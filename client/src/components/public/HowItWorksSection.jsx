@@ -1,119 +1,95 @@
-import { UserPlus, Wallet, BarChart2, TrendingUp } from 'lucide-react'
+import { UserPlus, Wallet, BarChart2, TrendingUp, CheckCircle2 } from 'lucide-react'
 
 const STEPS = [
   {
     icon: UserPlus,
-    number: '01',
-    title: 'Create Account',
-    desc: 'Register with your referral link. Takes less than 2 minutes with basic details.',
+    title: 'Identity Setup',
+    desc: 'Register your secure investor account and verify your details in seconds.',
+    color: 'text-primary',
+    bg: 'bg-primary/5',
+    border: 'border-primary/20'
   },
   {
     icon: Wallet,
-    number: '02',
-    title: 'Fund Your Wallet',
-    desc: 'Deposit USDT (BEP20) starting from $50. Funds are credited within minutes.',
+    title: 'Fund Allocation',
+    desc: 'Deposit USDT via BEP20. Our gateways are instant and fully encrypted.',
+    color: 'text-accent',
+    bg: 'bg-accent/5',
+    border: 'border-accent/20'
   },
   {
     icon: BarChart2,
-    number: '03',
-    title: 'Start Trading',
-    desc: 'Activate a trade package. Our team trades on your behalf 24/7 across markets.',
+    title: 'Strategy Activation',
+    desc: 'Choose your growth package and let our AI agents handle the market execution.',
+    color: 'text-orange-500',
+    bg: 'bg-orange-50',
+    border: 'border-orange-200'
   },
   {
     icon: TrendingUp,
-    number: '04',
-    title: 'Earn Daily Returns',
-    desc: 'Receive daily profits until you reach 2× your invested amount. Withdraw anytime.',
+    title: 'Wealth Growth',
+    desc: 'Watch your ROI grow daily. Withdraw your profits anytime with zero friction.',
+    color: 'text-success',
+    bg: 'bg-success/5',
+    border: 'border-success/20'
   },
 ]
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="section" style={{ background: 'rgba(255,255,255,0.01)' }}>
-      <div className="container">
-        <div style={{ textAlign: 'center' }}>
-          <div className="section-tag" style={{ justifyContent: 'center' }}>
-            <span>◆</span> How It Works
+    <section id="how-it-works" className="section bg-white relative overflow-hidden">
+      {/* Decorative Blur */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-slate-50 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="container relative z-10">
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 border border-primary/10 rounded-full text-primary text-[10px] font-black uppercase tracking-widest mb-6">
+            <CheckCircle2 size={14} /> Step-by-Step Guide
           </div>
-          <h2 className="section-title">
-            Start Earning in{' '}
-            <span style={{
-              background: 'linear-gradient(135deg, var(--cyan), var(--purple))',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>4 Simple Steps</span>
+          <h2 className="text-4xl lg:text-5xl font-black text-text-main mb-6 tracking-tight">
+            How to Scale Your <br />
+            <span className="gradient-text">Financial Future</span>
           </h2>
-          <p className="section-subtitle">
-            From registration to daily returns — getting started on Novatrix is fast, simple, and transparent.
+          <p className="text-lg text-text-sub leading-relaxed">
+            We've simplified complex algorithmic trading into a seamless 4-step experience. No technical expertise required — our systems do the heavy lifting for you.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.25rem', position: 'relative' }} id="hiw-grid">
-          {/* Connector line (desktop only) */}
-          <div style={{
-            display: 'none',
-            position: 'absolute',
-            top: '2.25rem', left: '14%', right: '14%', height: 1,
-            background: 'linear-gradient(90deg, var(--cyan), var(--purple), var(--cyan))',
-            opacity: 0.15, zIndex: 0,
-          }} id="hiw-connector" />
-
-          {STEPS.map(({ icon: Icon, number, title, desc }) => (
-            <div
-              key={number}
-              style={{
-                background: 'var(--navy-card)',
-                border: '1px solid var(--border)',
-                borderRadius: 16,
-                padding: '2rem 1.5rem',
-                textAlign: 'center',
-                position: 'relative',
-                zIndex: 1,
-                transition: 'all 0.25s',
-                cursor: 'default',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'rgba(0,212,255,0.25)'
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border)'
-                e.currentTarget.style.transform = 'none'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                <div style={{
-                  width: 52, height: 52, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, var(--cyan), var(--purple))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 0 20px rgba(0,212,255,0.3)',
-                }}>
-                  <Icon size={20} color="#fff" />
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {STEPS.map((step, i) => (
+            <div key={i} className="group relative">
+              {/* Connector line (desktop) */}
+              {i < STEPS.length - 1 && (
+                <div className="hidden lg:block absolute top-12 left-full w-full h-[2px] bg-slate-100 -translate-x-6 z-0" />
+              )}
+              
+              <div className="relative z-10 flex flex-col items-center text-center p-8 rounded-[32px] bg-white border border-border-subtle group-hover:border-primary/20 group-hover:shadow-2xl transition-all duration-500">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-8 border-4 border-white shadow-xl transition-transform group-hover:scale-110 duration-500 ${step.bg} ${step.color}`}>
+                  <step.icon size={36} strokeWidth={2.5} />
                 </div>
+                
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-text-main text-white text-xs font-black mb-4">
+                  {i + 1}
+                </div>
+                
+                <h3 className="text-xl font-black text-text-main mb-3">{step.title}</h3>
+                <p className="text-text-sub text-sm font-semibold leading-relaxed">
+                  {step.desc}
+                </p>
               </div>
-              <div style={{
-                fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em',
-                color: 'var(--cyan)', marginBottom: '0.625rem',
-              }}>STEP {number}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.625rem', color: 'var(--text-primary)' }}>
-                {title}
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>{desc}</p>
             </div>
           ))}
         </div>
+        
+        <div className="mt-20 flex justify-center">
+           <div className="p-1 rounded-full bg-slate-100 border border-slate-200 flex items-center gap-4 pr-6">
+              <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-primary">
+                 <CheckCircle2 size={20} />
+              </div>
+              <span className="text-sm font-black text-text-sub uppercase tracking-wider">Average setup time: <span className="text-text-main font-black">145 Seconds</span></span>
+           </div>
+        </div>
       </div>
-
-      <style>{`
-        @media (min-width: 640px) {
-          #hiw-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (min-width: 1024px) {
-          #hiw-grid { grid-template-columns: repeat(4, 1fr) !important; }
-          #hiw-connector { display: block !important; }
-        }
-      `}</style>
     </section>
   )
 }

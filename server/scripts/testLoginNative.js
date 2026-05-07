@@ -1,8 +1,8 @@
 const http = require('http')
 
 const data = JSON.stringify({
-  email: 'admin@novatrix.vip',
-  password: 'Admin@Novatrix2024!'
+  email: 'admin@globalfx.vip',
+  password: 'Admin@GlobalFX2024!'
 })
 
 const options = {

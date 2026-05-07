@@ -8,7 +8,7 @@ import api from '../../lib/api'
 import { PageHeader, Panel } from '../../components/member/ui'
 
 // Initial placeholder, will be replaced by dynamic settings from backend
-const DEFAULT_ADDRESS = 'TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXnovatrix'
+const DEFAULT_ADDRESS = 'TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXglobalfx'
 
 const schema = z.object({
   amount:  z.coerce.number()

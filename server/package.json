@@ -1,7 +1,7 @@
 {
-  "name": "novatrix-server",
+  "name": "globalfx-server",
   "version": "1.0.0",
-  "description": "Novatrix Investment Platform — Backend API",
+  "description": "GlobalFX Investment Platform — Backend API",
   "main": "index.js",
   "scripts": {
     "dev": "node --watch index.js",
@@ -11,10 +11,11 @@
     "db:studio": "npx prisma studio",
     "db:generate": "npx prisma generate",
     "seed:admin": "node scripts/seedAdmin.js",
+    "seed:settings": "node scripts/seedSettings.js",
     "vercel-build": "npx prisma generate"
   },
   "keywords": [],
-  "author": "Novatrix",
+  "author": "GlobalFX",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.22.0",

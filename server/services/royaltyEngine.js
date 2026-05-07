@@ -4,13 +4,7 @@ const prisma = require('../lib/prisma')
  * Royalty Ranks Configuration
  * Based on 40%-30%-30% Leg Distribution
  */
-const ROYALTY_RANKS = [
-  { id: 1, name: 'Executive',        target: 500000,   percent: 1 },
-  { id: 2, name: 'Senior Executive', target: 1000000,  percent: 2 },
-  { id: 3, name: 'Vice President',   target: 2500000,  percent: 3 },
-  { id: 4, name: 'CEO',              target: 5000000,  percent: 4 },
-  { id: 5, name: 'Chairman',         target: 10000000, percent: 5 }
-]
+const { ROYALTY_RANKS } = require('../lib/ranks')
 
 /**
  * Calculate and award royalty ranks based on cumulative business match

@@ -84,7 +84,7 @@ router.get('/csv', async (req, res, next) => {
       const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
       
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-      res.setHeader('Content-Disposition', `attachment; filename=novatrix-${type}-report.xlsx`)
+      res.setHeader('Content-Disposition', `attachment; filename=globalfx-${type}-report.xlsx`)
       return res.send(buf)
     }
 
@@ -93,7 +93,7 @@ router.get('/csv', async (req, res, next) => {
     ).join('\n')
 
     res.setHeader('Content-Type', 'text/csv')
-    res.setHeader('Content-Disposition', `attachment; filename=novatrix-${type}-report.csv`)
+    res.setHeader('Content-Disposition', `attachment; filename=globalfx-${type}-report.csv`)
     res.send(csvContent)
   } catch (err) { next(err) }
 })

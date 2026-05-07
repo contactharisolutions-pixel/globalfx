@@ -40,123 +40,73 @@ async function creditIncome(tx, userId, amount, remarks, refId) {
 async function distributeROI() {
   console.log(`[ROI Cron] Starting distribution — ${new Date().toISOString()}`)
 
-  const activePackages = await prisma.tradePackage.findMany({
-    where: { status: 'active' },
-  })
-
-  let processed = 0, completed = 0
-
-  // FIX #8: Get today's IST date string to prevent double-fire on same day
   const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
   const todayIST = new Date(Date.now() + IST_OFFSET_MS)
-  const todayStr = todayIST.toISOString().split('T')[0] // e.g. '2026-05-04'
+  const todayStr = todayIST.toISOString().split('T')[0]
+  const dayStart = new Date(todayStr + 'T00:00:00+05:30')
 
-  for (const pkg of activePackages) {
-    // FIX #8: Skip if ROI was already distributed today for this package
-    const alreadyRan = await prisma.roiDistribution.findFirst({
-      where: {
-        package_id: pkg.id,
-        created_at: { gte: new Date(todayStr + 'T00:00:00+05:30') }
-      }
+  // 1. Fetch all active packages and today's distributions in bulk
+  const [activePackages, todayDistributions] = await Promise.all([
+    prisma.tradePackage.findMany({ where: { status: 'active' } }),
+    prisma.roiDistribution.findMany({
+      where: { created_at: { gte: dayStart } },
+      select: { package_id: true }
     })
-    if (alreadyRan) {
-      console.log(`[ROI Cron] Package #${pkg.id} already distributed today. Skipping.`)
-      continue
-    }
+  ])
+
+  const distributedPkgIds = new Set(todayDistributions.map(d => d.package_id))
+  
+  // 2. Filter out already processed
+  const toProcess = activePackages.filter(p => !distributedPkgIds.has(p.id))
+  console.log(`[ROI Cron] Found ${activePackages.length} active packages. ${toProcess.length} need processing.`)
+
+  if (toProcess.length === 0) return
+
+  // 3. Process each package and aggregate ROI per user
+  let processed = 0, completed = 0
+  const userRoiTotals = {} // user_id -> { total: number, display_id: string }
+
+  // Fetch all user display IDs once to avoid repeated queries
+  const userIds = [...new Set(toProcess.map(p => p.user_id))]
+  const users = await prisma.user.findMany({
+    where: { id: { in: userIds } },
+    select: { id: true, user_id: true }
+  })
+  const userMap = Object.fromEntries(users.map(u => [u.id, u.user_id]))
+
+  for (const pkg of toProcess) {
     const amount      = parseFloat(pkg.amount)
     const totalEarned = parseFloat(pkg.total_earned)
-    const PLATFORM_LAUNCH = new Date('2026-05-04T00:00:00+05:30')
-    const pkgStart        = new Date(pkg.started_at)
-    
-    // For packages bought before launch, their activation is effectively on launch day
-    const effectiveStart  = pkgStart < PLATFORM_LAUNCH ? PLATFORM_LAUNCH : pkgStart
-    
-    const diffTime = effectiveStart.getTime() - PLATFORM_LAUNCH.getTime()
-    // Diff in days relative to platform launch
-    const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)))
+    const dailyRoi    = 2.0
+    const maxReturn   = amount * 2
 
-    // Determine daily ROI rate by package activation date
-    let dailyRoi = 0.5
-    if (diffDays <= 30) {
-      dailyRoi = 2.0
-    } else if (diffDays <= 120) { // next 90 days (30 + 90)
-      dailyRoi = 1.0
-    } else { // after 120 days
-      dailyRoi = 0.5
-    }
+    const roiEarned   = parseFloat((amount * dailyRoi / 100).toFixed(2))
+    const creditable  = Math.min(roiEarned, maxReturn - totalEarned)
 
-    // Get member's first activation date to calculate their 15-day window
-    const [firstPkg] = await prisma.$queryRaw`
-      SELECT started_at FROM "TradePackage"
-      WHERE user_id = ${pkg.user_id}
-      ORDER BY started_at ASC LIMIT 1
-    `
-    const memberActivationDate = firstPkg ? new Date(firstPkg.started_at) : pkgStart
-    const limit15Days = new Date(memberActivationDate.getTime() + 15 * 24 * 60 * 60 * 1000)
-
-    // Member's total investment up to 15 days from their activation date
-    const [memberInvestRes] = await prisma.$queryRaw`
-      SELECT COALESCE(SUM(amount), 0) as total FROM "TradePackage"
-      WHERE user_id = ${pkg.user_id} AND started_at <= ${limit15Days}
-    `
-    const memberInvest15Days = parseFloat(memberInvestRes?.total || 0)
-
-    // Downline total business up to 15 days from member's activation date
-    const [teamInvestRes15Days] = await prisma.$queryRaw`
-      WITH RECURSIVE tree AS (
-        SELECT id FROM "User" WHERE sponsor_id = ${pkg.user_id}
-        UNION ALL
-        SELECT u.id FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id
-      )
-      SELECT COALESCE(SUM(amount), 0) as total FROM "TradePackage"
-      WHERE user_id IN (SELECT id FROM tree) AND started_at <= ${limit15Days}
-    `
-    const teamTotal15Days = parseFloat(teamInvestRes15Days?.total || 0)
-
-    let maxMultiplier = 2
-    if (memberInvest15Days > 0 && teamTotal15Days >= 3 * memberInvest15Days) {
-      maxMultiplier = 3
-    }
-
-    const maxReturn = amount * maxMultiplier
-
-    const roiEarned = parseFloat((amount * dailyRoi / 100).toFixed(2))
-
-    // Cap at maxReturn limit
-    const creditable = Math.min(roiEarned, maxReturn - totalEarned)
     if (creditable <= 0) {
-      // If already reached max via other bonuses, mark completed
       if (totalEarned >= maxReturn) {
         await prisma.tradePackage.update({
           where: { id: pkg.id },
-          data: { status: 'completed', completed_at: new Date(), max_return: maxReturn, daily_roi_percent: dailyRoi },
+          data: { status: 'completed', completed_at: new Date() },
         })
       }
       continue
     }
 
-    const newTotal  = totalEarned + creditable
-    const isDone    = newTotal >= maxReturn
+    const newTotal = totalEarned + creditable
+    const isDone   = newTotal >= maxReturn
 
     try {
       await prisma.$transaction(async (tx) => {
         await tx.tradePackage.update({
           where: { id: pkg.id },
           data: {
-            total_earned:      newTotal,
-            max_return:        maxReturn,
-            daily_roi_percent: dailyRoi, // FIX #4: keep stored value in sync with date-based rate
-            status:            isDone ? 'completed' : 'active',
-            completed_at:      isDone ? new Date() : null,
+            total_earned: newTotal,
+            status:       isDone ? 'completed' : 'active',
+            completed_at: isDone ? new Date() : null,
           },
         })
-        await creditIncome(
-          tx,
-          pkg.user_id,
-          creditable,
-          `Daily ROI ${dailyRoi}% on package #${pkg.id}`,
-          pkg.id
-        )
+        await creditIncome(tx, pkg.user_id, creditable, `Daily ROI ${dailyRoi}% on package #${pkg.id}`, pkg.id)
         await tx.roiDistribution.create({
           data: {
             package_id: pkg.id,
@@ -167,17 +117,8 @@ async function distributeROI() {
         })
       })
 
-      // Run matching bonus OUTSIDE the main transaction (avoids long lock) but AWAITED so
-      // it fully completes before the cron response is sent. On Vercel serverless, any
-      // un-awaited Promise is killed the moment the HTTP response is flushed — which is why
-      // a fire-and-forget .catch() pattern silently drops all level bonuses.
-      const userObj = await prisma.user.findUnique({ where: { id: pkg.user_id }, select: { user_id: true } })
-      try {
-        await triggerROIMatchingBonus(pkg.user_id, userObj?.user_id || 'Member', creditable)
-      } catch (matchErr) {
-        console.error(`[ROI Cron] Matching bonus error for package #${pkg.id}:`, matchErr.message)
-      }
-
+      // Aggregate for matching bonus
+      userRoiTotals[pkg.user_id] = (userRoiTotals[pkg.user_id] || 0) + creditable
       processed++
       if (isDone) completed++
     } catch (err) {
@@ -185,8 +126,20 @@ async function distributeROI() {
     }
   }
 
+  // 4. Trigger matching bonuses ONCE per user (Aggregated)
+  console.log(`[ROI Cron] Triggering matching bonuses for ${Object.keys(userRoiTotals).length} members...`)
+  for (const [userId, totalRoi] of Object.entries(userRoiTotals)) {
+    try {
+      await triggerROIMatchingBonus(parseInt(userId), userMap[userId] || 'Member', totalRoi)
+    } catch (err) {
+      console.error(`[ROI Cron] Matching bonus fail for user ${userId}:`, err.message)
+    }
+  }
+
   console.log(`[ROI Cron] Done. Processed: ${processed}, Completed: ${completed}`)
 }
+
+
 
 /** Simulate a trading pair for daily reports */
 function pickTradingPair() {

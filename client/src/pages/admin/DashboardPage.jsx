@@ -51,31 +51,31 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-      <AdminPageHeader title="System Overview" subtitle="Overview of platform users and financial stats" />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+      <AdminPageHeader title="System Overview" subtitle="Real-time platform analytics and performance metrics" />
 
       {/* Primary stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--gap-md)' }} id="admin-stat-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }} id="admin-stat-grid">
         <AdminStatCard label="Total Users"   value={members.total.toLocaleString()}         icon={Users}      color="orange" sub="Total registrations" />
-        <AdminStatCard label="Active Users"  value={members.active.toLocaleString()}        icon={Activity}   color="green"  sub="Verified and trading" />
+        <AdminStatCard label="Active Members" value={members.active.toLocaleString()}        icon={Activity}   color="green"  sub="Verified and trading" />
         <AdminStatCard label="New This Week" value={members.new_this_week.toLocaleString()} icon={TrendingUp} color="blue"   sub="Recent registrations" />
         <AdminStatCard
           label="Total Deposits"
           value={`$${(+financials.total_deposits).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           icon={CreditCard}
           color="purple"
-          sub="Total money deposited"
+          sub="Cumulative deposits"
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--gap-md)' }} id="admin-mid-grid">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }} id="admin-mid-grid">
         {/* Pending Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-md)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <AlertCircle size={18} style={{ color: 'var(--orange)' }} />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Pending Actions</h3>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
+            <AlertCircle size={18} style={{ color: '#f97316' }} />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Pending Actions</h3>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--gap-sm)' }} id="admin-pending-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }} id="admin-pending-grid">
             {PENDING_LINKS.map(({ key, label, to, accent, icon: Icon }) => (
               <Link
                 key={key}
@@ -83,13 +83,13 @@ export default function AdminDashboard() {
                 className="fade-in"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '1rem',
-                  background: 'var(--navy-card)', border: '1px solid var(--border)',
-                  borderRadius: 'var(--radius-md)', padding: '1.25rem',
-                  textDecoration: 'none', transition: 'var(--transition-normal)',
+                  background: '#0d1526', border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 16, padding: '1.25rem',
+                  textDecoration: 'none', transition: 'all 0.25s',
                   position: 'relative', overflow: 'hidden',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = accent }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--border)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)' }}
               >
                 <div style={{
                   width: 44, height: 44, borderRadius: 12, flexShrink: 0,
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
                   <p style={{ fontSize: '1.625rem', fontWeight: 900, color: accent, lineHeight: 1, fontFamily: 'Outfit, sans-serif' }}>
                     {pending_actions[key]}
                   </p>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '0.375rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.375rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {label}
                   </p>
                 </div>
@@ -117,25 +117,25 @@ export default function AdminDashboard() {
         </div>
 
         {/* Financial velocity */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-md)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-            <TrendingUp size={18} style={{ color: 'var(--cyan)' }} />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Financial Summary</h3>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
+            <TrendingUp size={18} style={{ color: '#06b6d4' }} />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Financial Summary</h3>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--gap-sm)' }} id="admin-fin-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }} id="admin-fin-grid">
             {[
-              { label: 'Total Deposits',    value: financials.total_deposits,    color: 'var(--green)'  },
-              { label: 'Total Withdrawals', value: financials.total_withdrawals,  color: 'var(--red)'    },
-              { label: 'Total Profits',     value: financials.total_bonuses,      color: 'var(--orange)' },
+              { label: 'Total Deposits',    value: financials.total_deposits,    color: '#22c55e'  },
+              { label: 'Total Withdrawals', value: financials.total_withdrawals,  color: '#ef4444'    },
+              { label: 'Total Profits',     value: financials.total_bonuses,      color: '#f59e0b' },
             ].map(({ label, value, color }) => (
               <div key={label} style={{
-                background: 'var(--navy-card)', border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-md)', padding: '1.5rem', textAlign: 'center',
+                background: '#0d1526', border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: 16, padding: '1.5rem', textAlign: 'center',
               }}>
-                <p style={{ fontSize: '1.25rem', fontWeight: 800, color, marginBottom: '0.5rem', fontFamily: 'JetBrains Mono, monospace' }}>
+                <p style={{ fontSize: '1.5rem', fontWeight: 900, color, marginBottom: '0.5rem', fontFamily: 'JetBrains Mono, monospace', margin: '0 0 0.5rem' }}>
                   ${(+value).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-faint)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
+                <p style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>{label}</p>
               </div>
             ))}
           </div>
@@ -143,23 +143,23 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── All Income KPI Cards ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-md)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-          <DollarSign size={18} style={{ color: 'var(--cyan)' }} />
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>All Income Distribution</h3>
+          <DollarSign size={18} style={{ color: '#06b6d4' }} />
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Income Distribution</h3>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 'var(--gap-sm)' }} id="admin-income-grid">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }} id="admin-income-grid">
           {INCOME_TYPES.map(({ key, label, color, icon: Icon }) => {
             const fieldMap = { trading: 'roi_paid', direct: 'direct_paid', level: 'level_paid', reward: 'reward_paid', royalty: 'royalty_paid' }
             const val = financials[fieldMap[key]] || 0
             return (
               <div key={key} style={{
-                background: 'var(--navy-card)', border: `1px solid ${color}22`,
-                borderRadius: 'var(--radius-md)', padding: '1.25rem',
+                background: '#0d1526', border: `1px solid ${color}22`,
+                borderRadius: 16, padding: '1.25rem',
                 display: 'flex', flexDirection: 'column', gap: '0.75rem',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-faint)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
+                  <p style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
                   <div style={{ width: 28, height: 28, borderRadius: 8, background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={14} style={{ color }} />
                   </div>
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── Profit Payout Chart — stacked bar per IST day ── */}
-      <Panel style={{ padding: '1.5rem 1.75rem' }}>
+      <Panel style={{ padding: '1.5rem 1.75rem', background: '#0d1526', border: '1px solid rgba(255,255,255,0.07)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
             <Activity size={18} style={{ color: 'var(--orange)' }} />
@@ -231,6 +231,7 @@ export default function AdminDashboard() {
           #admin-income-grid  { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (min-width: 640px) and (max-width: 1023px) {
+          #admin-stat-grid    { grid-template-columns: repeat(2, 1fr) !important; }
           #admin-pending-grid { grid-template-columns: repeat(2, 1fr) !important; }
           #admin-fin-grid     { grid-template-columns: repeat(3, 1fr) !important; }
           #admin-income-grid  { grid-template-columns: repeat(3, 1fr) !important; }
@@ -238,10 +239,8 @@ export default function AdminDashboard() {
         @media (min-width: 1024px) {
           #admin-stat-grid    { grid-template-columns: repeat(4, 1fr) !important; }
           #admin-pending-grid { grid-template-columns: repeat(4, 1fr) !important; }
+          #admin-mid-grid     { grid-template-columns: 1.3fr 1fr !important; }
           #admin-income-grid  { grid-template-columns: repeat(5, 1fr) !important; }
-        }
-        @media (min-width: 1280px) {
-          #admin-mid-grid { grid-template-columns: 1.2fr 1fr !important; }
         }
       `}</style>
     </div>

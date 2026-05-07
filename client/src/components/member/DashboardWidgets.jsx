@@ -6,11 +6,10 @@ export const ForexLiveGraph = memo(({ symbol = "BITSTAMP:BTCUSD" }) => {
 
   useEffect(() => {
     if (container.current) {
-      // Clear existing content to force re-render of the widget
       container.current.innerHTML = ''
       const widgetDiv = document.createElement('div')
       widgetDiv.className = 'tradingview-widget-container__widget'
-      widgetDiv.style.height = 'calc(100% - 32px)'
+      widgetDiv.style.height = '100%'
       widgetDiv.style.width = '100%'
       container.current.appendChild(widgetDiv)
 
@@ -23,12 +22,14 @@ export const ForexLiveGraph = memo(({ symbol = "BITSTAMP:BTCUSD" }) => {
         "symbol": symbol,
         "interval": "D",
         "timezone": "Etc/UTC",
-        "theme": "dark",
+        "theme": "light",
         "style": "1",
         "locale": "en",
         "enable_publishing": false,
         "allow_symbol_change": true,
         "calendar": false,
+        "backgroundColor": "#ffffff",
+        "gridColor": "#f1f5f9",
         "support_host": "https://www.tradingview.com"
       })
       container.current.appendChild(script)
@@ -37,7 +38,7 @@ export const ForexLiveGraph = memo(({ symbol = "BITSTAMP:BTCUSD" }) => {
 
   return (
     <div className="tradingview-widget-container" ref={container} style={{ height: "500px", width: "100%" }}>
-      <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
+      <div className="tradingview-widget-container__widget" style={{ height: "100%", width: "100%" }}></div>
     </div>
   )
 })
@@ -61,7 +62,7 @@ export const CapitalHubTicker = memo(() => {
           { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" }
         ],
         "showSymbolLogo": true,
-        "colorTheme": "dark",
+        "colorTheme": "light",
         "isTransparent": true,
         "displayMode": "adaptive",
         "locale": "en"

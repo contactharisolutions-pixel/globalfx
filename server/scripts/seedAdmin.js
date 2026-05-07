@@ -13,11 +13,11 @@ require('dotenv').config({ path: require('path').join(__dirname, '../.env') })
 const bcrypt = require('bcryptjs')
 const prisma = require('../lib/prisma')
 const ADMIN_NAME     = process.env.SEED_ADMIN_NAME  || 'Super Admin'
-const ADMIN_EMAIL    = process.env.SEED_ADMIN_EMAIL  || 'admin@novatrix.vip'
-const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASS   || 'Admin@Novatrix2024!'
+const ADMIN_EMAIL    = process.env.SEED_ADMIN_EMAIL  || 'admin@globalfx.vip'
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASS   || 'Admin@GlobalFX2024!'
 
 async function main() {
-  console.log('\n🌱  Novatrix Admin Seeder\n')
+  console.log('\n🌱  GlobalFX Admin Seeder\n')
 
   const password_hash = await bcrypt.hash(ADMIN_PASSWORD, 12)
 
@@ -36,23 +36,16 @@ async function main() {
     },
   })
 
-  // Seed default platform settings
+  // Seed default platform settings (Synced with central ranks.js and documentation)
   const DEFAULT_SETTINGS = {
-    daily_roi_min:          '0.50',
-    daily_roi_max:          '1.50',
-    roi_cap_multiplier:     '2.0',
     direct_bonus_pct:       '5',
-    level_1_pct:            '5',
-    level_2_pct:            '4',
-    level_3_pct:            '3',
-    level_4_pct:            '2',
-    level_5_pct:            '1',
-    withdrawal_fee_pct:     '5',
-    min_withdrawal:         '10',
+    level_bonus_rates:      JSON.stringify([0, 25, 20, 15, 10, 5]),
+    withdrawal_fee_pct:     '10',
+    min_withdrawal:         '20',
     max_withdrawal:         '5000',
     withdrawal_days:        'mon,tue,wed,thu,fri',
-    min_deposit:            '50',
-    registration_bonus:     '0',
+    min_investment:         '25',
+    roi_cap_multiplier:     '2.0',
     maintenance_mode:       'off',
     deposit_wallet_address: '',
   }

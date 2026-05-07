@@ -35,10 +35,10 @@ async function creditIncome(tx, userId, amount, remarks, refType = null, refId =
   })
 }
 
-// ─── Shared launch-window constants ──────────────────────────
-const DAY_15_END = new Date('2026-05-17T00:00:00+05:30')
+// ─── Shared investment constants ──────────────────────────────
+const MIN_AMOUNT = 25
+const MAX_AMOUNT = 5000
 
-// ─── POST /api/trades/activate-for-other ──────────────────────
 router.post('/activate-for-other', async (req, res, next) => {
   const { targetUserId, amount, pin } = req.body
   const amt = parseFloat(amount)
@@ -54,44 +54,11 @@ router.post('/activate-for-other', async (req, res, next) => {
     if (!target) return res.status(404).json({ error: 'Target member not found' })
     if (parseFloat(sender.fund_wallet_balance) < amt) return res.status(400).json({ error: 'Insufficient fund wallet balance' })
 
-    const minAmount = 20
-    const maxAmount = 5000
-    if (amt < minAmount) return res.status(400).json({ error: `Minimum investment is $${minAmount}` })
-    if (amt > maxAmount) return res.status(400).json({ error: `Maximum investment is $${maxAmount.toLocaleString()}` })
+    if (amt < MIN_AMOUNT) return res.status(400).json({ error: `Minimum investment is $${MIN_AMOUNT}` })
+    if (amt > MAX_AMOUNT) return res.status(400).json({ error: `Maximum investment is $${MAX_AMOUNT.toLocaleString()}` })
 
-    // FIX #4: daily_roi_percent is determined by activation date relative to platform launch.
-    // The roiCron calculates and stores the correct date-based rate on each distribution run.
-    // We store 0 here as a placeholder — it will be set correctly on the first cron run.
-    const dailyRoi = 0
-
-    // Target member's total investment up to 15 days from launch
-    const today = new Date()
-    const [targetInvestRes] = await prisma.$queryRaw`
-      SELECT COALESCE(SUM(amount), 0) as total FROM "TradePackage"
-      WHERE user_id = ${target.id} AND started_at <= ${DAY_15_END}
-    `
-    let targetInvest15Days = parseFloat(targetInvestRes?.total || 0)
-    if (today <= DAY_15_END) {
-      targetInvest15Days += amt
-    }
-
-    // Downline total business up to 15 days from launch
-    const [teamInvestRes15Days] = await prisma.$queryRaw`
-      WITH RECURSIVE tree AS (
-        SELECT id FROM "User" WHERE sponsor_id = ${target.id}
-        UNION ALL
-        SELECT u.id FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id
-      )
-      SELECT COALESCE(SUM(amount), 0) as total FROM "TradePackage"
-      WHERE user_id IN (SELECT id FROM tree) AND started_at <= ${DAY_15_END}
-    `
-    const teamTotal15Days = parseFloat(teamInvestRes15Days?.total || 0)
-
-    let maxMultiplier = 2
-    if (targetInvest15Days > 0 && teamTotal15Days >= 3 * targetInvest15Days) {
-      maxMultiplier = 3
-    }
-    const maxReturn = amt * maxMultiplier
+    // Flat 2× max return — no early adopter cap
+    const maxReturn = amt * 2
 
     await prisma.$transaction(async (tx) => {
       // 1. Deduct from sender fund wallet
@@ -100,14 +67,14 @@ router.post('/activate-for-other', async (req, res, next) => {
         data: { fund_wallet_balance: { decrement: amt } }
       })
 
-      // 2. Create package for target
+      // 2. Create package for target (daily_roi set to 2% — cron will keep in sync)
       await tx.tradePackage.create({
         data: {
-          user_id:          target.id,
-          amount:           amt,
-          daily_roi_percent: dailyRoi,
-          max_return:       maxReturn,
-          status:           'active',
+          user_id:           target.id,
+          amount:            amt,
+          daily_roi_percent: 2.0,
+          max_return:        maxReturn,
+          status:            'active',
         }
       })
 
@@ -156,58 +123,24 @@ router.post('/invest', async (req, res, next) => {
 
     const user = await prisma.user.findUnique({ where: { id: req.user.id } })
 
-    // Check balance
-    const minAmount = 20
-    const maxAmount = 5000
-    if (parseFloat(amount) < minAmount) return res.status(400).json({ error: `Minimum investment is $${minAmount}` })
-    if (parseFloat(amount) > maxAmount) return res.status(400).json({ error: `Maximum investment is $${maxAmount.toLocaleString()}` })
+    if (parseFloat(amount) < MIN_AMOUNT) return res.status(400).json({ error: `Minimum investment is $${MIN_AMOUNT}` })
+    if (parseFloat(amount) > MAX_AMOUNT) return res.status(400).json({ error: `Maximum investment is $${MAX_AMOUNT.toLocaleString()}` })
 
     const balanceField = source === 'fund' ? 'fund_wallet_balance' : 'income_wallet_balance'
     if (parseFloat(user[balanceField]) < parseFloat(amount)) return res.status(400).json({ error: 'Insufficient balance' })
 
-    // FIX #4: daily_roi_percent is determined by activation date relative to platform launch.
-    // The roiCron calculates and stores the correct date-based rate on each distribution run.
-    // We store 0 here as a placeholder — it will be set correctly on the first cron run.
-    const dailyRoi = 0
-
-    // Member's total investment up to 15 days from launch
-    const today = new Date()
-    const [memberInvestRes] = await prisma.$queryRaw`
-      SELECT COALESCE(SUM(amount), 0) as total FROM "TradePackage"
-      WHERE user_id = ${req.user.id} AND started_at <= ${DAY_15_END}
-    `
-    let memberInvest15Days = parseFloat(memberInvestRes?.total || 0)
-    if (today <= DAY_15_END) {
-      memberInvest15Days += parseFloat(amount)
-    }
-
-    // Downline total business up to 15 days from launch
-    const [teamInvestRes15Days] = await prisma.$queryRaw`
-      WITH RECURSIVE tree AS (
-        SELECT id FROM "User" WHERE sponsor_id = ${req.user.id}
-        UNION ALL
-        SELECT u.id FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id
-      )
-      SELECT COALESCE(SUM(amount), 0) as total FROM "TradePackage"
-      WHERE user_id IN (SELECT id FROM tree) AND started_at <= ${DAY_15_END}
-    `
-    const teamTotal15Days = parseFloat(teamInvestRes15Days?.total || 0)
-
-    let maxMultiplier = 2
-    if (memberInvest15Days > 0 && teamTotal15Days >= 3 * memberInvest15Days) {
-      maxMultiplier = 3
-    }
-    const maxReturn = parseFloat(amount) * maxMultiplier
+    // Flat 2× max return — no early adopter cap
+    const maxReturn = parseFloat(amount) * 2
 
     // Atomic: deduct balance, create package, activate user if needed
     const pkg = await prisma.$transaction(async (tx) => {
       const p = await tx.tradePackage.create({
         data: {
-          user_id:          req.user.id,
-          amount:           parseFloat(amount),
-          daily_roi_percent: dailyRoi,
-          max_return:       maxReturn,
-          status:           'active',
+          user_id:           req.user.id,
+          amount:            parseFloat(amount),
+          daily_roi_percent: 2.0,  // flat 2% daily
+          max_return:        maxReturn,
+          status:            'active',
         },
       })
       await tx.user.update({

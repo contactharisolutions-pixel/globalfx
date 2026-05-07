@@ -45,7 +45,7 @@ const SETTING_DEFS = [
     group: 'Deposit Configuration',
     icon: QrCode,
     items: [
-      { key: 'deposit_address', label: 'USDT Deposit Address (BEP20)', type: 'text', placeholder: 'TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXnovatrix' },
+      { key: 'deposit_address', label: 'USDT Deposit Address (BEP20)', type: 'text', placeholder: 'TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXglobalfx' },
     ]
   },
 ]

@@ -13,7 +13,7 @@ router.get('/settings', async (req, res, next) => {
     settings.forEach(s => { obj[s.key] = s.value })
     
     // Set defaults if not found
-    if (!obj.deposit_address) obj.deposit_address = 'TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXnovatrix'
+    if (!obj.deposit_address) obj.deposit_address = 'TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXglobalfx'
     
     res.json({ settings: obj })
   } catch (err) { next(err) }

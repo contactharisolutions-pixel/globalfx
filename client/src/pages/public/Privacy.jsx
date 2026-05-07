@@ -1,16 +1,12 @@
 import LegalPage from '../../components/public/LegalPage'
 
 const Section = ({ title, children }) => (
-  <div style={{ marginBottom: '1.75rem' }}>
-    <h2 style={{
-      fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)',
-      marginBottom: '0.625rem', fontFamily: 'Outfit, sans-serif',
-      display: 'flex', alignItems: 'center', gap: '0.5rem',
-    }}>
-      <span style={{ color: 'var(--cyan)', fontSize: '0.7rem' }}>▶</span>
-      {title}
-    </h2>
-    <div style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.8 }}>
+  <div className="mb-10 group">
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-1.5 h-6 bg-primary rounded-full transition-transform group-hover:scale-y-125" />
+      <h2 className="text-xl font-black text-text-main tracking-tight uppercase text-xs tracking-widest">{title}</h2>
+    </div>
+    <div className="text-text-sub font-medium leading-relaxed pl-4.5 border-l border-slate-100 space-y-4">
       {children}
     </div>
   </div>
@@ -19,6 +15,12 @@ const Section = ({ title, children }) => (
 export default function Privacy() {
   return (
     <LegalPage title="Privacy Policy">
+      <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 mb-12">
+         <p className="text-sm font-bold text-primary flex items-center gap-2 italic">
+            Your data is handled with institutional-grade security and transparency.
+         </p>
+      </div>
+
       <Section title="1. Information We Collect">
         <p>We collect information you provide during registration (name, email, phone number) and information generated through your use of the platform (transaction records, IP address, device data).</p>
       </Section>
@@ -36,12 +38,12 @@ export default function Privacy() {
       </Section>
       <Section title="6. Your Rights">
         <p>You may request access to, correction of, or deletion of your personal data by contacting us at{' '}
-          <a href="mailto:support@novatrix.vip" style={{ color: 'var(--cyan)' }}>support@novatrix.vip</a>.
+          <a href="mailto:support@globalfx.vip" className="text-primary font-bold hover:underline">support@globalfx.vip</a>.
         </p>
       </Section>
       <Section title="7. Contact">
         <p>For privacy-related inquiries, email us at{' '}
-          <a href="mailto:support@novatrix.vip" style={{ color: 'var(--cyan)' }}>support@novatrix.vip</a>.
+          <a href="mailto:support@globalfx.vip" className="text-primary font-bold hover:underline">support@globalfx.vip</a>.
         </p>
       </Section>
     </LegalPage>

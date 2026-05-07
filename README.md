@@ -1,10 +1,10 @@
-# Novatrix — Investment Trading Platform
+# GlobalFX — Investment Trading Platform
 
 > A full-stack MLM investment platform built with React, Node.js/Express, and PostgreSQL.
 
 [![Phase](https://img.shields.io/badge/Phase-5%20Complete-brightgreen)]()
 [![Stack](https://img.shields.io/badge/Stack-React%20%7C%20Node.js%20%7C%20PostgreSQL-blue)]()
-[![Domain](https://img.shields.io/badge/Domain-novatrix.vip-purple)]()
+[![Domain](https://img.shields.io/badge/Domain-globalfx.vip-purple)]()
 
 ---
 
@@ -63,7 +63,7 @@ cd client && npm run dev
 ## 🏗️ Project Structure
 
 ```
-novatrix/
+globalfx/
 ├── client/                  # React + Vite frontend
 │   └── src/
 │       ├── components/
@@ -240,9 +240,9 @@ Set SMTP vars in `server/.env`:
 ```env
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=noreply@novatrix.vip
+SMTP_USER=noreply@globalfx.vip
 SMTP_PASS=your_app_password
-EMAIL_FROM="Novatrix" <noreply@novatrix.vip>
+EMAIL_FROM="GlobalFX" <noreply@globalfx.vip>
 ```
 
 > **Dev mode:** Leave SMTP blank — emails are sent to [Ethereal](https://ethereal.email) and a preview URL is logged to console.
@@ -269,4 +269,4 @@ npm run preview       # Preview production build
 
 ## 📄 License
 
-Private — All rights reserved © 2024 Novatrix
+Private — All rights reserved © 2024 GlobalFX

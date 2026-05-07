@@ -1,5 +1,5 @@
-# 🏛️ Novatrix Platform — Full Planning & Documentation
-> **Domain:** [novatrix.vip](https://novatrix.vip) · Member Panel: [member.novatrix.vip](https://member.novatrix.vip) · Admin Panel: [admin.novatrix.vip](https://admin.novatrix.vip)
+# 🏛️ GlobalFX Platform — Full Planning & Documentation
+> **Domain:** [globalfx.vip](https://globalfx.vip) · Member Panel: [member.globalfx.vip](https://member.globalfx.vip) · Admin Panel: [admin.globalfx.vip](https://admin.globalfx.vip)
 > Inspired by CapitalHub.vip | Smart Crypto & Forex Investment Platform with MLM/Referral Network
 
 ---
@@ -20,7 +20,7 @@
 
 ## 1. Project Overview
 
-**Novatrix** is a full-stack investment platform combining:
+**GlobalFX** is a full-stack investment platform combining:
 - A **public marketing website** to attract new members
 - A **member dashboard** for managing investments, referrals, and withdrawals
 - A **fully-controlled admin panel** for platform management
@@ -74,7 +74,7 @@
 | Hosting (Frontend) | Vercel |
 | Hosting (Backend) | Railway / Render |
 | File Storage | Cloudinary |
-| Domain | `novatrix.vip` (+ subdomains: member, admin, api) |
+| Domain | `globalfx.vip` (+ subdomains: member, admin, api) |
 | SSL | Auto via Vercel / Let's Encrypt |
 
 ---
@@ -163,30 +163,30 @@
 - Logo + description + social icons (Telegram, X, Instagram, YouTube)
 - Quick Links + Legal Links (Privacy, Terms, Disclaimer)
 - **Contact:**
-  - Email: `support@novatrix.vip`
-  - Telegram: `@novatrix_official`
+  - Email: `support@globalfx.vip`
+  - Telegram: `@globalfx_official`
   - Support Hours: 24/7
-- **URLs:** Main → `https://novatrix.vip` | Member → `https://member.novatrix.vip` | Admin → `https://admin.novatrix.vip`
-- Copyright: © 2026 Novatrix.vip — All Rights Reserved.
+- **URLs:** Main → `https://globalfx.vip` | Member → `https://member.globalfx.vip` | Admin → `https://admin.globalfx.vip`
+- Copyright: © 2026 GlobalFX.vip — All Rights Reserved.
 
 ### 3.4 Additional Public Pages
 
 | Page | Full URL | Content |
 |---|---|---|
-| Register | `https://novatrix.vip/register` | Referral auto-fill, name, email, phone, password |
-| Login | `https://novatrix.vip/login` | Redirects to `member.novatrix.vip` |
-| Privacy Policy | `https://novatrix.vip/privacy` | Data handling policy |
-| Terms of Service | `https://novatrix.vip/terms` | Platform terms |
-| Disclaimer | `https://novatrix.vip/disclaimer` | Investment risk disclosure |
+| Register | `https://globalfx.vip/register` | Referral auto-fill, name, email, phone, password |
+| Login | `https://globalfx.vip/login` | Redirects to `member.globalfx.vip` |
+| Privacy Policy | `https://globalfx.vip/privacy` | Data handling policy |
+| Terms of Service | `https://globalfx.vip/terms` | Platform terms |
+| Disclaimer | `https://globalfx.vip/disclaimer` | Investment risk disclosure |
 
 ### 3.5 Subdomain Structure
 
 | Subdomain | Purpose |
 |---|---|
-| `novatrix.vip` | Public marketing website |
-| `member.novatrix.vip` | Member dashboard panel |
-| `admin.novatrix.vip` | Admin control panel |
-| `api.novatrix.vip` | Backend REST API |
+| `globalfx.vip` | Public marketing website |
+| `member.globalfx.vip` | Member dashboard panel |
+| `admin.globalfx.vip` | Admin control panel |
+| `api.globalfx.vip` | Backend REST API |
 
 ---
 
@@ -459,9 +459,9 @@ On Approve: TxHash stored, Income Wallet debited, email notification sent to mem
 | Max Withdrawal/Day | Per-user daily cap |
 | Daily ROI % | Global or per-plan ROI |
 | Investment Min/Max | Per trade limits |
-| SMTP | Host, Port, Sender Email (`noreply@novatrix.vip`), Password |
-| Support Email | `support@novatrix.vip` |
-| Site URL | `https://novatrix.vip` |
+| SMTP | Host, Port, Sender Email (`noreply@globalfx.vip`), Password |
+| Support Email | `support@globalfx.vip` |
+| Site URL | `https://globalfx.vip` |
 
 ---
 
@@ -808,7 +808,7 @@ DELETE /api/admin/admins/:id
 - [ ] Full admin action audit log table
 - [ ] Environment variables for all secrets (never committed to git)
 - [ ] File upload validation (type, size, virus scan)
-- [ ] CORS whitelist: allow only `https://novatrix.vip`, `https://member.novatrix.vip`, `https://admin.novatrix.vip`
+- [ ] CORS whitelist: allow only `https://globalfx.vip`, `https://member.globalfx.vip`, `https://admin.globalfx.vip`
 
 ---
 

@@ -7,7 +7,7 @@ async function run() {
   await prisma.admin.create({
     data: {
       name: 'Super Admin',
-      email: 'admin@novatrix.vip',
+      email: 'admin@globalfx.vip',
       password_hash: hashedPassword,
       role: 'superadmin',
       is_active: true

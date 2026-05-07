@@ -1,124 +1,97 @@
-import { Eye, Zap, Shield, Users, HeadphonesIcon, BadgeDollarSign } from 'lucide-react'
+import { ShieldCheck, Zap, Shield, Users, Headphones, BadgeDollarSign, ArrowRight } from 'lucide-react'
 
 const REASONS = [
   {
-    icon: Eye,
-    title: '100% Transparent',
-    desc: 'Every trade and earning is logged. Full daily reports available in your dashboard.',
-    color: 'var(--cyan)',
-    glow: 'rgba(0,212,255,0.1)',
+    icon: ShieldCheck,
+    title: 'Full Transparency',
+    desc: 'Audit every single AI-executed trade in real-time. No hidden operations.',
+    color: 'text-primary',
+    bg: 'bg-primary/5'
   },
   {
     icon: Zap,
-    title: 'Instant Referral Bonus',
-    desc: 'Get paid immediately when your referrals deposit and activate a trade package.',
-    color: 'var(--amber)',
-    glow: 'rgba(245,158,11,0.1)',
+    title: 'Instant Rewards',
+    desc: 'Receive referral bonuses the moment your network deploys their capital.',
+    color: 'text-orange-500',
+    bg: 'bg-orange-50'
   },
   {
     icon: Shield,
-    title: 'Secure Withdrawals',
-    desc: 'USDT (BEP20) payouts with transaction PIN protection and TxHash verification.',
-    color: 'var(--green)',
-    glow: 'rgba(16,185,129,0.1)',
+    title: 'Asset Protection',
+    desc: 'Cold-storage wallets and multi-sig protocols for institutional security.',
+    color: 'text-success',
+    bg: 'bg-success/5'
   },
   {
     icon: Users,
-    title: 'Multi-Level Commissions',
-    desc: "Earn from 10 levels of your downline team's trading activity — every single day.",
-    color: 'var(--purple)',
-    glow: 'rgba(124,58,237,0.1)',
+    title: 'Network Growth',
+    desc: 'Earn from a powerful 15-level team structure as your alliance expands.',
+    color: 'text-accent',
+    bg: 'bg-accent/5'
   },
   {
-    icon: HeadphonesIcon,
-    title: '24/7 Support',
-    desc: 'Our support team is available around the clock via Telegram and ticket system.',
-    color: '#3b82f6',
-    glow: 'rgba(59,130,246,0.1)',
+    icon: Headphones,
+    title: 'Expert Support',
+    desc: '24/7 access to dedicated support agents and technical specialists.',
+    color: 'text-indigo-600',
+    bg: 'bg-indigo-50'
   },
   {
     icon: BadgeDollarSign,
-    title: 'No Hidden Fees',
-    desc: 'Only a transparent withdrawal processing fee. No registration fees, no surprises.',
-    color: 'var(--orange)',
-    glow: 'rgba(249,115,22,0.1)',
+    title: 'No Entry Fees',
+    desc: 'Zero registration or monthly maintenance fees. You keep what you earn.',
+    color: 'text-rose-500',
+    bg: 'bg-rose-50'
   },
 ]
 
 export default function WhyUsSection() {
   return (
-    <section id="why-us" className="section">
-      <div className="container">
-        <div style={{ textAlign: 'center' }}>
-          <div className="section-tag" style={{ justifyContent: 'center' }}>
-            <span>◆</span> Why Choose Us
-          </div>
-          <h2 className="section-title">
-            Built for{' '}
-            <span style={{
-              background: 'linear-gradient(135deg, var(--cyan), var(--purple))',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>Trust &amp; Growth</span>
-          </h2>
-          <p className="section-subtitle">
-            Thousands of members trust Novatrix for one reason — we deliver on our promise.
-          </p>
-        </div>
+    <section id="why-us" className="section bg-slate-50 relative overflow-hidden">
+      {/* Architectural decoration */}
+      <div className="absolute top-0 right-0 w-[40%] h-full bg-white skew-x-[-15deg] translate-x-1/2 pointer-events-none border-l border-slate-100 shadow-2xl" />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }} id="whyus-grid">
-          {REASONS.map(({ icon: Icon, title, desc, color, glow }) => (
-            <div
-              key={title}
-              style={{
-                display: 'flex', gap: '1rem', alignItems: 'flex-start',
-                padding: '1.5rem',
-                background: 'var(--navy-card)',
-                border: '1px solid var(--border)',
-                borderRadius: 16,
-                transition: 'all 0.25s',
-                cursor: 'default',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = `${color}35`
-                e.currentTarget.style.transform = 'translateY(-3px)'
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.2)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border)'
-                e.currentTarget.style.transform = 'none'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              <div style={{
-                width: 46, height: 46, borderRadius: 12,
-                background: glow,
-                border: `1px solid ${color}25`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <Icon size={20} style={{ color }} />
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.375rem', color: 'var(--text-primary)' }}>
-                  {title}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.7 }}>
-                  {desc}
+      <div className="container relative z-10">
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
+          
+          <div className="lg:col-span-4 space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-border-subtle rounded-full text-primary text-[10px] font-black uppercase tracking-widest shadow-sm">
+              <ShieldCheck size={14} /> The GlobalFX Edge
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-black text-text-main leading-tight tracking-tight">
+              Built for the <br />
+              <span className="gradient-text">Next Generation</span> <br />
+              of Investors
+            </h2>
+            <p className="text-lg text-text-sub leading-relaxed">
+              We've eliminated the barriers to high-performance trading. Thousands of users trust us because our platform is engineered for consistency and security.
+            </p>
+            <div className="pt-4">
+               <button className="flex items-center gap-3 font-black text-text-main group">
+                  EXPLORE OUR TECHNOLOGY <div className="w-10 h-10 rounded-full bg-white border border-border-subtle flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-sm"><ArrowRight size={18} /></div>
+               </button>
+            </div>
+          </div>
+
+          <div className="lg:col-span-8 grid sm:grid-cols-2 gap-6">
+            {REASONS.map((item, i) => (
+              <div 
+                key={i} 
+                className="group p-8 rounded-[32px] bg-white border border-border-subtle hover:border-transparent hover:shadow-2xl transition-all duration-300"
+              >
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border-2 border-white shadow-xl group-hover:scale-110 transition-transform ${item.bg} ${item.color}`}>
+                  <item.icon size={28} />
+                </div>
+                <h3 className="text-xl font-black text-text-main mb-3">{item.title}</h3>
+                <p className="text-text-sub text-sm font-semibold leading-relaxed">
+                  {item.desc}
                 </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
         </div>
       </div>
-
-      <style>{`
-        @media (min-width: 640px) {
-          #whyus-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (min-width: 1024px) {
-          #whyus-grid { grid-template-columns: repeat(3, 1fr) !important; }
-        }
-      `}</style>
     </section>
   )
 }

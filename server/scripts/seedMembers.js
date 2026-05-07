@@ -15,7 +15,7 @@ async function seed() {
       data: {
         user_id: rootId,
         name: 'Root Member',
-        email: 'root@novatrix.vip',
+        email: 'root@globalfx.vip',
         phone: '1234567890',
         password_hash,
         referral_code: `${rootId}`,
@@ -44,7 +44,7 @@ async function seed() {
       data: {
         user_id: userIdStr,
         name: `Test Member ${i}`,
-        email: `test${i}@novatrix.vip`,
+        email: `test${i}@globalfx.vip`,
         phone: `9990000${String(i).padStart(3, '0')}`,
         password_hash,
         referral_code: `${userIdStr}`,

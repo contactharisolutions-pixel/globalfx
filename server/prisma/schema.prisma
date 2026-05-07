@@ -124,6 +124,9 @@ model User {
   created_at            DateTime     @default(now())
   updated_at            DateTime     @updatedAt
 
+  @@index([sponsor_id])
+  @@index([user_id])
+  @@index([email])
   @@map("User")
 }
 
@@ -142,6 +145,7 @@ model FundLedger {
   remarks        String?
   created_at     DateTime   @default(now())
 
+  @@index([user_id])
   @@map("FundLedger")
 }
 
@@ -172,6 +176,8 @@ model Deposit {
   note           String?
   created_at     DateTime      @default(now())
 
+  @@index([user_id])
+  @@index([status])
   @@map("Deposit")
 }
 
@@ -189,6 +195,8 @@ model TradePackage {
   completed_at      DateTime?
   roi_distributions RoiDistribution[]
 
+  @@index([user_id])
+  @@index([status])
   @@map("TradePackage")
 }
 
@@ -202,6 +210,8 @@ model RoiDistribution {
   pair_name  String       @db.VarChar(20)
   created_at DateTime     @default(now())
 
+  @@index([package_id])
+  @@index([user_id])
   @@map("RoiDistribution")
 }
 
@@ -220,6 +230,9 @@ model Bonus {
   remarks      String?
   created_at   DateTime  @default(now())
 
+  @@index([user_id])
+  @@index([type])
+  @@index([from_user_id])
   @@map("Bonus")
 }
 
@@ -236,6 +249,7 @@ model IncomeLedger {
   remarks        String?
   created_at     DateTime   @default(now())
 
+  @@index([user_id])
   @@map("IncomeLedger")
 }
 
@@ -256,6 +270,8 @@ model Withdrawal {
   reject_reason  String?
   created_at     DateTime       @default(now())
 
+  @@index([user_id])
+  @@index([status])
   @@map("Withdrawal")
 }
 

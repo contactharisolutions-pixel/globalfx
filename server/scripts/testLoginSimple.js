@@ -1,7 +1,7 @@
 const http = require('http')
 
 const data = JSON.stringify({
-  email: 'admin@novatrix.vip',
+  email: 'admin@globalfx.vip',
   password: 'admin123'
 })
 

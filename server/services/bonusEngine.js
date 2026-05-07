@@ -14,7 +14,7 @@ const prisma = require('../lib/prisma')
 // Default commission rates
 const DEFAULT_RATES = {
   direct: 5.0,
-  levels: [0, 20, 15, 10, 5, 4, 3, 2, 2, 2, 1, 1, 1, 1, 0.5, 0.5], // index = level
+  levels: [0, 25, 20, 15, 10, 5], // index = level (1–5 only)
 }
 
 async function getCommissionRates() {
@@ -114,9 +114,8 @@ async function triggerDirectAndLevelBonus(memberId, investment) {
     select: { status: true }
   })
 
-  // Direct referral bonus: sponsor only needs to be active — no own package required.
-  // hasActivePackage gate applies only to ROI level matching bonus (triggerROIMatchingBonus).
-  if (sponsor?.status === 'active') {
+  // Direct referral bonus: sponsor must be active AND have at least one active trade package
+  if (sponsor?.status === 'active' && await hasActivePackage(sponsorId)) {
     const directBonusAmt = parseFloat((investment * rates.direct / 100).toFixed(2))
     if (directBonusAmt > 0) {
       await prisma.$transaction(async (tx) => {
@@ -154,8 +153,8 @@ async function triggerROIMatchingBonus(memberId, memberUserId, roiAmount) {
   let currentId = memberId
   let level = 1
 
-  // Walk up the sponsor chain up to 15 levels
-  while (level <= 15) {
+  // Walk up the sponsor chain up to 5 levels only
+  while (level <= 5) {
     const current = await prisma.user.findUnique({
       where:  { id: currentId },
       select: { sponsor_id: true },

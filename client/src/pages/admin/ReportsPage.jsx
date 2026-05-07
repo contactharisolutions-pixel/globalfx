@@ -33,7 +33,7 @@ export default function ReportsPage() {
       const link = document.createElement('a')
       const ext = format === 'excel' ? 'xlsx' : 'csv'
       link.href = url
-      link.download = `novatrix-${type}-report-${new Date().toISOString().slice(0, 10)}.${ext}`
+      link.download = `globalfx-${type}-report-${new Date().toISOString().slice(0, 10)}.${ext}`
       link.click()
       URL.revokeObjectURL(url)
       toast.success(`${type.toUpperCase()} export complete.`)

@@ -19,6 +19,9 @@ import NotFound from './pages/NotFound'
 const Privacy    = lazy(() => import('./pages/public/Privacy'))
 const Terms      = lazy(() => import('./pages/public/Terms'))
 const Disclaimer = lazy(() => import('./pages/public/Disclaimer'))
+const WhatIsCrypto = lazy(() => import('./pages/public/WhatIsCrypto'))
+const CryptoForex  = lazy(() => import('./pages/public/CryptoForex'))
+const WhyGlobalFX  = lazy(() => import('./pages/public/WhyGlobalFX'))
 
 // ── Lazy: Member pages (Phase 2) ─────────────────────────────
 const Dashboard          = lazy(() => import('./pages/member/Dashboard'))
@@ -63,11 +66,13 @@ const AdminGenealogy     = lazy(() => import('./pages/admin/GenealogyPage'))
 
 const TOAST_OPTIONS = {
   style: {
-    background:   '#111827',
-    color:        '#F1F5F9',
-    border:       '1px solid rgba(255,255,255,0.08)',
-    borderRadius: '12px',
+    background:   '#ffffff',
+    color:        '#0f172a',
+    border:       '1px solid #e2e8f0',
+    borderRadius: '14px',
     fontSize:     '14px',
+    fontWeight:   600,
+    boxShadow:    '0 8px 24px rgba(0,0,0,0.08)',
   },
   success: { iconTheme: { primary: '#10B981', secondary: '#fff' } },
   error:   { iconTheme: { primary: '#EF4444', secondary: '#fff' } },
@@ -76,8 +81,11 @@ const TOAST_OPTIONS = {
 /** Minimal spinner shown during route lazy-load */
 function RouteLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0f1e' }}>
-      <div className="w-10 h-10 rounded-full border-2 border-cyan-400/30 border-t-cyan-400 animate-spin" />
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+      <div style={{ width: 44, height: 44, position: 'relative' }}>
+        <div style={{ position: 'absolute', inset: 0, border: '4px solid #e2e8f0', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', inset: 0, border: '4px solid transparent', borderTopColor: '#0d9488', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      </div>
     </div>
   )
 }
@@ -94,9 +102,12 @@ export default function App() {
             <Route path="/"           element={<Home />}       />
             <Route path="/register"   element={<Register />}   />
             <Route path="/login"      element={<Login />}      />
-            <Route path="/privacy"    element={<Privacy />}    />
-            <Route path="/terms"      element={<Terms />}      />
-            <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="/privacy"       element={<Privacy />}    />
+            <Route path="/terms"         element={<Terms />}      />
+            <Route path="/disclaimer"    element={<Disclaimer />} />
+            <Route path="/what-is-crypto" element={<WhatIsCrypto />} />
+            <Route path="/crypto-forex"   element={<CryptoForex />} />
+            <Route path="/why-globalfx"   element={<WhyGlobalFX />} />
           </Route>
 
           {/* ── Member Panel (JWT protected) ─────────────────── */}

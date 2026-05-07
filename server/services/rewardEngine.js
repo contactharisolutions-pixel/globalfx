@@ -7,23 +7,7 @@ const prisma = require('../lib/prisma')
  * Performance Rewards Configuration
  * Based on 40%-30%-30% Leg Distribution
  */
-const FINAL_RANKS = [
-  { id: 1,  name: 'Pearl',                  target: 2500,       reward: 100 },
-  { id: 2,  name: 'Sapphire',               target: 5000,       reward: 250 },
-  { id: 3,  name: 'Ruby',                   target: 10000,      reward: 500 },
-  { id: 4,  name: 'Emerald',                target: 25000,      reward: 1000 },
-  { id: 5,  name: 'Platinum',               target: 50000,      reward: 2500 },
-  { id: 6,  name: 'Royal Platinum',         target: 100000,     reward: 5000 },
-  { id: 7,  name: 'Diamond',                target: 250000,     reward: 10000 },
-  { id: 8,  name: 'Blue Diamond',           target: 500000,     reward: 25000 },
-  { id: 9,  name: 'Green Diamond',          target: 1000000,    reward: 50000 },
-  { id: 10, name: 'Crown Diamond',          target: 2500000,    reward: 100000 },
-  { id: 11, name: 'Queen',                  target: 5000000,    reward: 250000 },
-  { id: 12, name: 'Global Vice President',  target: 10000000,   reward: 500000 },
-  { id: 13, name: 'King',                   target: 25000000,   reward: 1000000 },
-  { id: 14, name: 'Global Trader',          target: 50000000,   reward: 2500000 },
-  { id: 15, name: 'Market Maker',           target: 100000000,  reward: 5000000 }
-]
+const { REWARD_RANKS: FINAL_RANKS } = require('../lib/ranks')
 
 const { getLegBusiness } = require('./businessUtils')
 

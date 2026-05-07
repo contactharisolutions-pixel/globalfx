@@ -21,36 +21,64 @@ router.get('/level-report', async (req, res, next) => {
   const level    = parseInt(req.query.level || '0')
   const pageSize = 20
   try {
-    const rows = await prisma.$queryRaw`
+    // 1. Get counts per level for summary
+    const levelCounts = await prisma.$queryRaw`
       WITH RECURSIVE tree AS (
-        SELECT id, user_id, name, status, sponsor_id, created_at, 1 AS lvl
-        FROM "User" WHERE sponsor_id = ${req.user.id}
+        SELECT id, 1 AS lvl FROM "User" WHERE sponsor_id = ${req.user.id}
         UNION ALL
-        SELECT u.id, u.user_id, u.name, u.status, u.sponsor_id, u.created_at, t.lvl + 1
-        FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id
-        WHERE t.lvl < 10
+        SELECT u.id, t.lvl + 1 FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 10
       )
-      SELECT tree.id, tree.user_id, tree.name, tree.status, tree.lvl, tree.created_at,
-             COALESCE(SUM(tp.amount), 0) AS total_invested
-      FROM tree
-      LEFT JOIN "TradePackage" tp ON tp.user_id = tree.id AND tp.status = 'active'
-      GROUP BY tree.id, tree.user_id, tree.name, tree.status, tree.lvl, tree.created_at
-      ORDER BY tree.lvl, tree.user_id
+      SELECT lvl, COUNT(*) as count FROM tree GROUP BY lvl ORDER BY lvl
     `
-    const levels = {}
-    rows.forEach((r) => {
-      const l = r.lvl
-      if (!levels[l]) levels[l] = []
-      levels[l].push({ user_id: r.user_id, name: r.name, status: r.status, total_invested: +r.total_invested, level: +r.lvl, created_at: r.created_at })
-    })
-    if (level > 0 && levels[level]) {
-      const members = levels[level]
-      const start   = (page - 1) * pageSize
+    const levelsSummary = {}
+    levelCounts.forEach(lc => levelsSummary[lc.lvl] = { length: Number(lc.count) })
+
+    if (level > 0) {
+      const skip = (page - 1) * pageSize
+      const rows = await prisma.$queryRaw`
+        WITH RECURSIVE tree AS (
+          SELECT id, user_id, name, status, created_at, 1 AS lvl
+          FROM "User" WHERE sponsor_id = ${req.user.id}
+          UNION ALL
+          SELECT u.id, u.user_id, u.name, u.status, u.created_at, t.lvl + 1
+          FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 10
+        )
+        SELECT t.id, t.user_id, t.name, t.status, t.lvl, t.created_at,
+               COALESCE(SUM(tp.amount), 0) AS total_invested
+        FROM tree t
+        LEFT JOIN "TradePackage" tp ON tp.user_id = t.id AND tp.status = 'active'
+        WHERE t.lvl = ${level}
+        GROUP BY t.id, t.user_id, t.name, t.status, t.lvl, t.created_at
+        ORDER BY t.created_at DESC
+        LIMIT ${pageSize} OFFSET ${skip}
+      `
+      const total = levelsSummary[level]?.length || 0
       res.json({
-        levels: { [level]: members.slice(start, start + pageSize) },
-        pagination: { page, pageSize, total: members.length, pages: Math.ceil(members.length / pageSize) },
+        levels: { [level]: rows.map(r => ({ ...r, total_invested: Number(r.total_invested) })) },
+        pagination: { page, pageSize, total, pages: Math.ceil(total / pageSize) }
       })
     } else {
+      // Just return summary info for all levels
+      const summaryRows = await prisma.$queryRaw`
+        WITH RECURSIVE tree AS (
+          SELECT id, status, 1 AS lvl FROM "User" WHERE sponsor_id = ${req.user.id}
+          UNION ALL
+          SELECT u.id, u.status, t.lvl + 1 FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 10
+        )
+        SELECT t.lvl, COUNT(t.id) as count, COUNT(t.id) FILTER (WHERE t.status = 'active') as active_count,
+               COALESCE(SUM(tp.amount), 0) as total_invested
+        FROM tree t
+        LEFT JOIN "TradePackage" tp ON tp.user_id = t.id AND tp.status = 'active'
+        GROUP BY t.lvl ORDER BY t.lvl
+      `
+      const levels = {}
+      summaryRows.forEach(sr => {
+        levels[sr.lvl] = { 
+          length: Number(sr.count), 
+          active_count: Number(sr.active_count),
+          total_invested: Number(sr.total_invested)
+        }
+      })
       res.json({ levels })
     }
   } catch (err) { next(err) }

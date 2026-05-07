@@ -42,7 +42,7 @@ const MEMBERS = [
 
 // ── Main ────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log('\n🌱  Novatrix JSK Member Seeder\n')
+  console.log('\n🌱  GlobalFX JSK Member Seeder\n')
   console.log('   Seeding 10 members in a linear referral chain...\n')
 
   // Keep a map of email → created user for sponsor resolution

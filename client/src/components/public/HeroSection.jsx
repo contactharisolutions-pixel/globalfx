@@ -1,525 +1,199 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  ArrowRight, Users, DollarSign, Cpu, Activity, TrendingUp, Download,
-} from 'lucide-react'
+import { ArrowRight, Shield, TrendingUp, Globe, Play, ChevronRight } from 'lucide-react'
 
-const STATS = [
-  { icon: Users,      value: '50,000+', label: 'Active Traders'  },
-  { icon: DollarSign, value: '$12M+',   label: 'Capital Managed' },
-  { icon: Cpu,        value: '99.9%',   label: 'AI Accuracy'     },
-  { icon: Activity,   value: '24/7',    label: 'Market Uptime'   },
-]
-
-/* ---------- Neural Canvas (adaptive node count) ---------- */
-function AICanvas() {
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-    }
-    resize()
-
-    const ro = new ResizeObserver(resize)
-    ro.observe(canvas)
-
-    // Fewer nodes on mobile — keeps frame-time low
-    const isMobile = window.innerWidth < 768
-    const nodeCount = isMobile ? 50 : 120
-    const connDist  = isMobile ? 100 : 150
-
-    const nodes = Array.from({ length: nodeCount }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      radius: Math.random() * 2 + 0.5,
-      type: Math.random() > 0.8 ? 'core' : 'node',
-      pulse: Math.random() * Math.PI * 2,
-    }))
-
-    const streams = Array.from({ length: isMobile ? 6 : 15 }, () => ({
-      x: Math.random() * canvas.width,
-      speed: Math.random() * 1.5 + 0.5,
-      y: Math.random() * -1000,
-      length: Math.random() * 150 + 50,
-    }))
-
-    let animId
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // Data streams
-      ctx.lineWidth = 1.5
-      streams.forEach(s => {
-        const grad = ctx.createLinearGradient(s.x, s.y, s.x, s.y + s.length)
-        grad.addColorStop(0, 'rgba(0,212,255,0)')
-        grad.addColorStop(1, 'rgba(0,212,255,0.12)')
-        ctx.strokeStyle = grad
-        ctx.beginPath()
-        ctx.moveTo(s.x, s.y)
-        ctx.lineTo(s.x, s.y + s.length)
-        ctx.stroke()
-        s.y += s.speed
-        if (s.y > canvas.height) { s.y = -s.length; s.x = Math.random() * canvas.width }
-      })
-
-      // Nodes
-      nodes.forEach((node, i) => {
-        node.x += node.vx
-        node.y += node.vy
-        node.pulse += 0.04
-        if (node.x < 0 || node.x > canvas.width)  node.vx *= -1
-        if (node.y < 0 || node.y > canvas.height)  node.vy *= -1
-
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = node.x - nodes[j].x
-          const dy = node.y - nodes[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          if (dist < connDist) {
-            ctx.beginPath()
-            const op = (1 - dist / connDist) * 0.12
-            ctx.strokeStyle = node.type === 'core' || nodes[j].type === 'core'
-              ? `rgba(0,212,255,${op})`
-              : `rgba(124,58,237,${op})`
-            ctx.lineWidth = 0.5
-            ctx.moveTo(node.x, node.y)
-            ctx.lineTo(nodes[j].x, nodes[j].y)
-            ctx.stroke()
-          }
-        }
-
-        ctx.beginPath()
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
-        if (node.type === 'core') {
-          const glow = Math.sin(node.pulse) * 0.5 + 0.5
-          ctx.fillStyle = `rgba(0,212,255,${glow})`
-          ctx.shadowBlur = 12
-          ctx.shadowColor = 'rgba(0,212,255,0.8)'
-        } else {
-          ctx.fillStyle = 'rgba(124,58,237,0.4)'
-          ctx.shadowBlur = 0
-        }
-        ctx.fill()
-      })
-
-      animId = requestAnimationFrame(draw)
-    }
-    draw()
-
-    return () => {
-      ro.disconnect()
-      cancelAnimationFrame(animId)
-    }
-  }, [])
-
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{
-        position: 'absolute', top: 0, left: 0,
-        width: '100%', height: '100%',
-        zIndex: 0,
-        willChange: 'transform', // promote to compositor layer
-      }}
-    />
-  )
-}
-
-/* ---------- Candle chart (right panel) ---------- */
-function FakeCandleChart() {
-  const candles = useRef(
-    Array.from({ length: 36 }, () => ({
-      height: Math.random() * 60 + 10,
-      top: Math.random() * 35,
-      isUp: Math.random() > 0.4,
-      dur: (Math.random() * 2 + 2).toFixed(1),
-    }))
-  )
-  return (
-    <div className="candle-chart-bg">
-      {candles.current.map((c, i) => (
-        <div key={i} style={{ position: 'relative', width: 6, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ width: 1, height: '100%', background: c.isUp ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)', position: 'absolute' }} />
-          <div style={{
-            width: '100%', height: `${c.height}%`,
-            background: c.isUp ? 'var(--green)' : 'var(--red)',
-            position: 'absolute', top: `${c.top}%`,
-            borderRadius: 2, opacity: 0.8,
-            boxShadow: c.isUp ? '0 0 8px rgba(16,185,129,0.4)' : '0 0 8px rgba(239,68,68,0.4)',
-            animation: `float-candle ${c.dur}s ease-in-out infinite alternate`,
-          }} />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-/* ---------- Main export ---------- */
 export default function HeroSection() {
-  const [isSmall, setIsSmall] = useState(window.innerWidth < 768)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setTimeout(() => setMounted(true), 50) }, [])
 
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    const handler = (e) => setIsSmall(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-
-  const scrollToPlans = () =>
-    document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' })
+  const barHeights = [40,70,55,90,65,80,95,70,85,60,75,90]
 
   return (
-    <section id="home" className="hero-section">
-      {/* Backgrounds */}
-      <AICanvas />
-      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 50%, rgba(6,11,23,0.35) 0%, var(--navy) 100%)', zIndex: 1 }} />
-      <div className="glow-orb" style={{ top: '15%', left: '5%', background: 'var(--cyan)' }} />
-      <div className="glow-orb" style={{ bottom: '5%', right: '5%', background: 'var(--purple)' }} />
-      <div className="hero-grid-bg" aria-hidden="true" />
+    <section style={{ background: '#ffffff', paddingTop: '7rem', paddingBottom: '5rem', position: 'relative', overflow: 'hidden' }}>
+      {/* Decorative BG */}
+      <div style={{
+        position: 'absolute', top: 0, right: 0, width: '50%', height: '100%',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%)',
+        transform: 'skewX(-8deg) translateX(15%)', pointerEvents: 'none', zIndex: 0,
+      }} />
+      <div style={{ position: 'absolute', top: '-6rem', left: '-6rem', width: '24rem', height: '24rem', background: 'rgba(13,148,136,0.04)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0 }} />
 
-      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        <div className="hero-grid">
-
-          {/* ── Left: content ── */}
-          <div className="hero-content">
-
-            {/* Status badge */}
-            <div className="hero-badge slide-in-left">
-              <span className="hero-badge-dot" />
-              <span>Novatrix AI System v2.0&nbsp;Online</span>
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }} id="hero-grid">
+          
+          {/* Left Column */}
+          <div style={{
+            display: 'flex', flexDirection: 'column', gap: '1.75rem',
+            opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'translateY(20px)',
+            transition: 'opacity 0.7s, transform 0.7s',
+          }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+              padding: '0.375rem 1rem',
+              background: '#eff6ff', border: '1px solid #bfdbfe',
+              borderRadius: 9999, color: '#3b82f6',
+              fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase',
+              alignSelf: 'flex-start',
+            }}>
+              <Shield size={13} /> Institutional Grade AI
             </div>
 
-            {/* Headline */}
-            <h1 className="hero-title slide-in-up">
-              The Future of <br />
-              <span>Algorithmic Trading</span>
+            <h1 style={{
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+              fontWeight: 900, lineHeight: 1.1,
+              color: 'var(--text-main)',
+              fontFamily: 'Outfit, sans-serif',
+              letterSpacing: '-0.03em',
+              margin: 0,
+            }}>
+              Invest Smarter<br />
+              <span style={{
+                background: 'linear-gradient(135deg, #0d9488 0%, #3b82f6 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              }}>Trade Better</span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="fade-in delay-1 hero-subtitle">
-              Harness the power of autonomous AI robotics to navigate Crypto and Forex markets.
-              Zero emotion, 100% precision. Institutional-grade quantitative strategies now
-              available to everyone.
+            <p style={{ fontSize: '1.125rem', color: 'var(--text-sub)', lineHeight: 1.8, margin: 0, maxWidth: '28rem' }}>
+              GlobalFX combines proprietary AI neural networks with quantitative strategies to deliver consistent market performance. Secure, transparent, and built for your growth.
             </p>
 
-            {/* CTAs */}
-            <div className="fade-in delay-2 hero-ctas">
-              <Link to="/register" className="btn-primary hero-cta-primary">
-                Deploy Capital <ArrowRight size={18} />
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <Link to="/register" className="btn-primary" style={{ padding: '0.875rem 2rem', fontSize: '1rem', boxShadow: '0 8px 24px rgba(13,148,136,0.25)' }}>
+                Start Investing <ArrowRight size={18} />
               </Link>
-              <button onClick={scrollToPlans} className="btn-secondary hero-cta-secondary">
-                <Activity size={18} style={{ color: 'var(--cyan)', flexShrink: 0 }} />
-                Live Performance
-              </button>
-              <a
-                href="https://fuvivhukudqjjpzmqusg.supabase.co/storage/v1/object/public/novatrix/Novatrix%20Presentation.pdf"
-                download="Novatrix_Business_Plan.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary hero-cta-secondary"
-              >
-                <Download size={18} style={{ color: 'var(--purple)', flexShrink: 0 }} />
-                Business Plan
+              <a href="#markets" className="btn-secondary" style={{ padding: '0.875rem 2rem', fontSize: '1rem' }}>
+                Live Markets
               </a>
             </div>
 
-            {/* Stats */}
-            <div className="fade-in delay-3 hero-stats">
-              {STATS.map(({ icon: Icon, value, label }) => (
-                <div key={label} className="hero-stat-item">
-                  <Icon size={18} style={{ color: 'var(--cyan)' }} />
-                  <span className="hero-stat-value">{value}</span>
-                  <span className="hero-stat-label">{label}</span>
-                </div>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', paddingTop: '0.5rem' }}>
+              <div style={{ display: 'flex' }}>
+                {[1,2,3,4,5].map(i => (
+                  <img key={i} src={`https://i.pravatar.cc/64?u=user${i}`} alt="investor" style={{
+                    width: 40, height: 40, borderRadius: '50%', border: '3px solid #fff',
+                    marginLeft: i === 1 ? 0 : -12, objectFit: 'cover',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  }} />
+                ))}
+              </div>
+              <div>
+                <p style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '0.9rem', margin: 0 }}>50,000+ Active Investors</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: 0 }}>Trusted globally in 80+ countries</p>
+              </div>
             </div>
           </div>
 
-          {/* ── Right: visualizer (hidden on small mobile) ── */}
-          {!isSmall && (
-            <div className="hero-visualizer fade-in delay-2">
-              <div className="hero-vis-glow" />
+          {/* Right Column — Terminal UI */}
+          <div style={{
+            opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'scale(0.97)',
+            transition: 'opacity 0.7s 0.2s, transform 0.7s 0.2s',
+          }}>
+            <div style={{
+              background: '#ffffff', borderRadius: 28,
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04)',
+              overflow: 'hidden', position: 'relative',
+            }}>
+              {/* Terminal bar */}
+              <div style={{
+                background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)',
+                padding: '0.875rem 1.25rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              }}>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {['#fca5a5','#fde68a','#86efac'].map((c,i) => (
+                    <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 700 }}>
+                  <Globe size={13} /> LIVE TERMINAL
+                </div>
+              </div>
 
-              {/* Glass panel */}
-              <div className="hero-vis-panel">
-                {/* Header */}
-                <div className="hero-vis-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Cpu size={22} style={{ color: 'var(--cyan)' }} />
+              <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {/* Stats area */}
+                <div style={{ background: '#f8fafc', borderRadius: 16, padding: '1.25rem', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                     <div>
-                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#fff', marginBottom: '0.15rem' }}>Neural Engine Active</h3>
-                      <p style={{ fontSize: '0.7rem', color: 'var(--green)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)', display: 'inline-block' }} />
-                        Scanning Markets
+                      <p style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 4 }}>Total Assets Managed</p>
+                      <p style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>$12,450,230</p>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <p style={{ color: '#10b981', fontWeight: 900, fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}>
+                        <TrendingUp size={14} /> +12.5%
                       </p>
+                      <p style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Weekly Yield</p>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--cyan)', fontFamily: 'JetBrains Mono, monospace' }}>+12.4%</p>
-                    <p style={{ fontSize: '0.625rem', color: 'var(--text-faint)' }}>24h Net Yield</p>
+                  {/* Bar chart */}
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 60 }}>
+                    {barHeights.map((h, i) => (
+                      <div key={i} style={{
+                        flex: 1, borderRadius: '4px 4px 0 0',
+                        background: i === barHeights.length - 1 ? 'var(--primary)' : 'rgba(13,148,136,0.15)',
+                        height: `${h}%`, transition: 'background 0.2s',
+                        cursor: 'pointer',
+                      }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--primary)'}
+                        onMouseLeave={e => { if (i !== barHeights.length - 1) e.currentTarget.style.background = 'rgba(13,148,136,0.15)' }}
+                      />
+                    ))}
                   </div>
                 </div>
 
-                {/* Chart */}
-                <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
-                  <FakeCandleChart />
-                </div>
-
-                {/* Fade overlay */}
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(10,15,30,1), transparent)', pointerEvents: 'none' }} />
-
-                {/* Floating metrics */}
-                <div className="hero-vis-metrics">
-                  <div className="hero-vis-metric">
-                    <p style={{ fontSize: '0.6rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>BTC/USD</p>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>64,230.50</p>
+                {/* Bottom cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div style={{ background: 'rgba(13,148,136,0.06)', borderRadius: 16, padding: '1rem', border: '1px solid rgba(13,148,136,0.12)' }}>
+                    <p style={{ fontSize: '0.6rem', fontWeight: 900, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>BTC Confidence</p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '1.375rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif' }}>98.2%</span>
+                      <span style={{ padding: '0.2rem 0.6rem', background: 'var(--primary)', color: '#fff', fontSize: '0.6rem', fontWeight: 900, borderRadius: 8 }}>BUY</span>
+                    </div>
                   </div>
-                  <div className="hero-vis-metric">
-                    <p style={{ fontSize: '0.6rem', color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Confidence</p>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace' }}>98.2% BUY</p>
+                  <div style={{ background: 'rgba(59,130,246,0.06)', borderRadius: 16, padding: '1rem', border: '1px solid rgba(59,130,246,0.12)' }}>
+                    <p style={{ fontSize: '0.6rem', fontWeight: 900, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Active Bots</p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '1.375rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif' }}>1,240</span>
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px rgba(16,185,129,0.6)' }} />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Floating badge */}
-              <div className="float-obj-1">
-                <TrendingUp size={22} style={{ color: 'var(--purple)' }} />
+                {/* Watch button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Play size={16} style={{ color: '#fff', marginLeft: 3 }} />
+                    </div>
+                    <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-main)' }}>Watch AI Execution</p>
+                  </div>
+                  <ChevronRight size={20} style={{ color: 'var(--border-medium)' }} />
+                </div>
               </div>
             </div>
-          )}
 
+            {/* Floating badge */}
+            <div style={{
+              position: 'absolute', bottom: -20, left: -20,
+              background: '#fff', border: '1px solid var(--border-subtle)',
+              borderRadius: 20, padding: '0.875rem 1.25rem',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.1)',
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+            }}>
+              <div style={{ width: 40, height: 40, background: 'rgba(16,185,129,0.1)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendingUp size={20} style={{ color: '#10b981' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Last ROI Paid</p>
+                <p style={{ fontSize: '0.9375rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif' }}>+$420.50</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <style>{`
-        /* ── Glow orbs ── */
-        .glow-orb {
-          position: absolute;
-          width: min(600px, 80vw);
-          height: min(600px, 80vw);
-          border-radius: 50%;
-          filter: blur(100px);
-          opacity: 0.12;
-          pointer-events: none;
-          z-index: 0;
-          will-change: transform;
-        }
-
-        /* ── Grid background ── */
-        .hero-grid-bg {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          background-image:
-            linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-          background-size: 50px 50px;
-          transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
-          opacity: 0.25;
-          pointer-events: none;
-        }
-
-        /* ── Status badge ── */
-        .hero-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(0,212,255,0.08);
-          border: 1px solid rgba(0,212,255,0.2);
-          border-radius: 100px;
-          padding: 0.4rem 1rem;
-          margin-bottom: 1.75rem;
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          font-size: 0.75rem;
-          font-weight: 800;
-          color: var(--cyan);
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
-          flex-wrap: nowrap;
-          white-space: nowrap;
-          max-width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .hero-badge-dot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: var(--cyan);
-          box-shadow: 0 0 8px var(--cyan);
-          animation: pulse 1.5s infinite;
-          flex-shrink: 0;
-        }
-
-        /* ── CTA buttons ── */
-        .hero-cta-primary {
-          padding: 0.9rem 2rem;
-          font-size: 1rem;
-          min-height: 52px;
-          box-shadow: 0 0 20px rgba(0,212,255,0.25);
-          flex: 1 1 auto;
-          justify-content: center;
-        }
-        .hero-cta-secondary {
-          padding: 0.9rem 2rem;
-          font-size: 1rem;
-          min-height: 52px;
-          background: rgba(255,255,255,0.04);
-          flex: 1 1 auto;
-          justify-content: center;
-        }
-
-        /* ── Stats ── */
-        .hero-stats {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1.5rem;
-        }
-        .hero-stat-item {
-          display: flex;
-          flex-direction: column;
-          gap: 0.375rem;
-        }
-        .hero-stat-value {
-          font-size: 1.375rem;
-          font-weight: 900;
-          color: #fff;
-          font-family: 'Outfit', sans-serif;
-          line-height: 1;
-        }
-        .hero-stat-label {
-          font-size: 0.7rem;
-          color: var(--text-faint);
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          font-weight: 700;
-        }
-
-        /* ── Visualizer panel ── */
-        .hero-visualizer {
-          position: relative;
-          height: 520px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .hero-vis-glow {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(45deg, rgba(0,212,255,0.05), rgba(124,58,237,0.05));
-          border-radius: 50%;
-          filter: blur(60px);
-        }
-        .hero-vis-panel {
-          position: relative;
-          width: 100%;
-          height: 460px;
-          background: rgba(10,15,30,0.65);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(0,212,255,0.2);
-          border-radius: 24px;
-          padding: 1.75rem;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,212,255,0.04);
-        }
-        .hero-vis-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-          padding-bottom: 1rem;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .hero-vis-metrics {
-          position: absolute;
-          bottom: 1.25rem;
-          left: 1.5rem;
-          right: 1.5rem;
-          display: flex;
-          justify-content: space-between;
-          gap: 0.75rem;
-          z-index: 2;
-        }
-        .hero-vis-metric {
-          background: rgba(0,0,0,0.5);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          padding: 0.5rem 0.875rem;
-          border-radius: 8px;
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* ── Float element ── */
-        .float-obj-1 {
-          position: absolute;
-          top: 40px;
-          right: -16px;
-          background: rgba(124,58,237,0.12);
-          border: 1px solid var(--purple);
-          padding: 0.875rem;
-          border-radius: 14px;
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          animation: float 6s ease-in-out infinite;
-        }
-
-        /* ── Candle chart ── */
-        .candle-chart-bg {
-          display: flex;
-          align-items: flex-end;
-          gap: 5px;
-          height: 100%;
-          width: 100%;
-          padding-bottom: 1.5rem;
-        }
-
-        /* ── Keyframes ── */
-        @keyframes float-candle {
-          0%   { transform: translateY(0); }
-          100% { transform: translateY(-8%); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50%       { transform: translateY(-18px); }
-        }
-
-        /* ── Tablet breakpoint (< 1024px) ── */
-        @media (max-width: 1024px) {
-          .hero-stats { gap: 1rem; }
-          .hero-visualizer { height: 420px; }
-          .hero-vis-panel  { height: 400px; }
-        }
-
-        /* ── Small tablet / large phone (< 768px) ── */
-        @media (max-width: 767px) {
-          .hero-badge { font-size: 0.6875rem; padding: 0.35rem 0.875rem; margin-bottom: 1.25rem; }
-          .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
-          .hero-stat-value { font-size: 1.2rem; }
-          .hero-cta-primary, .hero-cta-secondary { padding: 0.8rem 1.5rem; font-size: 0.9375rem; }
-          .hero-grid-bg { display: none; } /* hide heavy perspective bg on mobile */
-        }
-
-        /* ── Phone (< 480px) ── */
-        @media (max-width: 480px) {
-          .hero-badge { font-size: 0.625rem; padding: 0.3rem 0.75rem; }
-          .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-          .hero-stat-value { font-size: 1.1rem; }
-          .hero-stat-label { font-size: 0.625rem; }
-          .hero-ctas { max-width: 100%; }
-          .hero-cta-primary, .hero-cta-secondary { min-height: 48px; }
-        }
+        @media (max-width: 1023px) { #hero-grid { grid-template-columns: 1fr !important; } }
       `}</style>
     </section>
   )

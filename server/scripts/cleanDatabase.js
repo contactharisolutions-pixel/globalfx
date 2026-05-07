@@ -1,5 +1,5 @@
 /**
- * Database Cleanup Script — Novatrix
+ * Database Cleanup Script — GlobalFX
  * ─────────────────────────────────────────────────────────────────────────────
  * Deletes ALL member / transactional data from Supabase while keeping:
  *   • Admin accounts  (Admin table)
@@ -14,7 +14,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '../.env') })
 const prisma = require('../lib/prisma')
 
 async function main() {
-  console.log('\n🧹  Novatrix Database Cleanup\n')
+  console.log('\n🧹  GlobalFX Database Cleanup\n')
   console.log('⚠️   This will DELETE all member data from Supabase.')
   console.log('✅  Admin accounts & platform settings will be PRESERVED.\n')
 

@@ -20,10 +20,8 @@ export default function Home() {
       <AboutSection />
       <ServicesSection />
       <HowItWorksSection />
-      <PlansSection />
       <WhyUsSection />
       <TestimonialsSection />
-      <FAQSection />
     </>
   )
 }

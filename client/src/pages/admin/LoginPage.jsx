@@ -59,7 +59,7 @@ export default function AdminLogin() {
             </div>
             <div style={{ textAlign: 'left' }}>
               <p style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)', lineHeight: 1.1 }}>
-                NOVATRIX
+                GLOBALFX
               </p>
               <p style={{ fontSize: '0.75rem', color: 'var(--orange)', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
                 Command Center
@@ -107,7 +107,7 @@ export default function AdminLogin() {
                 <input
                   {...register('email')}
                   type="email"
-                  placeholder="admin@novatrix.system"
+                  placeholder="admin@globalfx.system"
                   className="input"
                   style={{ paddingLeft: '3rem', height: 52, fontSize: '0.9375rem' }}
                   autoComplete="email"

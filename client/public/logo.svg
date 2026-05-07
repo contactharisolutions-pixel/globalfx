@@ -8,6 +8,6 @@
   <!-- "N" Right side (Darker Blue) -->
   <path d="M 54 58 L 54 22 L 48 26 L 48 50 L 32 34 L 32 26 Z" fill="#1c75ff" />
   
-  <!-- Text "NOVATRIX" -->
-  <text x="92" y="52" fill="#ffffff" font-family="Outfit, Arial, sans-serif" font-weight="800" font-size="36" letter-spacing="2">NOVATRIX</text>
+  <!-- Text "GLOBALFX" -->
+  <text x="92" y="52" fill="#ffffff" font-family="Outfit, Arial, sans-serif" font-weight="800" font-size="36" letter-spacing="2">GLOBALFX</text>
 </svg>
