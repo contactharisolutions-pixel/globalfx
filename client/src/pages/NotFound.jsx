@@ -12,20 +12,20 @@ export default function NotFound() {
         <div className="relative inline-block mb-12">
            <div className="text-[180px] lg:text-[240px] font-black leading-none text-slate-100 select-none">404</div>
            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full">
-              <h1 className="text-4xl lg:text-6xl font-black text-text-main tracking-tight">Signal Lost</h1>
+              <h1 className="text-4xl lg:text-6xl font-black text-text-main tracking-tight">Page Not Found</h1>
            </div>
         </div>
         
         <p className="text-xl text-text-sub font-medium leading-relaxed mb-12 max-w-md mx-auto">
-          The node you are looking for does not exist in our network. It may have been relocated or purged from the terminal.
+          The page you are looking for does not exist or has been moved. Please return to our homepage or go back to the previous page.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
            <Link to="/" className="btn-primary !px-10 !py-4 w-full sm:w-auto">
-              <Home size={20} /> Back to Dashboard
+              <Home size={20} /> Go to Homepage
            </Link>
            <button onClick={() => window.history.back()} className="btn-secondary !px-10 !py-4 w-full sm:w-auto">
-              <ArrowLeft size={20} /> Previous Signal
+              <ArrowLeft size={20} /> Go Back
            </button>
         </div>
 

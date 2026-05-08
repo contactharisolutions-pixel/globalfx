@@ -34,7 +34,7 @@ export default function FundHistory() {
         <div className="scale-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
               <Clock size={16} style={{ color: 'var(--text-faint)' }} />
-              <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)' }}>Transaction Logs</p>
+              <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-main)' }}>Transaction Logs</p>
            </div>
            <DataTable columns={COLUMNS} data={data} emptyText="No transaction logs found." />
         </div>

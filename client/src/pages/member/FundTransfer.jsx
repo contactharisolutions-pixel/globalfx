@@ -130,7 +130,7 @@ export default function FundTransfer() {
 
         <div>
           <Panel style={{ background: 'rgba(0,212,255,0.02)', border: '1px solid var(--border-cyan)' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1rem' }}>Transfer Rules</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1rem' }}>Transfer Rules</h3>
             <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.8, paddingLeft: '1.25rem' }}>
               <li>Transfer from <strong>Fund Wallet</strong> only.</li>
               <li>Instantly credited to receiver's Fund Wallet.</li>

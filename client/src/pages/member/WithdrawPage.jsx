@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, AlertTriangle, ArrowUpFromLine, Wallet, History as HistoryIcon, ShieldCheck } from 'lucide-react'
+import {
+  Loader2, AlertTriangle, ArrowUpFromLine, Wallet,
+  History as HistoryIcon, ShieldCheck, Lock, Info, CheckCircle,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../lib/api'
 import { PageHeader, StatCard, DataTable, Badge, Spinner, Panel } from '../../components/member/ui'
@@ -12,17 +15,18 @@ const FEE_PERCENT = 10
 
 const schema = z.object({
   amount: z.coerce.number()
-    .min(20, 'Minimum withdrawal is $20')
-    .refine(val => val % 10 === 0, 'Amount must be in multiples of $10'),
-  pin:    z.string().length(6, 'Enter your 6-digit transaction PIN'),
+    .min(25, 'Minimum withdrawal is $25')
+    .refine(val => val === 25 || val % 10 === 0, 'Amount must be $25 or a multiple of $10'),
+  pin: z.string().length(6, 'Enter your 6-digit PIN'),
 })
 
 const HIST_COLS = [
-  { label: 'SR.NO.',      render: (v, row, i) => <span style={{ fontWeight: 800, color: 'var(--text-faint)' }}>{i + 1}</span> },
-  { key: 'created_at',   label: 'DATE & TIME', render: (v) => <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{new Date(v).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span> },
-  { key: 'amount',        label: 'AMOUNT',   render: (v) => <span style={{ fontWeight: 700 }}>${(+v).toLocaleString()}</span> },
-  { key: 'net_amount',    label: 'RECEIVED', render: (v) => <span style={{ color: 'var(--green)', fontWeight: 800 }}>${(+v).toLocaleString()}</span> },
-  { key: 'status',        label: 'STATUS',  render: (v) => <Badge status={v} /> },
+  { label: '#',          render: (v, row, i) => <span style={{ fontWeight: 700, color: '#94a3b8' }}>{i + 1}</span> },
+  { key: 'created_at',  label: 'Date',       render: (v) => <span style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: 600 }}>{new Date(v).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span> },
+  { key: 'amount',      label: 'Requested',  render: (v) => <span style={{ fontWeight: 700, color: '#0f172a' }}>${(+v).toLocaleString()}</span> },
+  { key: 'fee',         label: 'Fee',        render: (v) => <span style={{ color: '#ef4444', fontWeight: 600 }}>-${(+v).toLocaleString()}</span> },
+  { key: 'net_amount',  label: 'You Receive',render: (v) => <span style={{ color: '#10b981', fontWeight: 800 }}>${(+v).toLocaleString()}</span> },
+  { key: 'status',      label: 'Status',     render: (v) => <Badge status={v} /> },
 ]
 
 export default function WithdrawPage() {
@@ -35,7 +39,7 @@ export default function WithdrawPage() {
 
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { amount: 0, pin: '' }
+    defaultValues: { amount: 25, pin: '' },
   })
   const amount = watch('amount') || 0
   const fee    = +(amount * FEE_PERCENT / 100).toFixed(2)
@@ -52,24 +56,24 @@ export default function WithdrawPage() {
       setBalance(dashRes.data.stats.income_wallet)
       setHistory(histRes.data.withdrawals || [])
       setWallet(profileRes.data.bep20_wallet || '')
-    } catch { toast.error('Could not load withdrawal data') }
+    } catch { toast.error('Could not load data') }
     finally { setLoading(false) }
   }
 
   useEffect(() => { fetchData() }, [])
 
   const onSubmit = async (data) => {
-    if (!wallet) return toast.error('Please set your BEP20 wallet address in profile first')
-    if (data.amount > balance) return toast.error('Insufficient income wallet balance')
+    if (!wallet) return toast.error('Please add your USDT wallet address in My Account first.')
+    if (data.amount > balance) return toast.error('Not enough balance in your Earnings Wallet.')
     setSubmitting(true)
     try {
       await api.post('/withdrawals/request', data)
-      toast.success('Withdrawal request submitted!')
+      toast.success('Withdrawal request submitted! Processing within 24 hours.')
       reset()
       fetchData()
       setTab('history')
     } catch (err) {
-      toast.error(err?.response?.data?.error || 'Withdrawal failed')
+      toast.error(err?.response?.data?.error || 'Withdrawal failed. Please try again.')
     } finally { setSubmitting(false) }
   }
 
@@ -78,130 +82,213 @@ export default function WithdrawPage() {
   if (loading) return <Spinner />
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-      <PageHeader title="Withdraw Funds" subtitle="Cash out your profit to your USDT (BEP20) wallet" />
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+      <PageHeader
+        title="Withdraw Funds"
+        subtitle="Transfer your earnings to your USDT (BEP20) wallet"
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 'var(--gap-lg)' }} id="withdraw-layout">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-          <StatCard label="Available Profit" value={fmt(balance)} icon={Wallet} color="cyan" sub="Profit available to withdraw" />
+      <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '1.5rem' }} id="withdraw-layout">
 
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border)', paddingBottom: '2px' }}>
+        {/* Left: Form */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+          {/* Balance Card */}
+          <StatCard
+            label="Earnings Wallet Balance"
+            value={fmt(balance)}
+            icon={Wallet}
+            color="green"
+            sub="Available to withdraw"
+          />
+
+          {/* Tab Bar */}
+          <div style={{ display: 'flex', gap: '0.25rem', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '0.25rem' }}>
             {[
-              { id: 'request', label: 'New Withdrawal', icon: ArrowUpFromLine },
-              { id: 'history', label: 'Withdrawal History', icon: HistoryIcon },
+              { id: 'request', label: 'New Withdrawal',    icon: ArrowUpFromLine },
+              { id: 'history', label: 'Withdrawal History', icon: HistoryIcon     },
             ].map((t) => (
-              <button key={t.id} onClick={() => setTab(t.id)}
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
                 style={{
-                  background: 'none', border: 'none', padding: '0.75rem 1rem', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '0.625rem', fontSize: '0.875rem', fontWeight: 700,
-                  color: tab === t.id ? 'var(--cyan)' : 'var(--text-muted)',
-                  borderBottom: `2px solid ${tab === t.id ? 'var(--cyan)' : 'transparent'}`,
-                  transition: 'var(--transition-normal)', marginBottom: '-2px',
-                }}>
-                <t.icon size={16} /> {t.label}
+                  flex: 1, padding: '0.625rem 1rem', border: 'none',
+                  background: tab === t.id ? '#ffffff' : 'transparent',
+                  color: tab === t.id ? '#0f172a' : '#94a3b8',
+                  fontWeight: tab === t.id ? 700 : 600,
+                  fontSize: '0.8125rem', cursor: 'pointer', borderRadius: 10,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                  transition: 'all 0.2s',
+                  boxShadow: tab === t.id ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                }}
+              >
+                <t.icon size={14} />
+                {t.label}
               </button>
             ))}
           </div>
 
+          {/* Withdrawal Form */}
           {tab === 'request' && (
             <Panel className="scale-in">
-              <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {/* Wallet display */}
-                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em', marginBottom: '0.75rem' }}>My Wallet Address</p>
-                  {wallet ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--green-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ShieldCheck size={16} style={{ color: 'var(--green)' }} />
-                      </div>
-                      <code style={{ fontSize: '0.8125rem', fontFamily: 'JetBrains Mono, monospace', color: 'var(--text-primary)', wordBreak: 'break-all' }}>{wallet}</code>
+              {/* Wallet Status */}
+              <div style={{
+                marginBottom: '1.5rem', padding: '0.875rem 1.125rem',
+                background: wallet ? '#f0fdf4' : '#fffbeb',
+                border: `1.5px solid ${wallet ? 'rgba(16,185,129,0.25)' : 'rgba(245,158,11,0.25)'}`,
+                borderRadius: 12,
+                display: 'flex', alignItems: 'center', gap: '0.875rem',
+              }}>
+                {wallet ? (
+                  <>
+                    <CheckCircle size={18} style={{ color: '#10b981', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: '0.6875rem', fontWeight: 800, color: '#065f46', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.25rem' }}>Withdrawal Wallet</p>
+                      <code style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono, monospace', color: '#0f172a', wordBreak: 'break-all' }}>{wallet}</code>
                     </div>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--orange)' }}>
-                      <AlertTriangle size={18} />
-                      <p style={{ fontSize: '0.875rem', fontWeight: 600 }}>
-                        Wallet not set. <Link to="/dashboard/wallet-setup" style={{ color: 'var(--cyan)', textDecoration: 'none' }}>Set up your wallet →</Link>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle size={18} style={{ color: '#f59e0b', flexShrink: 0 }} />
+                    <div>
+                      <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: 700, color: '#92400e' }}>
+                        No wallet configured.{' '}
+                        <Link to="/dashboard/wallet-setup" style={{ color: '#0d9488', textDecoration: 'none' }}>
+                          Add wallet address →
+                        </Link>
                       </p>
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
+              </div>
+
+              <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }} id="withdraw-inputs">
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Withdrawal Amount</label>
+                    <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.625rem' }}>
+                      Amount to Withdraw
+                    </label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', fontSize: '0.875rem', fontWeight: 600 }}>$</span>
-                      <input {...register('amount')} type="number" min={20} step={10} max={balance} placeholder="Min. $20 (Multiples of $10)" className="input" style={{ paddingLeft: '2rem' }} autoComplete="off" />
+                      <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#64748b' }}>$</span>
+                      <input
+                        {...register('amount')}
+                        type="number" min={25} step={10} max={balance}
+                        placeholder="Min. $25"
+                        className="input"
+                        style={{ paddingLeft: '2rem', fontWeight: 700, fontSize: '1rem' }}
+                        autoComplete="off"
+                      />
                     </div>
-                    {errors.amount && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.amount.message}</p>}
+                    {errors.amount && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.amount.message}</p>}
+                    <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>Available: <strong style={{ color: '#10b981' }}>{fmt(balance)}</strong></p>
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Transaction PIN</label>
-                    <input {...register('pin')} type="password" maxLength={6} placeholder="6-digit PIN" className="input" style={{ letterSpacing: '0.5em', textAlign: 'center' }} />
-                    {errors.pin && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.pin.message}</p>}
+                    <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.625rem' }}>
+                      Security PIN
+                    </label>
+                    <div style={{ position: 'relative' }}>
+                      <Lock size={15} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                      <input
+                        {...register('pin')}
+                        type="password" maxLength={6}
+                        placeholder="6-digit PIN"
+                        className="input"
+                        style={{ paddingLeft: '2.75rem', letterSpacing: '0.35em', textAlign: 'center', fontSize: '1.125rem', fontWeight: 800 }}
+                      />
+                    </div>
+                    {errors.pin && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.pin.message}</p>}
                   </div>
                 </div>
 
-                {amount >= 10 && (
-                  <div style={{ background: 'rgba(0,212,255,0.03)', border: '1px solid var(--border-cyan)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Requested Amount</span>
-                      <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 700 }}>${(+amount).toLocaleString()}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-cyan)' }}>
-                      <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Fee ({FEE_PERCENT}%)</span>
-                      <span style={{ fontSize: '0.875rem', color: 'var(--red)', fontWeight: 700 }}>-${fee.toLocaleString()}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '1rem', color: 'var(--text-primary)', fontWeight: 800 }}>Amount You Receive</span>
-                      <span style={{ fontSize: '1.25rem', color: 'var(--green)', fontWeight: 900 }}>${net.toLocaleString()}</span>
+                {/* Breakdown */}
+                {amount >= 25 && (
+                  <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 14, padding: '1.125rem 1.25rem' }}>
+                    <p style={{ fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.875rem' }}>Withdrawal Summary</p>
+                    {[
+                      { label: 'Requested Amount', value: `$${(+amount).toLocaleString()}`,   color: '#0f172a' },
+                      { label: `Processing Fee (${FEE_PERCENT}%)`, value: `-$${fee.toLocaleString()}`, color: '#ef4444' },
+                    ].map((row) => (
+                      <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>{row.label}</span>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 700, color: row.color }}>{row.value}</span>
+                      </div>
+                    ))}
+                    <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem', marginTop: '0.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0f172a' }}>You Receive</span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#10b981' }}>${net.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
 
-                <button type="submit" disabled={submitting || !wallet} className="btn-primary" style={{ height: 50 }}>
-                  {submitting ? <Loader2 size={18} className="animate-spin" /> : <><ArrowUpFromLine size={18} /><span>Withdraw Now</span></>}
+                <button
+                  type="submit"
+                  disabled={submitting || !wallet}
+                  className="btn-primary"
+                  style={{ height: 52 }}
+                >
+                  {submitting
+                    ? <Loader2 size={18} className="animate-spin" />
+                    : <><ArrowUpFromLine size={18} /><span>Submit Withdrawal</span></>
+                  }
                 </button>
               </form>
             </Panel>
           )}
 
+          {/* History Tab */}
           {tab === 'history' && (
             <div className="scale-in">
-              <DataTable columns={HIST_COLS} data={history} emptyText="No transaction history discovered." />
+              <DataTable columns={HIST_COLS} data={history} emptyText="No withdrawals yet." />
             </div>
           )}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-          <Panel style={{ background: 'rgba(249,115,22,0.02)', border: '1px solid var(--border-orange)' }}>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <AlertTriangle size={24} style={{ color: 'var(--orange)', flexShrink: 0 }} />
-              <div>
-                <p style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.9375rem', marginBottom: '0.5rem' }}>Withdrawal Policy</p>
-                <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.8, paddingLeft: '1.25rem' }}>
-                  <li>Withdrawal Days: <strong>Monday to Friday</strong></li>
-                  <li>Withdrawal Time: <strong>6:00 AM to 11:00 AM IST</strong></li>
-                  <li>Minimum amount: <strong>$20.00</strong></li>
-                  <li>Amount must be in <strong>multiples of $10</strong></li>
-                  <li>Processing fee: <strong>{FEE_PERCENT}% per request</strong></li>
-                  <li>Withdrawals are processed to your registered BEP20 address.</li>
-                </ul>
+        {/* Right: Policy */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <Panel>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fff7ed', border: '1px solid rgba(249,115,22,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Info size={18} style={{ color: '#f97316' }} />
               </div>
+              <div>
+                <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Withdrawal Rules</p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>Please read before submitting</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {[
+                { label: 'Processing Days', value: 'Monday to Friday',     color: '#0d9488' },
+                { label: 'Processing Hours', value: '6:00 AM – 11:00 AM (IST)', color: '#3b82f6' },
+                { label: 'Minimum Amount',  value: '$25.00',               color: '#7c3aed' },
+                { label: 'Allowed Steps',   value: '$25, then $10 steps',  color: '#f97316' },
+                { label: 'Processing Fee',  value: `${FEE_PERCENT}%`,      color: '#ef4444' },
+                { label: 'Network',         value: 'USDT BEP20 (BSC)',     color: '#10b981' },
+              ].map((item) => (
+                <div key={item.label} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: 10, border: '1px solid #f1f5f9',
+                }}>
+                  <span style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: 500 }}>{item.label}</span>
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 800, color: item.color }}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: '1.25rem', padding: '0.875rem', background: '#fef2f2', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10 }}>
+              <p style={{ fontSize: '0.8125rem', color: '#991b1b', fontWeight: 600, lineHeight: 1.6 }}>
+                ⚠️ Make sure your wallet address is correct. Funds sent to the wrong address cannot be recovered.
+              </p>
             </div>
           </Panel>
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 1023px) {
-          #withdraw-layout { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 639px) {
-          #withdraw-inputs { grid-template-columns: 1fr !important; }
-        }
+        @media (max-width: 1023px) { #withdraw-layout { grid-template-columns: 1fr !important; } }
+        @media (max-width: 639px)  { #withdraw-inputs { grid-template-columns: 1fr !important; } }
       `}</style>
     </div>
   )

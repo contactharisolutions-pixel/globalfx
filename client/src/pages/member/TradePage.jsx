@@ -1,40 +1,53 @@
 import { useEffect, useState } from 'react'
 import {
-  TrendingUp, Wallet, DollarSign, ArrowRight,
-  ShieldCheck, Loader2, Info, Activity, AlertTriangle, RefreshCw
+  TrendingUp, Wallet, DollarSign, ShieldCheck,
+  Loader2, Info, Activity, RefreshCw, CheckCircle,
+  Lock,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../lib/api'
 import useAuthStore from '../../store/useAuthStore'
 import { PageHeader, Spinner, Panel, DataTable, Badge } from '../../components/member/ui'
 
-const PACKAGES = [
-  { id: 'starter', label: 'Starter Protocol', min: 20,  max: 999,  yield: '0.5% - 0.75%', color: 'var(--cyan)'   },
-  { id: 'pro',     label: 'Pro Alpha',        min: 1000,max: 4999, yield: '0.8% - 1.25%', color: 'var(--purple)' },
-  { id: 'elite',   label: 'Elite Nexus',      min: 5000,max: 5000, yield: '1.3% - 2.00%', color: 'var(--green)'  },
+const QUICK_AMOUNTS = [25, 50, 100, 250, 500, 1000, 2500, 5000]
+
+const INVESTMENT_HIGHLIGHTS = [
+  { label: 'Daily Return',    value: '2% per day',    color: '#0d9488', bg: '#f0fdfa' },
+  { label: 'Total Payout',   value: '200% return',   color: '#7c3aed', bg: '#f5f3ff' },
+  { label: 'Min. Amount',    value: '$25',            color: '#3b82f6', bg: '#eff6ff' },
+  { label: 'Max. Amount',    value: '$5,000',         color: '#f97316', bg: '#fff7ed' },
+]
+
+const PACKAGE_COLS = [
+  { key: 'amount',      label: 'Invested',   render: (v) => <span style={{ fontWeight: 800, color: '#0f172a' }}>${(+v).toLocaleString()}</span> },
+  { key: 'total_earned',label: 'Earned',     render: (v) => <span style={{ color: '#10b981', fontWeight: 700 }}>${(+v).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span> },
+  { key: 'max_return',  label: 'Total Limit',render: (v) => <span style={{ color: '#94a3b8', fontWeight: 600 }}>${(+v).toLocaleString()}</span> },
+  { key: 'status',      label: 'Status',     render: (v) => <Badge status={v} /> },
+  { key: 'started_at',  label: 'Started',    render: (v) => <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>{new Date(v).toLocaleDateString()}</span> },
 ]
 
 export default function TradePage() {
-  const { user }                  = useAuthStore()
-  const [wallets, setWallets]     = useState({ fund_wallet: 0, income_wallet: 0 })
-  const [packages, setPackages]   = useState([])
-  const [loading, setLoading]     = useState(true)
+  const { user }                    = useAuthStore()
+  const [wallets, setWallets]       = useState({ fund_wallet: 0, income_wallet: 0 })
+  const [packages, setPackages]     = useState([])
+  const [loading, setLoading]       = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [amount, setAmount]       = useState('20')
-  const [source, setSource]       = useState('fund_wallet')
-  const [pin, setPin]             = useState('')
+  const [amount, setAmount]         = useState('25')
+  const [source, setSource]         = useState('fund_wallet')
+  const [pin, setPin]               = useState('')
+  const [success, setSuccess]       = useState(false)
 
   const loadData = async () => {
     setLoading(true)
     try {
       const [dashRes, pkgRes] = await Promise.all([
         api.get('/member/dashboard'),
-        api.get('/trades/active')
+        api.get('/trades/active'),
       ])
       setWallets(dashRes.data.stats)
       setPackages(pkgRes.data.packages || [])
     } catch {
-      toast.error('Could not load trading environment')
+      toast.error('Could not load data. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -44,112 +57,132 @@ export default function TradePage() {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    if (!amount || amount < 20) return toast.error('Minimum investment is $20')
-    if (amount % 10 !== 0) return toast.error('Investment amount must be in multiples of $10')
-    if (amount > 5000) return toast.error('Maximum investment is $5,000')
-    if (!pin || pin.length !== 6) return toast.error('Enter your 6-digit security PIN')
-    
-    const sourceKey = source === 'fund_wallet' ? 'fund' : 'income'
-    if (amount > wallets[source]) return toast.error(`Insufficient balance`)
-    
+    const amt = +amount
+    if (!amt || amt < 25)          return toast.error('Minimum investment is $25')
+    if (amt > 5000)                return toast.error('Maximum investment is $5,000')
+    if (amt !== 25 && amt % 10 !== 0) return toast.error('Amount must be $25 or multiples of $10')
+    if (!pin || pin.length !== 6)  return toast.error('Enter your 6-digit PIN')
+
+    const bal = parseFloat(wallets[source] || 0)
+    if (amt > bal) return toast.error('Not enough balance in selected wallet')
+
     setSubmitting(true)
     try {
-      await api.post('/trades/invest', { amount: +amount, source: sourceKey, pin })
-      toast.success('Investment successful!')
+      await api.post('/trades/invest', { amount: amt, source: source === 'fund_wallet' ? 'fund' : 'income', pin })
+      toast.success('Investment activated! Earnings start today.')
       useAuthStore.getState().refreshUser()
-      setAmount('')
+      setAmount('25')
       setPin('')
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 3000)
       loadData()
     } catch (err) {
-      toast.error(err?.response?.data?.error || 'Investment failed')
+      toast.error(err?.response?.data?.error || 'Investment failed. Check your PIN and balance.')
     } finally {
       setSubmitting(false)
     }
   }
 
-  const PACKAGE_COLS = [
-    { key: 'amount', label: 'Invested', render: (v) => <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>${(+v).toLocaleString()}</span> },
-    { key: 'total_earned', label: 'Earned', render: (v) => <span style={{ color: 'var(--green)', fontWeight: 700 }}>${(+v).toLocaleString()}</span> },
-    { key: 'status', label: 'Status', render: (v) => <Badge status={v} /> },
-    { key: 'started_at', label: 'Date', render: (v) => <span style={{ fontSize: '0.75rem', color: 'var(--text-faint)' }}>{new Date(v).toLocaleDateString()}</span> },
-  ]
-
   if (loading) return <Spinner />
 
+  const selectedBalance = parseFloat(wallets[source] || 0)
+
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       <PageHeader
-        title="Start Trading"
-        subtitle="Start a new investment to earn daily profit"
+        title="Start Investing"
+        subtitle="Choose an amount, select your wallet, and activate your investment"
         action={
-          <button onClick={loadData} className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', fontWeight: 800 }}>
-             <RefreshCw size={14} /> <span>Refresh</span>
+          <button onClick={loadData} className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.8125rem' }}>
+            <RefreshCw size={14} /> Refresh
           </button>
         }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 'var(--gap-lg)' }} id="trade-layout">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-          {/* Wallets Display */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--gap-md)' }} id="trade-inputs">
-            <button
-              onClick={() => setSource('fund_wallet')}
-              className={`trade-source-card ${source === 'fund_wallet' ? 'active' : ''}`}
-              style={{
-                padding: '1.25rem', borderRadius: 'var(--radius-lg)', background: 'var(--panel-bg)',
-                border: '1px solid var(--border)', textAlign: 'left', transition: 'var(--transition-normal)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--purple-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <Wallet size={16} style={{ color: 'var(--purple)' }} />
-                </div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Deposit Wallet</span>
-              </div>
-              <p style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>${(+wallets.fund_wallet).toLocaleString()}</p>
-            </button>
+      {/* Investment Highlights */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} id="trade-highlights">
+        {INVESTMENT_HIGHLIGHTS.map((h, i) => (
+          <div key={i} style={{
+            padding: '1rem 1.25rem',
+            background: '#ffffff',
+            border: '1.5px solid #e2e8f0',
+            borderRadius: 16,
+            display: 'flex', alignItems: 'center', gap: '0.875rem',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+          }}>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: h.color, flexShrink: 0, boxShadow: `0 0 8px ${h.color}60` }} />
+            <div>
+              <p style={{ margin: 0, fontSize: '0.625rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.125rem' }}>{h.label}</p>
+              <p style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 900, color: h.color }}>{h.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
-            <button
-              onClick={() => setSource('income_wallet')}
-              className={`trade-source-card ${source === 'income_wallet' ? 'active' : ''}`}
-              style={{
-                padding: '1.25rem', borderRadius: 'var(--radius-lg)', background: 'var(--panel-bg)',
-                border: '1px solid var(--border)', textAlign: 'left', transition: 'var(--transition-normal)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--cyan-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   <DollarSign size={16} style={{ color: 'var(--cyan)' }} />
-                </div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Profit Wallet</span>
-              </div>
-              <p style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>${(+wallets.income_wallet).toLocaleString()}</p>
-            </button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '1.5rem' }} id="trade-layout">
+
+        {/* Left: Investment Form */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+          {/* Wallet Selection */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} id="trade-wallets">
+            {[
+              { key: 'fund_wallet',   label: 'Deposit Wallet',  icon: Wallet,     color: '#0d9488', bg: '#f0fdfa', border: 'rgba(13,148,136,0.3)'  },
+              { key: 'income_wallet', label: 'Earnings Wallet', icon: DollarSign, color: '#7c3aed', bg: '#f5f3ff', border: 'rgba(124,58,237,0.3)' },
+            ].map(({ key, label, icon: Icon, color, bg, border }) => {
+              const selected = source === key
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setSource(key)}
+                  style={{
+                    padding: '1.25rem',
+                    background: selected ? bg : '#ffffff',
+                    border: `2px solid ${selected ? color : '#e2e8f0'}`,
+                    borderRadius: 16, textAlign: 'left',
+                    cursor: 'pointer', transition: 'all 0.2s ease',
+                    boxShadow: selected ? `0 4px 20px ${border}` : 'none',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.75rem' }}>
+                    <div style={{ width: 30, height: 30, borderRadius: 8, background: selected ? color : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={15} style={{ color: selected ? '#fff' : '#94a3b8' }} strokeWidth={2.5} />
+                    </div>
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 800, color: selected ? color : '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '1.375rem', fontWeight: 900, color: selected ? color : '#0f172a', fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>
+                    ${(+wallets[key]).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </p>
+                  {selected && (
+                    <p style={{ margin: '0.375rem 0 0', fontSize: '0.6875rem', color: color, fontWeight: 700 }}>
+                      ✓ Selected
+                    </p>
+                  )}
+                </button>
+              )
+            })}
           </div>
 
-          {/* Configuration */}
+          {/* Form */}
           <Panel>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <TrendingUp size={20} style={{ color: 'var(--cyan)' }} />
-              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Investment Settings</h3>
-            </div>
+            <h3 style={{ margin: '0 0 1.5rem', fontSize: '0.9375rem', fontWeight: 800, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>
+              Investment Amount
+            </h3>
 
             <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Choose Amount</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
-                  {[20, 30, 50, 100, 250, 500, 1000, 5000].map((v) => (
+
+              {/* Quick Pick */}
+              <div>
+                <p style={{ fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.75rem' }}>Quick Select</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.625rem' }}>
+                  {QUICK_AMOUNTS.map((v) => (
                     <button
                       key={v}
                       type="button"
                       onClick={() => setAmount(v.toString())}
-                      style={{
-                        padding: '0.875rem 0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)',
-                        background: amount === v.toString() ? 'var(--cyan-glow)' : 'rgba(255,255,255,0.02)',
-                        color: amount === v.toString() ? 'var(--cyan)' : 'var(--text-muted)',
-                        fontSize: '0.875rem', fontWeight: 800, cursor: 'pointer', transition: 'var(--transition-normal)',
-                        borderColor: amount === v.toString() ? 'var(--cyan)' : 'var(--border)'
-                      }}
+                      className={`amount-btn ${amount === v.toString() ? 'active' : ''}`}
+                      style={{ padding: '0.75rem 0.5rem', fontSize: '0.8125rem' }}
                     >
                       ${v.toLocaleString()}
                     </button>
@@ -157,83 +190,133 @@ export default function TradePage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Custom Amount ($)</label>
-                  <div style={{ position: 'relative' }}>
-                     <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 700, color: 'var(--text-faint)' }}>$</span>
-                       <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="Min $20 - Max $5,000"
-                        autoComplete="off"
-                        className="input"
-                        style={{ paddingLeft: '2rem', fontSize: '1rem', fontWeight: 700 }}
-                      />
-                  </div>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)' }}>Balance: <span style={{ color: 'var(--cyan)', fontWeight: 700 }}>${(+wallets[source]).toLocaleString()}</span></p>
+              {/* Custom Input */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.625rem' }}>
+                  Custom Amount (min $25, max $5,000, multiples of $10)
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#64748b', fontSize: '1rem' }}>$</span>
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    className="input"
+                    style={{ paddingLeft: '2rem', fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.01em' }}
+                  />
                 </div>
+                <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem', fontWeight: 500 }}>
+                  Balance in selected wallet: <strong style={{ color: '#0d9488' }}>${selectedBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+                </p>
+              </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Transaction PIN</label>
+              {/* PIN */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.625rem' }}>
+                  Security PIN
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                   <input
                     type="password"
                     maxLength={6}
                     value={pin}
                     onChange={(e) => setPin(e.target.value)}
-                    placeholder="6-digit PIN"
+                    placeholder="Enter your 6-digit PIN"
                     className="input"
-                    style={{ fontSize: '1rem', fontWeight: 700, textAlign: 'center', letterSpacing: '0.2em' }}
+                    style={{ paddingLeft: '2.75rem', textAlign: 'center', letterSpacing: '0.3em', fontSize: '1.125rem', fontWeight: 800 }}
                   />
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)' }}>Manage in profile settings</p>
                 </div>
-              </div>
-
-              <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--cyan-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                   <ShieldCheck size={20} style={{ color: 'var(--cyan)' }} />
-                </div>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                  Your investment will start generating daily profit. You can track your earnings in the profit chart.
+                <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>
+                  Set or update your PIN in <a href="/dashboard/profile" style={{ color: '#0d9488', textDecoration: 'none', fontWeight: 600 }}>My Account</a>
                 </p>
               </div>
 
-              <button type="submit" disabled={submitting} className="btn-primary" style={{ height: 50 }}>
-                {submitting ? <Loader2 size={18} className="animate-spin" /> : <><ShieldCheck size={18} /><span>Start Investment</span></>}
+              {/* Summary */}
+              {amount > 0 && (
+                <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '1rem 1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Amount to invest</span>
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0f172a' }}>${(+amount || 0).toLocaleString()}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Daily earnings (2%)</span>
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#10b981' }}>+${((+amount || 0) * 0.02).toLocaleString(undefined, { minimumFractionDigits: 2 })}/day</span>
+                  </div>
+                  <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: 600 }}>Total return (200%)</span>
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 900, color: '#0d9488' }}>${((+amount || 0) * 2).toLocaleString()}</span>
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-primary"
+                style={{ height: 52, fontSize: '0.9375rem' }}
+              >
+                {submitting
+                  ? <Loader2 size={18} className="animate-spin" />
+                  : success
+                    ? <><CheckCircle size={18} /><span>Investment Activated!</span></>
+                    : <><ShieldCheck size={18} /><span>Activate Investment</span></>
+                }
               </button>
             </form>
           </Panel>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
-          <Panel style={{ background: 'rgba(0,212,255,0.02)', border: '1px solid var(--border-cyan)' }}>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <Info size={24} style={{ color: 'var(--cyan)', flexShrink: 0 }} />
-              <div>
-                <p style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.9375rem', marginBottom: '0.5rem' }}>How it works</p>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.8 }}>
-                  Your investment will earn daily profit until it reaches 200% total return. Profits are added to your profit wallet every day.
-                </p>
-              </div>
+        {/* Right: Info + Active Investments */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+          {/* How It Works */}
+          <Panel>
+            <h3 style={{ margin: '0 0 1.25rem', fontSize: '0.9375rem', fontWeight: 800, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>
+              How It Works
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {[
+                { step: '1', title: 'Choose Amount',   desc: 'Select between $25 and $5,000 from your wallet.', color: '#0d9488' },
+                { step: '2', title: 'Confirm with PIN', desc: 'Enter your 6-digit PIN to authorize the investment.', color: '#3b82f6' },
+                { step: '3', title: 'Earn Every Day',  desc: 'Receive 2% of your investment into your Earnings Wallet daily.', color: '#7c3aed' },
+                { step: '4', title: 'Reach 200%',      desc: 'Your investment completes once you earn double the amount.', color: '#f97316' },
+              ].map((item) => (
+                <div key={item.step} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: '50%',
+                    background: item.color, color: '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.75rem', fontWeight: 900, flexShrink: 0,
+                    boxShadow: `0 4px 10px ${item.color}40`,
+                  }}>
+                    {item.step}
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.875rem', color: '#0f172a' }}>{item.title}</p>
+                    <p style={{ margin: '0.25rem 0 0', fontSize: '0.8125rem', color: '#64748b', lineHeight: 1.5 }}>{item.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </Panel>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-md)' }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-                <Activity size={18} style={{ color: 'var(--green)' }} />
-                <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>Active Investments</p>
-             </div>
-             <DataTable columns={PACKAGE_COLS} data={packages} emptyText="No active investments found." />
+
+          {/* Active Investments Table */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.875rem' }}>
+              <Activity size={16} style={{ color: '#10b981' }} />
+              <p style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Active Investments</p>
+            </div>
+            <DataTable columns={PACKAGE_COLS} data={packages} emptyText="No active investments yet." />
           </div>
         </div>
       </div>
 
       <style>{`
-        .trade-source-card:hover { border-color: var(--cyan); background: rgba(0,212,255,0.02) !important; }
-        .trade-source-card.active { border-color: var(--cyan) !important; background: var(--cyan-glow) !important; box-shadow: 0 0 15px rgba(0,212,255,0.1); }
+        @media (max-width: 1279px) { #trade-highlights { grid-template-columns: repeat(2, 1fr) !important; } }
         @media (max-width: 1023px) { #trade-layout { grid-template-columns: 1fr !important; } }
-        @media (max-width: 639px) { #trade-inputs { grid-template-columns: 1fr !important; } }
+        @media (max-width: 639px)  { #trade-wallets { grid-template-columns: 1fr !important; } #trade-highlights { grid-template-columns: repeat(2, 1fr) !important; } }
       `}</style>
     </div>
   )

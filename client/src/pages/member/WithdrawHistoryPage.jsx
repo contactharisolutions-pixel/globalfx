@@ -1,29 +1,30 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Clock, ExternalLink, ArrowUpRight } from 'lucide-react'
+import { ArrowUpFromLine, ExternalLink } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../lib/api'
 import { PageHeader, DataTable, Badge, Spinner } from '../../components/member/ui'
 
 const COLUMNS = [
-  { key: 'created_at',    label: 'Registered', render: (v) => <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{new Date(v).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span> },
-  { key: 'amount',        label: 'Gross', render: (v) => <span style={{ fontWeight: 700, color: 'var(--text-muted)' }}>${(+v).toLocaleString()}</span> },
-  { key: 'fee',           label: 'Network Fee',    render: (v) => <span style={{ color: 'var(--red)', fontSize: '0.8125rem' }}>-${(+v).toLocaleString()}</span> },
-  { key: 'net_amount',    label: 'Liquidation',    render: (v) => <span style={{ fontWeight: 800, color: 'var(--green)' }}>${(+v).toLocaleString()}</span> },
+  { key: 'created_at',    label: 'Date',       render: (v) => <span style={{ fontSize: '0.8125rem', color: '#475569', fontWeight: 600 }}>{new Date(v).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span> },
+  { key: 'amount',        label: 'Requested',  render: (v) => <span style={{ fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>${(+v).toLocaleString()}</span> },
+  { key: 'fee',           label: 'Fee',        render: (v) => <span style={{ color: '#ef4444', fontWeight: 700, fontSize: '0.8125rem' }}>-${(+v).toLocaleString()}</span> },
+  { key: 'net_amount',    label: 'You Receive', render: (v) => <span style={{ fontWeight: 900, color: '#10b981' }}>${(+v).toLocaleString()}</span> },
   {
-    key: 'wallet_address', label: 'Destination',
-    render: (v) => v ? <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: 'var(--text-faint)' }}>{v.slice(0, 10)}…{v.slice(-8)}</span> : '—',
+    key: 'wallet_address', label: 'Sent To',
+    render: (v) => v
+      ? <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: '#64748b' }}>{v.slice(0, 10)}…{v.slice(-8)}</span>
+      : '—',
   },
   {
-    key: 'tx_hash', label: 'Reference',
+    key: 'tx_hash', label: 'TX ID',
     render: (v) => v ? (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: 'var(--cyan)' }}>
-        {v.slice(0, 10)}...
-        <ExternalLink size={12} style={{ opacity: 0.5 }} />
-      </div>
-    ) : <span style={{ fontSize: '0.75rem', color: 'var(--text-faint)', fontStyle: 'italic' }}>Pending Pipeline</span>,
+      <span style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: '#0d9488' }}>
+        {v.slice(0, 10)}… <ExternalLink size={11} style={{ opacity: 0.6 }} />
+      </span>
+    ) : <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontStyle: 'italic' }}>Pending</span>,
   },
-  { key: 'status', label: 'State', render: (v) => <Badge status={v} /> },
+  { key: 'status', label: 'Status', render: (v) => <Badge status={v} /> },
 ]
 
 export default function WithdrawHistoryPage() {
@@ -37,25 +38,42 @@ export default function WithdrawHistoryPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const totalWithdrawn = data.reduce((s, d) => s + (+d.net_amount || 0), 0)
+  const pendingCount   = data.filter(d => d.status === 'pending').length
+
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       <PageHeader
-        title="Liquidation Log"
-        subtitle="Historical registry of all asset exits and network settlements"
+        title="Withdrawal History"
+        subtitle="All your past withdrawals and their current status"
         action={
-          <Link to="/dashboard/withdraw" className="btn-primary" style={{ padding: '0 1.25rem' }}>
-            <ArrowUpRight size={18} /> <span>Initiate Exit</span>
+          <Link to="/dashboard/withdraw" className="btn-primary">
+            <ArrowUpFromLine size={16} /><span>Withdraw Now</span>
           </Link>
         }
       />
-      
+
+      {data.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+          {[
+            { label: 'Total Withdrawals', value: data.length,                          color: '#0d9488', bg: '#f0fdfa' },
+            { label: 'Pending',           value: pendingCount,                          color: '#f59e0b', bg: '#fffbeb' },
+            { label: 'Total Received',    value: `$${totalWithdrawn.toLocaleString()}`, color: '#10b981', bg: '#f0fdf4' },
+          ].map(({ label, value, color, bg }) => (
+            <div key={label} style={{ padding: '1rem 1.25rem', background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 14, display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0, boxShadow: `0 0 8px ${color}50` }} />
+              <div>
+                <p style={{ margin: 0, fontSize: '0.625rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
+                <p style={{ margin: '0.125rem 0 0', fontSize: '1.125rem', fontWeight: 900, color, fontFamily: 'Outfit, sans-serif' }}>{value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {loading ? <Spinner /> : (
-        <div className="scale-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-              <Clock size={16} style={{ color: 'var(--text-faint)' }} />
-              <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)' }}>Historical Settlements</p>
-           </div>
-           <DataTable columns={COLUMNS} data={data} emptyText="No liquidation operations discovered in the registry." />
+        <div className="scale-in">
+          <DataTable columns={COLUMNS} data={data} emptyText="No withdrawals yet." />
         </div>
       )}
     </div>

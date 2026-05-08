@@ -60,15 +60,15 @@ export default function WalletSetupPage() {
           </div>
           
           <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Your Active Payout Address</p>
-          <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', marginBottom: '1.5rem', position: 'relative' }}>
+          <div style={{ background: 'rgba(0,0,0,0.04)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', marginBottom: '1.5rem', position: 'relative' }}>
             <code style={{ fontSize: '1rem', fontFamily: 'JetBrains Mono, monospace', color: 'var(--cyan)', wordBreak: 'break-all', fontWeight: 700 }}>{current}</code>
-            <button onClick={copy} style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.05)', border: 'none', padding: '0.5rem', borderRadius: 6, cursor: 'pointer', color: copied ? 'var(--green)' : 'var(--text-faint)' }}>
+            <button onClick={copy} style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.05)', border: 'none', padding: '0.5rem', borderRadius: 6, cursor: 'pointer', color: copied ? 'var(--green)' : 'var(--text-faint)' }}>
                {copied ? <CheckCircle size={14} /> : <Copy size={14} />}
             </button>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
               <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 This address is used for all your withdrawals. You can update it anytime using your Security PIN.
               </p>
@@ -101,7 +101,7 @@ export default function WalletSetupPage() {
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--cyan-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Wallet size={18} style={{ color: 'var(--cyan)' }} />
                 </div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>{current ? 'Update Wallet' : 'Set Up Wallet'}</h3>
+                <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>{current ? 'Update Wallet' : 'Set Up Wallet'}</h3>
               </div>
 
               <div>
@@ -116,7 +116,7 @@ export default function WalletSetupPage() {
                 {errors.pin && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.pin.message}</p>}
               </div>
 
-              <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', display: 'flex', gap: '0.75rem' }}>
+              <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', display: 'flex', gap: '0.75rem' }}>
                 <Info size={16} style={{ color: 'var(--cyan)', flexShrink: 0 }} />
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                   Please ensure this is a <strong>BEP20</strong> address. Sending funds to the wrong network may result in permanent loss.

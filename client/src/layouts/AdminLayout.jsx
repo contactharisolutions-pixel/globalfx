@@ -50,12 +50,26 @@ function Sidebar({ onClose = () => {} }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'linear-gradient(180deg, #020617 0%, #0b1120 60%, #0f172a 100%)' }}>
       {/* Logo */}
-      <div style={{ padding: '1.75rem 1.5rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <Link to="/admin" onClick={onClose} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <img src="/src/assets/images/logo.png" alt="GlobalFX" style={{ height: 40, width: 'auto' }} />
-          <div style={{ fontSize: '0.55rem', fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: 4, marginLeft: 2, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+      <div style={{ padding: '1.5rem 1.5rem 1.125rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <Link to="/admin" onClick={onClose} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0.5rem 0.875rem',
+            background: '#ffffff',
+            borderRadius: 14,
+            boxShadow: '0 4px 16px rgba(0,0,0,0.35)',
+          }}>
+            <img
+              src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png"
+              alt="GlobalFX"
+              style={{ height: 36, width: 'auto', display: 'block' }}
+            />
+          </div>
+          <div style={{ fontSize: '0.55rem', fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginLeft: 2, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Shield size={8} style={{ color: '#f97316' }} />
-            <span style={{ color: '#f97316' }}>Admin Command Center</span>
+            <span style={{ color: '#f97316' }}>Admin Panel</span>
           </div>
         </Link>
       </div>

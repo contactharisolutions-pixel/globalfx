@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Activity, TrendingUp, Cpu, Maximize2 } from 'lucide-react'
+import { Activity, TrendingUp, BarChart2, Maximize2, Globe } from 'lucide-react'
 
 function TradingViewTicker() {
   const ref = useRef(null)
@@ -42,7 +42,6 @@ function TradingViewChart() {
 
   useEffect(() => {
     if (!ref.current) return
-    // Clear previous content on re-render
     ref.current.innerHTML = ''
 
     const widgetDiv = document.createElement('div')
@@ -58,7 +57,7 @@ function TradingViewChart() {
       autosize: true,
       symbol: 'BINANCE:BTCUSDT',
       interval: '60',
-      timezone: 'Asia/Kolkata',
+      timezone: 'Etc/UTC',
       theme: 'light',
       style: '1',
       locale: 'en',
@@ -77,7 +76,7 @@ function TradingViewChart() {
     <div
       className="tradingview-widget-container"
       ref={ref}
-      style={{ height: '600px !important', minHeight: '600px !important', maxHeight: '600px !important', width: '100%' }}
+      style={{ height: '600px', width: '100%' }}
     >
       <div className="tradingview-widget-container__widget" style={{ height: '100%', width: '100%' }} />
     </div>
@@ -86,107 +85,105 @@ function TradingViewChart() {
 
 export default function LiveMarketSection() {
   return (
-    <section id="markets" style={{ padding: '5rem 0', background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
-      {/* Dot-grid background */}
-      <div style={{
-        position: 'absolute', inset: 0, opacity: 0.3, pointerEvents: 'none',
-        backgroundImage: 'radial-gradient(#e2e8f0 1px, transparent 1px)',
-        backgroundSize: '20px 20px',
-      }} />
+    <section id="markets" style={{ padding: '6rem 0', background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
+      {/* Background decoration */}
+      <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: 'linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%)', clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0% 100%)', opacity: 0.5, pointerEvents: 'none' }} />
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Header row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '3rem', alignItems: 'center', marginBottom: '3rem' }} id="markets-header">
-          <div>
+        {/* Header Section */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '4rem', alignItems: 'flex-end', marginBottom: '4rem' }} id="markets-header">
+          <div style={{ maxWidth: 640 }}>
             <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.375rem 1rem', marginBottom: '1.25rem',
-              background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)',
-              borderRadius: 9999, color: '#059669',
-              fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.12em',
+              display: 'inline-flex', alignItems: 'center', gap: '0.625rem',
+              padding: '0.375rem 1rem', marginBottom: '1.5rem',
+              background: '#f0fdfa', border: '1.5px solid rgba(13,148,136,0.2)',
+              borderRadius: 9999, color: '#0d9488',
+              fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em',
             }}>
-              <Activity size={13} style={{ animation: 'pulse 2s infinite' }} /> Live Market Feed
+              <Activity size={14} style={{ animation: 'pulse-live 2s infinite' }} /> Live Market Feed
             </div>
             <h2 style={{
-              fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 900,
-              color: 'var(--text-main)', lineHeight: 1.15,
+              fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900,
+              color: '#0f172a', lineHeight: 1.15,
               fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em', margin: 0,
             }}>
-              Institutional Grade <br />
+              Professional Market <br />
               <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Charting & Data
+                Analysis & Tracking
               </span>
             </h2>
-            <p style={{ fontSize: '1.0625rem', color: 'var(--text-sub)', lineHeight: 1.75, margin: '1rem 0 0', maxWidth: '36rem' }}>
-              Our proprietary neural network analyzes global markets in real-time. Use the same tools as our AI agents to track performance and market trends.
+            <p style={{ fontSize: '1.125rem', color: '#64748b', lineHeight: 1.8, margin: '1.25rem 0 0', fontWeight: 500 }}>
+              Stay ahead of the curve with real-time data from global exchanges. We use these same tools to manage your investments and ensure consistent daily returns.
             </p>
           </div>
 
-          {/* Stat cards */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', minWidth: 200 }} id="markets-stats">
+          {/* Side Stats */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: 240 }} id="markets-stats">
             {[
-              { icon: TrendingUp, label: '99.9% Uptime',    sub: 'Real-time Feed',    bg: 'rgba(13,148,136,0.08)',  color: '#0d9488' },
-              { icon: Cpu,        label: 'AI Optimized',    sub: 'Neural Execution',  bg: 'rgba(59,130,246,0.08)', color: '#3b82f6' },
-            ].map(({ icon: Icon, label, sub, bg, color }) => (
+              { icon: TrendingUp, label: '99.9% Accuracy',  sub: 'Live Data Feed',   color: '#0d9488', bg: '#f0fdfa' },
+              { icon: Globe,      label: '2.0% Daily',      sub: 'Consistent Profit', color: '#3b82f6', bg: '#eff6ff' },
+            ].map(({ icon: Icon, label, sub, color, bg }) => (
               <div key={label} style={{
-                padding: '1rem 1.25rem', background: '#f8fafc',
-                borderRadius: 20, border: '1px solid #e2e8f0',
-                display: 'flex', alignItems: 'center', gap: '0.875rem',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                padding: '1.125rem 1.25rem', background: '#ffffff',
+                borderRadius: 20, border: '1.5px solid #e2e8f0',
+                display: 'flex', alignItems: 'center', gap: '1rem',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
               }}>
-                <div style={{ width: 38, height: 38, background: bg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={18} style={{ color }} />
+                <div style={{ width: 44, height: 44, background: bg, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `1px solid ${color}20` }}>
+                  <Icon size={20} style={{ color }} />
                 </div>
                 <div>
-                  <p style={{ fontWeight: 900, fontSize: '0.875rem', color: 'var(--text-main)', margin: 0 }}>{label}</p>
-                  <p style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>{sub}</p>
+                  <p style={{ fontWeight: 800, fontSize: '0.9375rem', color: '#0f172a', margin: 0 }}>{label}</p>
+                  <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>{sub}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Terminal Card */}
+        {/* Chart Card */}
         <div style={{
           background: '#ffffff', border: '1.5px solid #e2e8f0',
-          borderRadius: 32, boxShadow: '0 24px 64px rgba(0,0,0,0.08)',
+          borderRadius: 32, boxShadow: '0 32px 80px rgba(0,0,0,0.06)',
           overflow: 'hidden',
         }}>
-          {/* Terminal header bar */}
+          {/* Header Bar */}
           <div style={{
-            padding: '0.875rem 1.5rem', background: '#f8fafc',
+            padding: '1rem 1.5rem', background: '#f8fafc',
             borderBottom: '1px solid #e2e8f0',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ display: 'flex', gap: '0.375rem' }}>
                 {['#fca5a5', '#fde68a', '#86efac'].map((c, i) => (
                   <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />
                 ))}
               </div>
-              <span style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--text-muted)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-                Terminal v2.4 — BTC/USDT
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                Live Terminal — Global Markets
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.7rem', fontWeight: 800, color: '#10b981' }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 6px rgba(16,185,129,0.6)' }} />
-                WebSocket Connected
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', fontWeight: 800, color: '#10b981' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 10px rgba(16,185,129,0.7)', animation: 'pulse-live 2s infinite' }} />
+                Server Online
               </span>
-              <Maximize2 size={15} style={{ color: '#94a3b8', cursor: 'pointer' }} />
+              <Maximize2 size={16} style={{ color: '#94a3b8', cursor: 'pointer' }} />
             </div>
           </div>
 
-          {/* Chart */}
-          <TradingViewChart />
+          {/* Chart Area */}
+          <div style={{ background: '#ffffff', height: 600 }}>
+             <TradingViewChart />
+          </div>
 
-          {/* Ticker */}
+          {/* Ticker Tape */}
           <TradingViewTicker />
         </div>
       </div>
 
       <style>{`
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes pulse-live { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); } }
         @media (max-width: 1023px) { #markets-header { grid-template-columns: 1fr !important; } }
         @media (max-width: 639px)  { #markets-stats  { display: none !important; } }
       `}</style>

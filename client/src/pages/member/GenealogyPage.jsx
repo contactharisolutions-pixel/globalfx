@@ -91,7 +91,7 @@ function TreeCanvas({ treeData }) {
 
     labelGroup.append('text')
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--text-primary)')
+      .attr('fill', '#ffffff') // Keep labels white since tree background is dark
       .attr('font-size', '11px')
       .attr('font-weight', '700')
       .text((d) => d.data.name?.length > 12 ? d.data.name.slice(0, 12) + '…' : d.data.name || '—')
@@ -142,7 +142,7 @@ function TreeCanvas({ treeData }) {
   }
 
   return (
-    <Panel style={{ height: 560, padding: 0, position: 'relative', overflow: 'hidden', background: '#020617' }}>
+    <Panel style={{ height: 560, padding: 0, position: 'relative', overflow: 'hidden', background: '#0f172a' }}>
       {/* Controls */}
       <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
         {[
@@ -270,12 +270,12 @@ export default function GenealogyPage() {
           {/* Level selector pills */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
             {Object.keys(levels).sort((a,b) => a-b).map((lvl) => (
-              <button key={lvl} onClick={() => { setSelLevel(+lvl); loadLevelPage(+lvl, 1) }}
+                <button key={lvl} onClick={() => { setSelLevel(+lvl); loadLevelPage(+lvl, 1) }}
                 style={{
-                  padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)',
-                  background: selLevel === +lvl ? 'var(--cyan-glow)' : 'var(--panel-bg)',
-                  borderColor: selLevel === +lvl ? 'var(--cyan)' : 'var(--border)',
-                  color: selLevel === +lvl ? 'var(--cyan)' : 'var(--text-secondary)',
+                  padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)',
+                  background: selLevel === +lvl ? 'var(--cyan-glow)' : '#ffffff',
+                  borderColor: selLevel === +lvl ? 'var(--cyan)' : 'var(--border-subtle)',
+                  color: selLevel === +lvl ? 'var(--cyan)' : 'var(--text-main)',
                   fontSize: '0.8125rem', fontWeight: 800, transition: 'var(--transition-normal)', cursor: 'pointer'
                 }}>
                 LEVEL {lvl} <span style={{ opacity: 0.5, marginLeft: '0.5rem', fontWeight: 600 }}>({levels[lvl].length})</span>
@@ -289,7 +289,7 @@ export default function GenealogyPage() {
               <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
                   <Search size={16} style={{ color: 'var(--cyan)' }} />
-                  <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)' }}>Team List: Level {selLevel}</p>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-main)' }}>Team List: Level {selLevel}</p>
                 </div>
                 <DataTable columns={LEVEL_COLS} data={levels[selLevel] || []} emptyText="No members found at this level." />
                 
@@ -299,9 +299,9 @@ export default function GenealogyPage() {
                     {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((pg) => (
                       <button key={pg} onClick={() => loadLevelPage(selLevel, pg)}
                         style={{
-                          width: 36, height: 36, borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)',
-                          background: pg === page ? 'var(--cyan-glow)' : 'var(--panel-bg)',
-                          borderColor: pg === page ? 'var(--cyan)' : 'var(--border)',
+                          width: 36, height: 36, borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)',
+                          background: pg === page ? 'var(--cyan-glow)' : '#ffffff',
+                          borderColor: pg === page ? 'var(--cyan)' : 'var(--border-subtle)',
                           color: pg === page ? 'var(--cyan)' : 'var(--text-muted)',
                           fontSize: '0.8125rem', fontWeight: 700, cursor: 'pointer'
                         }}>
@@ -315,13 +315,13 @@ export default function GenealogyPage() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {Object.entries(levels).sort((a,b) => a[0]-b[0]).map(([lvl, members]) => (
-                <div key={lvl} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', background: 'var(--panel-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <div key={lvl} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', background: '#ffffff', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                     <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-sm)', background: 'var(--purple-glow)', border: '1px solid var(--border-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: 'var(--purple)' }}>
                       L{lvl}
                     </div>
                     <div>
-                      <p style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--text-primary)' }}>{members.length} Members</p>
+                      <p style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--text-main)' }}>{members.length} Members</p>
                       <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)' }}>{members.filter((m) => m.status === 'active').length} Active Members</p>
                     </div>
                   </div>

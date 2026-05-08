@@ -42,19 +42,19 @@ export default function RewardIncome() {
               </div>
               <div>
                  <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Current Rank</p>
-                 <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>{perf?.current_rank || 'No Rank'}</h3>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)' }}>{perf?.current_rank || 'No Rank'}</h3>
               </div>
            </div>
         </Panel>
 
-        <Panel style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <Panel style={{ background: 'rgba(0,0,0,0.02)' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--purple-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                  <Trophy size={24} style={{ color: 'var(--purple)' }} />
               </div>
               <div style={{ flex: 1 }}>
                  <p style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>Total Team Business</p>
-                 <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>{fmt(perf?.legs?.total)}</h3>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)' }}>{fmt(perf?.legs?.total)}</h3>
               </div>
            </div>
         </Panel>
@@ -64,7 +64,7 @@ export default function RewardIncome() {
       <Panel>
          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
             <ShieldCheck size={20} style={{ color: 'var(--cyan)' }} />
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Leg-wise Distribution (40/30/30 Rule)</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>Leg-wise Distribution (40/30/30 Rule)</h3>
          </div>
          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
             {[
@@ -84,7 +84,7 @@ export default function RewardIncome() {
       <Panel>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
            <Clock size={20} style={{ color: 'var(--orange)' }} />
-           <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Reward Milestones</h3>
+           <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>Reward Milestones</h3>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="data-table">
@@ -104,10 +104,10 @@ export default function RewardIncome() {
                   <tr key={r.id} style={{ opacity: r.achieved ? 1 : 0.6, background: isNext ? 'rgba(0,212,255,0.03)' : 'transparent' }}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: 32, height: 32, borderRadius: 8, background: r.achieved ? 'var(--green-glow)' : 'rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 8, background: r.achieved ? 'var(--green-glow)' : 'rgba(0,0,0,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                            {r.achieved ? <CheckCircle2 size={16} style={{ color: 'var(--green)' }} /> : <Lock size={16} style={{ color: 'var(--text-faint)' }} />}
                         </div>
-                        <span style={{ fontWeight: 800, color: r.achieved ? 'var(--text-primary)' : 'var(--text-muted)' }}>{r.name}</span>
+                        <span style={{ fontWeight: 800, color: r.achieved ? 'var(--text-main)' : 'var(--text-muted)' }}>{r.name}</span>
                         {isNext && <Badge status="Next Goal" />}
                       </div>
                     </td>

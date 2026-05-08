@@ -36,7 +36,7 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
  */
 async function uploadToSupabase(buffer, fileName, contentType) {
   const supabase = getClient() // throws if credentials missing
-  const bucket   = process.env.SUPABASE_BUCKET || 'globalfx'
+  const bucket   = process.env.SUPABASE_BUCKET || 'GlobalFX'
 
   console.log(`[Supabase] Uploading ${fileName} (${(buffer.length / 1024).toFixed(1)} KB) → bucket:${bucket}`)
 
@@ -70,7 +70,7 @@ async function uploadToSupabase(buffer, fileName, contentType) {
 async function deleteFromSupabase(paths) {
   try {
     const supabase = getClient()
-    const bucket   = process.env.SUPABASE_BUCKET || 'globalfx'
+    const bucket   = process.env.SUPABASE_BUCKET || 'GlobalFX'
     const { error } = await supabase.storage.from(bucket).remove(paths)
     if (error) console.error('[Supabase Delete Failed]:', error.message)
   } catch (err) {

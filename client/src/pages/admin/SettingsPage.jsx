@@ -6,41 +6,6 @@ import { AdminPageHeader, AdminSpinner } from '../../components/admin/ui'
 
 // Default settings with labels and descriptions
 const SETTING_DEFS = [
-  { 
-    group: 'Trading Profits',
-    icon: Cpu,
-    items: [
-      { key: 'daily_roi_min',     label: 'Min Daily Profit (%)', type: 'number', step: '0.01', placeholder: '0.50' },
-      { key: 'daily_roi_max',     label: 'Max Daily Profit (%)', type: 'number', step: '0.01', placeholder: '1.50' },
-      { key: 'roi_cap_multiplier',label: 'Total Profit Limit (e.g. 2.0x)',    type: 'number', step: '0.1',  placeholder: '2.0'  },
-    ]
-  },
-  { 
-    group: 'Referral Bonuses',
-    icon: Percent,
-    items: [
-      { key: 'direct_bonus_pct',  label: 'Direct Bonus (%)',  type: 'number', step: '0.1', placeholder: '5' },
-    ]
-  },
-  { 
-    group: 'Withdrawal Settings',
-    icon: Wallet,
-    items: [
-      { key: 'withdrawal_fee_pct',     label: 'Withdrawal Fee (%)',     type: 'number', step: '0.1', placeholder: '5'   },
-      { key: 'min_withdrawal',         label: 'Min Withdrawal ($)',   type: 'number', step: '1',   placeholder: '10'  },
-      { key: 'max_withdrawal',         label: 'Max Withdrawal ($)',   type: 'number', step: '1',   placeholder: '5000'},
-      { key: 'withdrawal_days',        label: 'Withdrawal Days', type: 'text',   placeholder: 'mon,tue,wed,thu,fri' },
-    ]
-  },
-  { 
-    group: 'System Settings',
-    icon: Layout,
-    items: [
-      { key: 'min_deposit',            label: 'Min Deposit ($)', type: 'number', step: '1',   placeholder: '50'  },
-      { key: 'registration_bonus',     label: 'Signup Bonus ($)',        type: 'number', step: '1',   placeholder: '0'   },
-      { key: 'maintenance_mode',       label: 'Maintenance Mode',     type: 'select', options: ['off', 'on'] },
-    ]
-  },
   {
     group: 'Deposit Configuration',
     icon: QrCode,

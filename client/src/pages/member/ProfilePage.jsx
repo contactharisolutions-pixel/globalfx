@@ -2,15 +2,21 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { User, Lock, Wallet, Loader2, ShieldCheck, Mail, Phone, Calendar, Code, UserCheck, Eye, EyeOff } from 'lucide-react'
+import { User, Lock, Loader2, ShieldCheck, Mail, Phone, Calendar, Copy, UserCheck, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../lib/api'
 import { PageHeader, Spinner, Panel } from '../../components/member/ui'
 
+const TABS = [
+  { key: 'info',     label: 'Personal Info',  icon: User        },
+  { key: 'password', label: 'Change Password', icon: Lock        },
+  { key: 'pin',      label: 'Security PIN',    icon: ShieldCheck },
+]
+
 export default function ProfilePage() {
-  const [profile,  setProfile]  = useState(null)
-  const [loading,  setLoading]  = useState(true)
-  const [tab,      setTab]      = useState('info')
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [tab,     setTab]     = useState('info')
 
   useEffect(() => {
     api.get('/member/profile')
@@ -22,33 +28,73 @@ export default function ProfilePage() {
   if (loading) return <Spinner />
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)', maxWidth: 1000 }}>
-      <PageHeader title="Identity Hub" subtitle={`System ID: ${profile?.user_id}`} />
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', maxWidth: 1000 }}>
+      <PageHeader
+        title="My Account"
+        subtitle={`Member ID: ${profile?.user_id}`}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 'var(--gap-lg)' }} id="profile-layout">
-        {/* Sidebar Tabs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {[
-            { key: 'info',     label: 'Core Profile',     icon: User },
-            { key: 'password', label: 'Password',         icon: Lock },
-            { key: 'pin',      label: 'Transaction PIN',  icon: ShieldCheck },
-          ].map(({ key, label, icon: Icon }) => (
-            <button key={key} onClick={() => setTab(key)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '0.875rem',
-                padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)',
-                background: tab === key ? 'var(--cyan-glow)' : 'transparent',
-                border: `1px solid ${tab === key ? 'var(--border-cyan)' : 'transparent'}`,
-                color: tab === key ? 'var(--cyan)' : 'var(--text-muted)',
-                fontSize: '0.875rem', fontWeight: 700, transition: 'var(--transition-normal)',
-                textAlign: 'left', cursor: 'pointer'
-              }}>
-              <Icon size={18} />
-              {label}
-            </button>
-          ))}
+      {/* Profile Card Header */}
+      <Panel>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
+          <div style={{
+            width: 64, height: 64, borderRadius: 20,
+            background: 'linear-gradient(135deg, #0d9488, #3b82f6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.625rem', fontWeight: 900, color: '#fff',
+            boxShadow: '0 8px 24px rgba(13,148,136,0.3)',
+            flexShrink: 0,
+          }}>
+            {profile?.name?.[0]?.toUpperCase() || 'M'}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>{profile?.name}</h2>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>{profile?.email}</p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem', flexShrink: 0 }}>
+            <div style={{ textAlign: 'center', padding: '0.5rem 1rem', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0' }}>
+              <p style={{ margin: 0, fontSize: '0.625rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Member ID</p>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', fontWeight: 800, color: '#0f172a', fontFamily: 'JetBrains Mono, monospace' }}>{profile?.user_id}</p>
+            </div>
+            <div style={{ textAlign: 'center', padding: '0.5rem 1rem', background: profile?.status === 'active' ? '#f0fdf4' : '#fffbeb', borderRadius: 12, border: `1px solid ${profile?.status === 'active' ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)'}` }}>
+              <p style={{ margin: 0, fontSize: '0.625rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Status</p>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', fontWeight: 800, color: profile?.status === 'active' ? '#10b981' : '#f59e0b', textTransform: 'capitalize' }}>{profile?.status}</p>
+            </div>
+          </div>
+        </div>
+      </Panel>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '1.5rem' }} id="profile-layout">
+
+        {/* Sidebar */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+          {TABS.map(({ key, label, icon: Icon }) => {
+            const active = tab === key
+            return (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '0.75rem',
+                  padding: '0.875rem 1.125rem', borderRadius: 14,
+                  background: active ? '#f0fdfa' : '#ffffff',
+                  border: `1.5px solid ${active ? 'rgba(13,148,136,0.3)' : '#e2e8f0'}`,
+                  color: active ? '#0d9488' : '#64748b',
+                  fontSize: '0.875rem', fontWeight: active ? 700 : 600,
+                  transition: 'all 0.18s', textAlign: 'left', cursor: 'pointer',
+                  boxShadow: active ? '0 4px 16px rgba(13,148,136,0.1)' : 'none',
+                }}
+              >
+                <div style={{ width: 32, height: 32, borderRadius: 10, background: active ? 'rgba(13,148,136,0.12)' : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon size={16} style={{ color: active ? '#0d9488' : '#94a3b8' }} strokeWidth={2.5} />
+                </div>
+                {label}
+              </button>
+            )
+          })}
         </div>
 
+        {/* Content */}
         <div className="scale-in">
           {tab === 'info'     && <ProfileInfo profile={profile} setProfile={setProfile} />}
           {tab === 'password' && <ChangePassword />}
@@ -57,20 +103,17 @@ export default function ProfilePage() {
       </div>
 
       <style>{`
-        @media (max-width: 850px) {
-          #profile-layout { grid-template-columns: 1fr !important; }
-        }
+        @media (max-width: 850px) { #profile-layout { grid-template-columns: 1fr !important; } }
       `}</style>
     </div>
   )
 }
 
-/* ── Sub-components ── */
-
+/* ── Profile Info ── */
 function ProfileInfo({ profile, setProfile }) {
   const schema = z.object({
-    name:  z.string().min(3, 'Name is too short'),
-    phone: z.string().min(7, 'Invalid phone number'),
+    name:  z.string().min(3, 'Name must be at least 3 characters'),
+    phone: z.string().min(7, 'Enter a valid phone number'),
   })
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -80,74 +123,101 @@ function ProfileInfo({ profile, setProfile }) {
   const onSubmit = async (data) => {
     try {
       const { data: updated } = await api.put('/member/profile', data)
-      setProfile((p) => ({ ...p, ...updated.user }))
-      toast.success('Profile credentials updated!')
-    } catch { toast.error('Update failed') }
+      setProfile(p => ({ ...p, ...updated.user }))
+      toast.success('Profile updated successfully!')
+    } catch { toast.error('Could not update profile') }
   }
 
-  const items = [
-    { label: 'Email Address', value: profile?.email, icon: Mail },
-    { label: 'Account Status', value: profile?.status, icon: UserCheck, color: profile?.status === 'active' ? 'var(--green)' : 'var(--orange)' },
-    { label: 'Sponsor Entity', value: profile?.sponsor?.user_id || 'System Root', icon: User },
-    { label: 'Referral Token', value: profile?.referral_code, icon: Code },
-    { label: 'Registration', value: profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : '—', icon: Calendar },
+  const copyRef = () => {
+    navigator.clipboard.writeText(profile?.referral_code || '')
+    toast.success('Referral code copied!')
+  }
+
+  const infoItems = [
+    { label: 'Email Address',   value: profile?.email,                                              icon: Mail     },
+    { label: 'Joined On',       value: profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '—', icon: Calendar  },
+    { label: 'Referred By',     value: profile?.sponsor?.user_id || 'GlobalFX Admin',              icon: UserCheck },
   ]
 
   return (
-    <Panel style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
-        {items.map(({ label, value, icon: Icon, color }) => (
-          <div key={label}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.375rem' }}>
-              <Icon size={14} style={{ color: 'var(--text-faint)' }} />
-              <p style={{ fontSize: '0.6875rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>{label}</p>
+    <Panel style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+      {/* Info Grid */}
+      <div>
+        <p style={{ margin: '0 0 1rem', fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Account Information</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          {infoItems.map(({ label, value, icon: Icon }) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.875rem 0', borderBottom: '1px solid #f1f5f9' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                <Icon size={15} style={{ color: '#94a3b8' }} />
+                <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>{label}</span>
+              </div>
+              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0f172a' }}>{value}</span>
             </div>
-            <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: color || 'var(--text-primary)' }}>{value}</p>
-          </div>
-        ))}
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
-        <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Update Credentials</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }} id="info-inputs">
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Full Legal Name</label>
-            <input {...register('name')} className="input" />
-            {errors.name && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.name.message}</p>}
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Phone Contact</label>
-            <input {...register('phone')} className="input" />
-            {errors.phone && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.phone.message}</p>}
+          ))}
+          {/* Referral Code row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.875rem 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+              <Copy size={15} style={{ color: '#94a3b8' }} />
+              <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Referral Code</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0d9488', fontFamily: 'JetBrains Mono, monospace' }}>{profile?.referral_code}</span>
+              <button onClick={copyRef} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', display: 'flex', padding: 0 }}>
+                <Copy size={14} />
+              </button>
+            </div>
           </div>
         </div>
-        <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ alignSelf: 'flex-start', padding: '0 2rem' }}>
-          {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : 'Save Profile Changes'}
-        </button>
-      </form>
+      </div>
+
+      {/* Edit Form */}
+      <div style={{ paddingTop: '1.5rem', borderTop: '1.5px solid #e2e8f0' }}>
+        <p style={{ margin: '0 0 1.25rem', fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Update Details</p>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }} id="info-inputs">
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Full Name</label>
+              <input {...register('name')} className="input" placeholder="Your full name" />
+              {errors.name && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.name.message}</p>}
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>Phone Number</label>
+              <input {...register('phone')} className="input" placeholder="Your phone number" />
+              {errors.phone && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.phone.message}</p>}
+            </div>
+          </div>
+          <div style={{ display: 'flex' }}>
+            <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ padding: '0.75rem 2rem' }}>
+              {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <><CheckCircle size={16} /><span>Save Changes</span></>}
+            </button>
+          </div>
+        </form>
+      </div>
+
       <style>{`
-        @media (max-width: 639px) {
-          #info-inputs { grid-template-columns: 1fr !important; }
-        }
+        @media (max-width: 639px) { #info-inputs { grid-template-columns: 1fr !important; } }
       `}</style>
     </Panel>
   )
 }
 
+/* ── Change Password ── */
 function ChangePassword() {
   const [show, setShow] = useState({ current: false, new: false, confirm: false })
   const schema = z.object({
-    current_password: z.string().min(1, 'Current password required'),
-    new_password:     z.string().min(6, 'Must be at least 6 characters'),
+    current_password: z.string().min(1, 'Current password is required'),
+    new_password:     z.string().min(6, 'Password must be at least 6 characters'),
     confirm_password: z.string(),
-  }).refine((d) => d.new_password === d.confirm_password, { message: "Passwords don't match", path: ['confirm_password'] })
+  }).refine(d => d.new_password === d.confirm_password, {
+    message: "Passwords don't match", path: ['confirm_password'],
+  })
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data) => {
     try {
       await api.put('/member/change-password', data)
-      toast.success('Account password updated!')
+      toast.success('Password updated successfully!')
       reset()
     } catch (err) { toast.error(err?.response?.data?.error || 'Update failed') }
   }
@@ -160,100 +230,99 @@ function ChangePassword() {
 
   return (
     <Panel style={{ maxWidth: 500 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--cyan-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Lock size={18} style={{ color: 'var(--cyan)' }} />
-        </div>
-        <div>
-          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Update Password</h3>
-          <p style={{ fontSize: '0.8125rem', color: 'var(--text-faint)' }}>Manage your platform access credentials</p>
-        </div>
+      <div style={{ marginBottom: '1.75rem' }}>
+        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Change Password</h3>
+        <p style={{ margin: '0.375rem 0 0', fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Keep your account safe with a strong password.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         {fields.map(({ name, label, key }) => (
           <div key={name}>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>{label}</label>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>{label}</label>
             <div style={{ position: 'relative' }}>
-              <input 
-                {...register(name)} 
-                type={show[key] ? 'text' : 'password'} 
-                className="input" 
-                style={{ paddingRight: '2.5rem' }}
+              <Lock size={15} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+              <input
+                {...register(name)}
+                type={show[key] ? 'text' : 'password'}
+                className="input"
+                style={{ paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setShow(s => ({ ...s, [key]: !s[key] }))}
-                style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-faint)', cursor: 'pointer', display: 'flex' }}
+                style={{ position: 'absolute', right: '0.875rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex' }}
               >
                 {show[key] ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors[name] && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors[name].message}</p>}
+            {errors[name] && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors[name].message}</p>}
           </div>
         ))}
-        <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '0.5rem' }}>
-          {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : 'Update Password Now'}
+        <button type="submit" disabled={isSubmitting} className="btn-primary">
+          {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <><CheckCircle size={16} /><span>Update Password</span></>}
         </button>
       </form>
     </Panel>
   )
 }
 
+/* ── Change PIN ── */
 function ChangePin() {
   const [show, setShow] = useState(false)
   const schema = z.object({
     new_pin:     z.string().length(6, 'PIN must be exactly 6 digits').regex(/^\d+$/, 'Digits only'),
     confirm_pin: z.string(),
-  }).refine((d) => d.new_pin === d.confirm_pin, { message: "PINs don't match", path: ['confirm_pin'] })
+  }).refine(d => d.new_pin === d.confirm_pin, { message: "PINs don't match", path: ['confirm_pin'] })
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ resolver: zodResolver(schema) })
 
   const onSubmit = async (data) => {
     try {
       await api.put('/member/transaction-pin', data)
-      toast.success('Transaction PIN authorized!')
+      toast.success('Security PIN updated!')
       reset()
     } catch (err) { toast.error(err?.response?.data?.error || 'Update failed') }
   }
 
   return (
     <Panel style={{ maxWidth: 500 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--orange-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <ShieldCheck size={18} style={{ color: 'var(--orange)' }} />
-        </div>
-        <div>
-          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Transaction PIN</h3>
-          <p style={{ fontSize: '0.8125rem', color: 'var(--text-faint)' }}>Required for all asset liquidations</p>
-        </div>
+      <div style={{ marginBottom: '1.75rem' }}>
+        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Security PIN</h3>
+        <p style={{ margin: '0.375rem 0 0', fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>Your 6-digit PIN is required for all transactions.</p>
+      </div>
+
+      <div style={{ marginBottom: '1.5rem', padding: '1rem', background: '#fffbeb', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 12 }}>
+        <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400e', fontWeight: 600, lineHeight: 1.6 }}>
+          💡 Your PIN is used every time you invest, withdraw, or transfer funds. Choose a 6-digit code you'll remember, but keep it private.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+        <button type="button" onClick={() => setShow(!show)} style={{ background: 'none', border: 'none', color: '#0d9488', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+          {show ? <><EyeOff size={14} /> Hide</>  : <><Eye size={14} /> Show</>}
+        </button>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6, padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-          Your 6-digit transaction PIN is a secondary security layer for all financial operations. 
-          <br /><br />
-          <span style={{ color: 'var(--orange)', fontWeight: 700 }}>Forgot your PIN?</span> Since your security is our priority, you can set a new PIN below at any time. We recommend using a unique code different from your password.
-        </p>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
-           <button type="button" onClick={() => setShow(!show)} style={{ background: 'none', border: 'none', color: 'var(--cyan)', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-             {show ? <><EyeOff size={14} /> HIDE CODES</> : <><Eye size={14} /> SHOW CODES</>}
-           </button>
-        </div>
-
         {[
-          { name: 'new_pin',     label: 'New 6-Digit PIN' },
-          { name: 'confirm_pin', label: 'Verify New PIN'        },
+          { name: 'new_pin',     label: 'New PIN'      },
+          { name: 'confirm_pin', label: 'Confirm PIN'  },
         ].map(({ name, label }) => (
           <div key={name}>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>{label}</label>
-            <input {...register(name)} type={show ? 'text' : 'password'} maxLength={6} className="input" style={{ letterSpacing: '0.5em', textAlign: 'center' }} placeholder="••••••" />
-            {errors[name] && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors[name].message}</p>}
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '0.5rem' }}>{label}</label>
+            <input
+              {...register(name)}
+              type={show ? 'text' : 'password'}
+              maxLength={6}
+              className="input"
+              style={{ letterSpacing: '0.5em', textAlign: 'center', fontSize: '1.25rem', fontWeight: 900 }}
+              placeholder="••••••"
+            />
+            {errors[name] && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors[name].message}</p>}
           </div>
         ))}
-        <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: '0.5rem', background: 'var(--orange)', color: '#000' }}>
-          {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : 'Authorize PIN Update'}
+        <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ background: 'linear-gradient(135deg, #f97316, #ea580c)', boxShadow: '0 4px 14px rgba(249,115,22,0.35)' }}>
+          {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <><ShieldCheck size={16} /><span>Set Security PIN</span></>}
         </button>
       </form>
     </Panel>

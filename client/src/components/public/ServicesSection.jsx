@@ -1,92 +1,101 @@
-import { TrendingUp, DollarSign, Briefcase, Users, Cpu, Lock, ChevronRight } from 'lucide-react'
+import { TrendingUp, DollarSign, Briefcase, Users, ShieldCheck, Lock, ChevronRight } from 'lucide-react'
 
 const SERVICES = [
   {
     icon: TrendingUp,
-    title: 'Precision Trading',
-    desc: 'Proprietary AI neural networks analyzing 10,000+ data points per second for high-confidence signals.',
-    accent: 'border-primary',
-    bg: 'bg-primary/5'
+    title: 'Smart Investing',
+    desc: 'We manage your investment 24 hours a day and pay you a fixed daily profit — no experience needed.',
+    color: '#0d9488', bg: '#f0fdfa', border: 'rgba(13,148,136,0.2)',
   },
   {
     icon: DollarSign,
-    title: 'Global Forex',
-    desc: 'Deep liquidity access to major and minor forex pairs managed by our institutional desk.',
-    accent: 'border-accent',
-    bg: 'bg-accent/5'
+    title: 'Forex Trading',
+    desc: 'We trade major global currency pairs and share the profits directly with our members daily.',
+    color: '#3b82f6', bg: '#eff6ff', border: 'rgba(59,130,246,0.2)',
   },
   {
     icon: Briefcase,
-    title: 'Portfolio Mastery',
-    desc: 'Hands-off investment management focusing on capital preservation and consistent compound growth.',
-    accent: 'border-orange-500',
-    bg: 'bg-orange-50'
+    title: 'Hands-Off Growth',
+    desc: 'Just deposit, choose a plan, and let our team handle everything. You earn while you live your life.',
+    color: '#f97316', bg: '#fff7ed', border: 'rgba(249,115,22,0.2)',
   },
   {
     icon: Users,
-    title: 'Alliance Network',
-    desc: 'Powerful 15-level referral structure designed for long-term community-driven earnings.',
-    accent: 'border-success',
-    bg: 'bg-success/5'
+    title: 'Referral Earnings',
+    desc: 'Invite friends and family. Earn a bonus every time someone in your network makes a deposit.',
+    color: '#10b981', bg: '#f0fdf4', border: 'rgba(16,185,129,0.2)',
   },
   {
-    icon: Cpu,
-    title: 'Quantum Tech',
-    desc: 'Low-latency execution bots and real-time transparent reporting for every single trade.',
-    accent: 'border-indigo-500',
-    bg: 'bg-indigo-50'
+    icon: ShieldCheck,
+    title: 'Daily Reports',
+    desc: 'Every member gets a full daily profit report. No guessing — you can always see what\'s happening.',
+    color: '#7c3aed', bg: '#f5f3ff', border: 'rgba(124,58,237,0.2)',
   },
   {
     icon: Lock,
-    title: 'Fortress Security',
-    desc: 'Military-grade encryption, 2FA, and cold-storage practices to keep your assets safe.',
-    accent: 'border-error',
-    bg: 'bg-error/5'
+    title: 'Secure Platform',
+    desc: 'Your account and funds are protected with the highest level of security available.',
+    color: '#f43f5e', bg: '#fff1f2', border: 'rgba(244,63,94,0.2)',
   },
 ]
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="section relative bg-white">
-      <div className="container relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8">
-          <div className="max-w-2xl">
-            <div className="text-primary font-black text-[10px] tracking-[0.2em] uppercase mb-4">Core Capabilities</div>
-            <h2 className="text-4xl lg:text-5xl font-black text-text-main tracking-tight">
-              Ecosystem Built for <br />
-              <span className="gradient-text">Institutional Performance</span>
-            </h2>
+    <section id="services" style={{ padding: '6rem 0', background: '#ffffff', position: 'relative' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        {/* Header */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
+            <div style={{ maxWidth: 560 }}>
+              <p style={{ fontSize: '0.7rem', fontWeight: 900, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '0.875rem' }}>What We Offer</p>
+              <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0 }}>
+                Everything You Need<br />
+                <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>To Grow Your Money</span>
+              </h2>
+            </div>
+            <p style={{ fontSize: '1rem', color: '#64748b', maxWidth: 320, lineHeight: 1.7, fontWeight: 500, borderLeft: '3px solid rgba(13,148,136,0.3)', paddingLeft: '1.25rem' }}>
+              We give you the tools, the team, and the technology — so you can focus on your goals.
+            </p>
           </div>
-          <p className="text-lg text-text-sub max-w-sm leading-relaxed border-l-4 border-primary/20 pl-6">
-            We provide the tools, the technology, and the team to help you scale your wealth in any market condition.
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SERVICES.map((item) => (
-            <div 
-              key={item.title} 
-              className="group p-8 rounded-[32px] bg-white border border-border-subtle hover:border-transparent hover:shadow-2xl transition-all duration-300 relative overflow-hidden"
-            >
-              {/* Subtle hover background decoration */}
-              <div className={`absolute -right-8 -top-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${item.bg}`} />
-              
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 border-2 ${item.accent} ${item.bg} group-hover:scale-110 transition-transform`}>
-                <item.icon size={22} className={`${item.accent.replace('border-', 'text-')}`} />
+        {/* Cards Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }} id="services-grid">
+          {SERVICES.map((item, i) => {
+            const Icon = item.icon
+            return (
+              <div
+                key={i}
+                style={{
+                  padding: '2rem', background: '#ffffff',
+                  border: `1.5px solid ${item.border}`,
+                  borderRadius: 24, position: 'relative', overflow: 'hidden',
+                  transition: 'all 0.25s ease', cursor: 'default',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 16px 40px ${item.color}18` }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+              >
+                {/* Subtle corner blob */}
+                <div style={{ position: 'absolute', top: -20, right: -20, width: 80, height: 80, background: item.bg, borderRadius: '50%', opacity: 0.6 }} />
+
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: item.bg, border: `1px solid ${item.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', position: 'relative', zIndex: 1 }}>
+                  <Icon size={22} style={{ color: item.color }} strokeWidth={2} />
+                </div>
+                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.625rem', position: 'relative', zIndex: 1 }}>{item.title}</h3>
+                <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: '0 0 1.25rem', position: 'relative', zIndex: 1 }}>{item.desc}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', fontWeight: 800, color: item.color, position: 'relative', zIndex: 1 }}>
+                  Learn more <ChevronRight size={14} />
+                </div>
               </div>
-              
-              <h3 className="text-xl font-black text-text-main mb-3 group-hover:text-primary transition-colors">{item.title}</h3>
-              <p className="text-text-sub text-sm font-medium leading-relaxed mb-6">
-                {item.desc}
-              </p>
-              
-              <div className="flex items-center gap-2 text-xs font-black text-primary opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
-                LEARN MORE <ChevronRight size={14} />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1023px) { #services-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 639px)  { #services-grid { grid-template-columns: 1fr !important; } }
+      `}</style>
     </section>
   )
 }

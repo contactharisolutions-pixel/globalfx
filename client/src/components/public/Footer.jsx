@@ -24,17 +24,17 @@ export default function Footer() {
   const year = new Date().getFullYear()
   return (
     <footer id="contact" style={{ background: '#f8fafc', borderTop: '1px solid var(--border-subtle)', paddingTop: '5rem', paddingBottom: '3rem' }}>
-      <div className="container">
+      <div className="footer-container" style={{ width: '100%', maxWidth: '100%', padding: '0 4rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.5fr', gap: '3rem', marginBottom: '4rem' }} id="footer-grid">
 
           {/* Brand */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <Link to="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
-              <img src="/src/assets/images/logo.png" alt="GlobalFX Logo" style={{ height: 54, width: 'auto' }} />
+              <img src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png" alt="GlobalFX Logo" style={{ height: 54, width: 'auto' }} />
             </Link>
 
             <p style={{ fontSize: '0.9375rem', color: 'var(--text-sub)', lineHeight: 1.75, maxWidth: '22rem' }}>
-              Democratizing high-frequency algorithmic trading for investors worldwide. Secure, transparent, and driven by institutional-grade AI performance.
+              Democratizing high-frequency algorithmic trading for investors worldwide. Secure, transparent, and driven by institutional-grade performance.
             </p>
 
             <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -105,7 +105,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p style={{ fontSize: '0.65rem', fontWeight: 900, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 4 }}>Support Email</p>
-                  <a href="mailto:support@globalfx.vip" style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-main)', textDecoration: 'none' }}>support@globalfx.vip</a>
+                  <a href="mailto:support@globalfx.pro" style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-main)', textDecoration: 'none' }}>support@globalfx.pro</a>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem' }}>
@@ -146,7 +146,10 @@ export default function Footer() {
       </div>
 
       <style>{`
-        @media (max-width: 1023px) { #footer-grid { grid-template-columns: 1fr 1fr !important; } }
+        @media (max-width: 1023px) { 
+          #footer-grid { grid-template-columns: 1fr 1fr !important; } 
+          .footer-container { padding: 0 1.5rem !important; }
+        }
         @media (max-width: 639px)  { #footer-grid { grid-template-columns: 1fr !important; } }
       `}</style>
     </footer>

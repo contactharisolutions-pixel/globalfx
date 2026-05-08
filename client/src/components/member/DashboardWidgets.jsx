@@ -37,7 +37,7 @@ export const ForexLiveGraph = memo(({ symbol = "BITSTAMP:BTCUSD" }) => {
   }, [symbol])
 
   return (
-    <div className="tradingview-widget-container" ref={container} style={{ height: "500px", width: "100%" }}>
+    <div className="tradingview-widget-container" ref={container} style={{ height: "650px", width: "100%" }}>
       <div className="tradingview-widget-container__widget" style={{ height: "100%", width: "100%" }}></div>
     </div>
   )

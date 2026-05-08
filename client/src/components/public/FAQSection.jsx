@@ -3,28 +3,28 @@ import { ChevronDown, HelpCircle, MessageCircle } from 'lucide-react'
 
 const FAQS = [
   {
-    q: 'How does the AI trading work?',
-    a: 'Our systems use neural networks to analyze massive amounts of historical and real-time market data. The AI identifies high-probability setups in Crypto and Forex markets and executes trades with micro-second precision, eliminating human emotion.',
+    q: 'How do I start earning money?',
+    a: 'Simply create a free account, deposit funds using USDT (BEP20), and choose an investment plan. Our team manages everything from there — you receive daily profits directly to your account wallet.',
   },
   {
-    q: 'What are the investment limits?',
-    a: 'You can start with as little as $50 (Starter Plan). The maximum investment depends on the plan chosen, with our Premium plan offering unlimited capital deployment for high-net-worth investors.',
+    q: 'How much do I need to start?',
+    a: 'You can start with as little as $25. We have plans for every budget, so whether you are starting small or investing more, there is an option for you.',
   },
   {
     q: 'When do I receive my profits?',
-    a: 'Profits are calculated based on trading pool performance and credited to your Income Wallet daily. You can track your daily yield and earnings history directly from your member dashboard.',
+    a: 'Profits are calculated daily and credited to your Income Wallet every day. You can view your full earnings history anytime from your personal dashboard.',
   },
   {
-    q: 'Are there any withdrawal restrictions?',
-    a: 'The minimum withdrawal is $10. We process payouts in USDT (BEP20) to ensure low fees and fast transaction times. Most withdrawals are approved and processed within 24 hours.',
+    q: 'Can I withdraw my money anytime?',
+    a: 'Yes. The minimum withdrawal is $10. We process payouts in USDT (BEP20) with low fees. Most withdrawals are approved and sent within 24 hours.',
   },
   {
-    q: 'How safe is my data?',
-    a: 'We use 256-bit SSL encryption, cold-storage for crypto assets, and multi-factor authentication to protect user data and funds. We are committed to maintaining the highest security standards in the industry.',
+    q: 'Is my money and data safe?',
+    a: 'Absolutely. We use strong encryption and secure login protection to keep your account and personal information fully safe. Your funds are always protected.',
   },
   {
-    q: 'How can I contact support?',
-    a: 'Our support team is available 24/7. You can reach out via the official Telegram channel, submit a support ticket from your dashboard, or email us at support@globalfx.vip.',
+    q: 'How do I contact support?',
+    a: 'Our support team is available 24 hours a day, 7 days a week. You can submit a support ticket from your dashboard or reach us on our official Telegram channel.',
   },
 ]
 
@@ -42,8 +42,8 @@ export default function FAQSection() {
               <HelpCircle size={14} /> Common Questions
             </div>
             <h2 className="text-4xl lg:text-5xl font-black text-text-main leading-tight tracking-tight">
-              Curiosity Fuels <br />
-              <span className="gradient-text">Discovery</span>
+              Got Questions?<br />
+              <span className="gradient-text">We Have Answers.</span>
             </h2>
             <p className="text-lg text-text-sub leading-relaxed max-w-sm">
               Everything you need to know about GlobalFX. Can't find what you're looking for? Our team is standing by.

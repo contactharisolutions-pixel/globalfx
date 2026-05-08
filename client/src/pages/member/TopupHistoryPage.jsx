@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Clock, ExternalLink } from 'lucide-react'
+import { Plus, Clock, ExternalLink, ArrowDownCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import api from '../../lib/api'
 import { PageHeader, DataTable, Badge, Spinner } from '../../components/member/ui'
 
 const COLUMNS = [
-  { key: 'created_at', label: 'Date', render: (v) => <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{new Date(v).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span> },
-  { key: 'amount',     label: 'Amount',    render: (v) => <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>${(+v).toLocaleString()}</span> },
-  { key: 'tx_hash',    label: 'TxHash', render: (v) => v ? (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: 'var(--cyan)' }}>
-      {v.slice(0, 10)}...{v.slice(-8)}
-      <ExternalLink size={12} style={{ opacity: 0.5 }} />
-    </div>
+  { key: 'created_at', label: 'Date',   render: (v) => <span style={{ fontSize: '0.8125rem', color: '#475569', fontWeight: 600 }}>{new Date(v).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span> },
+  { key: 'amount',     label: 'Amount', render: (v) => <span style={{ fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>${(+v).toLocaleString()}</span> },
+  { key: 'tx_hash',   label: 'TX ID',  render: (v) => v ? (
+    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.75rem', color: '#0d9488', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+      {v.slice(0, 10)}…{v.slice(-8)}
+      <ExternalLink size={11} style={{ opacity: 0.6 }} />
+    </span>
   ) : '—' },
-  { key: 'status',     label: 'Status',   render: (v) => <Badge status={v} /> },
-  { key: 'note',       label: 'Note', render: (v) => <span style={{ fontSize: '0.8125rem', color: 'var(--text-faint)' }}>{v || '—'}</span> },
+  { key: 'status',     label: 'Status', render: (v) => <Badge status={v} /> },
+  { key: 'note',       label: 'Note',   render: (v) => <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontStyle: v ? 'normal' : 'italic' }}>{v || 'Pending review'}</span> },
 ]
 
 export default function TopupHistoryPage() {
@@ -30,24 +30,28 @@ export default function TopupHistoryPage() {
   }, [])
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       <PageHeader
         title="Deposit History"
-        subtitle="View all your previous USDT deposits"
+        subtitle="All your previous USDT deposits and their status"
         action={
-          <Link to="/dashboard/topup" className="btn-primary" style={{ padding: '0 1.25rem' }}>
-            <Plus size={18} /> <span>Add Funds</span>
+          <Link to="/dashboard/topup" className="btn-primary">
+            <Plus size={16} /><span>Add Funds</span>
           </Link>
         }
       />
-      
+
       {loading ? <Spinner /> : (
-        <div className="scale-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-              <Clock size={16} style={{ color: 'var(--text-faint)' }} />
-              <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)' }}>Previous Deposits</p>
-           </div>
-           <DataTable columns={COLUMNS} data={data} emptyText="No deposits found." />
+        <div className="scale-in">
+          {data.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
+              <ArrowDownCircle size={16} style={{ color: '#0d9488' }} />
+              <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                {data.length} deposit{data.length !== 1 ? 's' : ''} found
+              </p>
+            </div>
+          )}
+          <DataTable columns={COLUMNS} data={data} emptyText="No deposits yet. Make your first deposit to get started!" />
         </div>
       )}
     </div>

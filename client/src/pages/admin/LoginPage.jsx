@@ -34,14 +34,14 @@ export default function AdminLogin() {
       minHeight: '100vh',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '2rem 1.25rem',
-      background: 'var(--navy-bg)',
+      background: '#f8fafc',
       position: 'relative',
       overflow: 'hidden'
     }}>
       {/* Background glow */}
       <div style={{
         position: 'fixed', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 60% 60% at 50% 30%, rgba(249,115,22,0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse 60% 60% at 50% 30%, rgba(13,148,136,0.04) 0%, transparent 70%)',
       }} />
 
       <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 10 }}>
@@ -49,24 +49,20 @@ export default function AdminLogin() {
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="fade-in">
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
             <div style={{
-              width: 56, height: 56, borderRadius: 16,
-              background: 'linear-gradient(135deg, var(--orange), var(--red))',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 40px rgba(249,115,22,0.3)',
-              border: '1px solid rgba(255,255,255,0.2)'
+              width: 'auto', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
-              <Cpu size={28} color="#fff" />
+              <img src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png" alt="GlobalFX Logo" style={{ height: 56, width: 'auto' }} />
             </div>
             <div style={{ textAlign: 'left' }}>
-              <p style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-primary)', lineHeight: 1.1 }}>
+              <p style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-main)', lineHeight: 1.1 }}>
                 GLOBALFX
               </p>
-              <p style={{ fontSize: '0.75rem', color: 'var(--orange)', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
                 Command Center
               </p>
             </div>
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
             System Authorization
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', fontWeight: 500 }}>
@@ -87,14 +83,13 @@ export default function AdminLogin() {
 
         {/* Login Card */}
         <div style={{
-          background: 'var(--panel-bg)',
-          border: '1px solid var(--border)',
+          background: '#ffffff',
+          border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-lg)',
           padding: '2.5rem',
-          boxShadow: 'var(--shadow-lg)',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.06)',
         }} className="scale-in">
-          {/* Top accent */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg, var(--orange), var(--red))', borderRadius: '4px 4px 0 0' }} />
+
 
           <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {/* Email */}
@@ -109,7 +104,11 @@ export default function AdminLogin() {
                   type="email"
                   placeholder="admin@globalfx.system"
                   className="input"
-                  style={{ paddingLeft: '3rem', height: 52, fontSize: '0.9375rem' }}
+                  style={{
+                    paddingLeft: '3rem', height: 52, fontSize: '0.9375rem',
+                    color: 'var(--text-main)', background: '#f8fafc',
+                    border: '1.5px solid var(--border-subtle)'
+                  }}
                   autoComplete="email"
                 />
               </div>
@@ -128,7 +127,12 @@ export default function AdminLogin() {
                   type={showPw ? 'text' : 'password'}
                   placeholder="••••••••••••"
                   className="input"
-                  style={{ paddingLeft: '3rem', paddingRight: '3rem', height: 52, fontSize: '0.9375rem', letterSpacing: '0.1em' }}
+                  style={{
+                    paddingLeft: '3rem', paddingRight: '3rem', height: 52,
+                    fontSize: '0.9375rem', letterSpacing: '0.1em',
+                    color: 'var(--text-main)', background: '#f8fafc',
+                    border: '1.5px solid var(--border-subtle)'
+                  }}
                   autoComplete="current-password"
                 />
                 <button
@@ -154,13 +158,15 @@ export default function AdminLogin() {
               className="btn-primary"
               style={{
                 width: '100%', height: 56, marginTop: '0.5rem', fontSize: '1rem',
+                fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em',
                 background: 'linear-gradient(135deg, var(--orange), var(--red))',
-                borderColor: 'transparent', boxShadow: '0 8px 30px rgba(249,115,22,0.2)'
+                color: '#ffffff',
+                borderColor: 'transparent', boxShadow: '0 8px 30px rgba(249,115,22,0.4)'
               }}
             >
               {loading
                 ? <Loader2 size={24} className="animate-spin" />
-                : <><Shield size={20} /> <span>Initialize Authorization</span></>
+                : <><Shield size={20} /> <span style={{ color: '#fff' }}>Initialize Authorization</span></>
               }
             </button>
           </form>

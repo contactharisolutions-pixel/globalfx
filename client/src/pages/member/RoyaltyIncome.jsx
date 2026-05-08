@@ -47,7 +47,7 @@ export default function RoyaltyIncome() {
            </div>
         </Panel>
 
-        <Panel style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <Panel style={{ background: 'rgba(0,0,0,0.02)' }}>
            <div style={{ display: 'flex', gap: '1rem' }}>
               <Info size={20} style={{ color: 'var(--cyan)', flexShrink: 0, marginTop: '0.25rem' }} />
               <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
@@ -61,7 +61,7 @@ export default function RoyaltyIncome() {
       <Panel>
          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
             <Target size={20} style={{ color: 'var(--cyan)' }} />
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Qualification Progress</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>Qualification Progress</h3>
          </div>
          <div style={{ overflowX: 'auto' }}>
             <table className="data-table">
@@ -82,7 +82,7 @@ export default function RoyaltyIncome() {
                        <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                              <Award size={16} style={{ color: r.achieved ? '#EAB308' : 'var(--text-faint)' }} />
-                             <span style={{ fontWeight: 800, color: r.achieved ? 'var(--text-primary)' : 'var(--text-muted)' }}>{r.name}</span>
+                             <span style={{ fontWeight: 800, color: r.achieved ? 'var(--text-main)' : 'var(--text-muted)' }}>{r.name}</span>
                           </div>
                        </td>
                        <td style={{ fontWeight: 700 }}>{fmt(r.target)}</td>

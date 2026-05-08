@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Search, UserCheck, UserX, Plus, Eye, Loader2, User, Mail, DollarSign, Activity, Calendar, ShieldAlert, LogIn, Phone, Globe, Lock, ShieldCheck, History } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { adminApi } from '../../store/useAdminStore'
@@ -180,37 +180,36 @@ export default function MembersPage() {
       {loading ? <AdminSpinner /> : <AdminTable columns={cols} data={members} emptyText="No matching entities discovered in the registry." />}
       <Pagination page={page} pages={pages} onPage={(p) => load(p)} />
 
-      {/* Details Modal */}
       {modal?.type === 'details' && (
-        <AdminModal title={`Deep Profile Analysis â€” ${memberDetails?.name || 'Loading...'}`} onClose={() => { setModal(null); setMemberDetails(null); }}>
+        <AdminModal title={`Deep Profile Analysis — ${memberDetails?.name || 'Loading...'}`} onClose={() => { setModal(null); setMemberDetails(null); }}>
            {detailsLoading ? <AdminSpinner /> : (
              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.04)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)' }}>
                       <p style={{ fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem' }}>Contact Intel</p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem' }}><Mail size={12} /> {memberDetails.email}</div>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem' }}><Phone size={12} /> {memberDetails.phone}</div>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: '#f1f5f9' }}><Mail size={12} /> {memberDetails.email}</div>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: '#f1f5f9' }}><Phone size={12} /> {memberDetails.phone}</div>
                       </div>
                    </div>
-                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.04)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)' }}>
                       <p style={{ fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem' }}>Network Lineage</p>
-                      <p style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Sponsor: {memberDetails.sponsor ? `${memberDetails.sponsor.name} (#${memberDetails.sponsor.user_id})` : 'System'}</p>
+                      <p style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#f1f5f9' }}>Sponsor: {memberDetails.sponsor ? `${memberDetails.sponsor.name} (#${memberDetails.sponsor.user_id})` : 'System'}</p>
                       <p style={{ fontSize: '0.75rem', color: 'var(--cyan)' }}>Direct Referrals: {memberDetails.referrals?.length || 0}</p>
                    </div>
-                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.04)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)' }}>
                       <p style={{ fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem' }}>Financial State</p>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}><span>Fund:</span> <b style={{ color: 'var(--text-primary)' }}>{fmt(memberDetails.fund_wallet_balance)}</b></div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}><span>Profit:</span> <b style={{ color: 'var(--green)' }}>{fmt(memberDetails.income_wallet_balance)}</b></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', color: '#cbd5e1' }}><span>Fund:</span> <b style={{ color: '#f1f5f9' }}>{fmt(memberDetails.fund_wallet_balance)}</b></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', color: '#cbd5e1' }}><span>Profit:</span> <b style={{ color: 'var(--green)' }}>{fmt(memberDetails.income_wallet_balance)}</b></div>
                    </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem' }}>
                    <div style={{ flex: 1 }}>
-                      <h4 style={{ fontSize: '0.75rem', fontWeight: 900, marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Activity size={14} /> ACTIVE PACKAGES</h4>
+                      <h4 style={{ fontSize: '0.75rem', fontWeight: 900, marginBottom: '0.75rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Activity size={14} /> ACTIVE PACKAGES</h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                          {memberDetails.packages?.slice(0,3).map(p => (
-                            <div key={p.id} style={{ fontSize: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: 8, display: 'flex', justifyContent: 'space-between' }}>
+                            <div key={p.id} style={{ fontSize: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.06)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', color: '#f1f5f9' }}>
                                <span>{fmt(p.amount)} Trade</span>
                                <span style={{ color: 'var(--cyan)' }}>{new Date(p.started_at).toLocaleDateString()}</span>
                             </div>
@@ -219,10 +218,10 @@ export default function MembersPage() {
                       </div>
                    </div>
                    <div style={{ flex: 1 }}>
-                      <h4 style={{ fontSize: '0.75rem', fontWeight: 900, marginBottom: '0.75rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><History size={14} /> RECENT INCOME</h4>
+                      <h4 style={{ fontSize: '0.75rem', fontWeight: 900, marginBottom: '0.75rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><History size={14} /> RECENT INCOME</h4>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                          {memberDetails.bonuses?.slice(0,3).map(b => (
-                            <div key={b.id} style={{ fontSize: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: 8, display: 'flex', justifyContent: 'space-between' }}>
+                            <div key={b.id} style={{ fontSize: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.06)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', color: '#f1f5f9' }}>
                                <span style={{ textTransform: 'uppercase' }}>{b.type}</span>
                                <span style={{ color: 'var(--green)' }}>+{fmt(b.amount)}</span>
                             </div>
@@ -231,7 +230,7 @@ export default function MembersPage() {
                    </div>
                 </div>
 
-                <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.04)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)' }}>
                    <p style={{ fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Lock size={11} /> Security Override — Reset Password</p>
                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                       <input

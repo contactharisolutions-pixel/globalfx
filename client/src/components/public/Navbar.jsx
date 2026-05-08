@@ -4,6 +4,7 @@ import { Menu, X, ChevronRight, User } from 'lucide-react'
 
 const NAV_LINKS = [
   { label: 'Markets',      href: '/#markets' },
+  { label: 'Business Plan', href: 'https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Business%20Plan.pdf' },
   { label: 'What is Crypto?', href: '/what-is-crypto' },
   { label: 'Crypto Forex', href: '/crypto-forex' },
   { label: 'Why GlobalFX', href: '/why-globalfx' },
@@ -53,10 +54,10 @@ export default function Navbar() {
         className={`navbar fixed top-0 left-0 right-0 z-50 ${scrolled ? 'scrolled py-3' : 'py-5'}`}
         style={{ transition: 'all 0.3s' }}
       >
-        <div className="container flex items-center justify-between">
+        <div className="nav-container" style={{ width: '100%', maxWidth: '100%', padding: '0 4rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <img src="/src/assets/images/logo.png" alt="GlobalFX Logo" style={{ height: 48, width: 'auto' }} />
+            <img src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png" alt="GlobalFX Logo" style={{ height: 48, width: 'auto' }} />
           </Link>
 
           {/* Desktop Nav Links */}
@@ -74,6 +75,25 @@ export default function Navbar() {
                     key={label}
                     href={href}
                     onClick={(e) => handleAnchor(e, href)}
+                    style={{
+                      padding: '0.5rem 1.125rem',
+                      fontSize: '0.875rem', fontWeight: 600,
+                      color: 'var(--text-sub)',
+                      borderRadius: 9999,
+                      textDecoration: 'none',
+                      transition: 'color 0.2s, background 0.2s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--primary)'; e.currentTarget.style.background = 'rgba(13,148,136,0.06)' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-sub)'; e.currentTarget.style.background = 'transparent' }}
+                  >
+                    {label}
+                  </a>
+                ) : href.startsWith('http') ? (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       padding: '0.5rem 1.125rem',
                       fontSize: '0.875rem', fontWeight: 600,
@@ -153,22 +173,43 @@ export default function Navbar() {
           display: 'flex', flexDirection: 'column',
           animation: 'fadeIn 0.25s ease',
         }}>
-          <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="nav-container" style={{ width: '100%', padding: '1.5rem 4rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => setMenuOpen(false)}>
-              <img src="/src/assets/images/logo.png" alt="GlobalFX Logo" style={{ height: 38, width: 'auto' }} />
+              <img src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png" alt="GlobalFX Logo" style={{ height: 38, width: 'auto' }} />
             </Link>
             <button onClick={() => setMenuOpen(false)} style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1.5px solid var(--border-subtle)', borderRadius: 10, background: '#f8fafc', cursor: 'pointer', color: 'var(--text-main)' }}>
               <X size={20} />
             </button>
           </div>
 
-          <div className="container" style={{ flex: 1 }}>
+          <div className="nav-container" style={{ width: '100%', padding: '0 4rem', flex: 1 }}>
             {NAV_LINKS.map(({ label, href }) => (
               href.startsWith('/#') ? (
                 <a
                   key={label}
                   href={href}
                   onClick={(e) => handleAnchor(e, href)}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '1.25rem 0',
+                    borderBottom: '1px solid #f1f5f9',
+                    textDecoration: 'none',
+                    color: 'var(--text-main)',
+                    fontSize: '1.5rem', fontWeight: 800,
+                    fontFamily: 'Outfit, sans-serif',
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {label}
+                  <ChevronRight size={20} style={{ color: 'var(--border-medium)' }} />
+                </a>
+              ) : href.startsWith('http') ? (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     padding: '1.25rem 0',
@@ -206,12 +247,18 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="container" style={{ paddingBottom: '2.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="nav-container" style={{ width: '100%', padding: '0 4rem 2.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <Link to="/login" className="btn-secondary" style={{ padding: '1rem', fontSize: '1.125rem', justifyContent: 'center' }} onClick={() => setMenuOpen(false)}>Login</Link>
             <Link to="/register" className="btn-primary" style={{ padding: '1rem', fontSize: '1.125rem', justifyContent: 'center' }} onClick={() => setMenuOpen(false)}>Register</Link>
           </div>
         </div>
       )}
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 1023px) { 
+          .nav-container { padding: 0 1.5rem !important; } 
+        }
+      `}</style>
     </>
   )
 }

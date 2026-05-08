@@ -10,8 +10,8 @@ import { PageHeader, StatCard, Panel } from '../../components/member/ui'
 const schema = z.object({
   targetUserId: z.string().min(4, 'Enter a valid Member ID').max(10, 'Invalid Member ID'),
   amount:       z.coerce.number()
-    .min(20, 'Minimum activation is $20')
-    .refine(val => val % 10 === 0, 'Amount must be in multiples of $10'),
+    .min(25, 'Minimum activation is $25')
+    .refine(val => val === 25 || val % 10 === 0, 'Amount must be $25 or in multiples of $10'),
   pin:          z.string().length(6, 'Enter your 6-digit transaction PIN'),
 })
 
@@ -112,7 +112,7 @@ export default function ActivateID() {
               </div>
               <div>
                 <p style={{ fontSize: '0.6875rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>Fund Wallet Balance</p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.2 }}>
                   {balanceLoading ? <Loader2 size={20} className="animate-spin" style={{ color: 'var(--cyan)' }} /> : fmt(fundBalance)}
                 </p>
               </div>
@@ -153,7 +153,7 @@ export default function ActivateID() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Investment Amount ($)</label>
-                  <input {...register('amount')} type="number" min={20} step={10} placeholder="Min. $20 (Multiples of $10)" className="input" />
+                  <input {...register('amount')} type="number" min={25} step={10} placeholder="Min. $25 (Multiples of $10)" className="input" />
                   {errors.amount && <p style={{ color: 'var(--red)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.amount.message}</p>}
                 </div>
 
@@ -186,10 +186,10 @@ export default function ActivateID() {
         {/* Rules panel */}
         <div>
           <Panel style={{ background: 'rgba(168,85,247,0.02)', border: '1px solid rgba(168,85,247,0.2)' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1rem' }}>ID Activation Rules</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1rem' }}>ID Activation Rules</h3>
             <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.8, paddingLeft: '1.25rem' }}>
               <li>Activation uses your <strong>Fund Wallet</strong> balance.</li>
-              <li>Minimum activation amount is <strong>$20</strong> (Multiples of $10).</li>
+              <li>Minimum activation amount is <strong>$25</strong> (Multiples of $10).</li>
               <li>Maximum activation per transaction is <strong>$5,000</strong>.</li>
               <li>The target member will be marked as <strong>Active</strong> instantly.</li>
               <li>Sponsor bonuses will be distributed to the target member's uplines.</li>

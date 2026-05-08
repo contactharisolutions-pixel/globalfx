@@ -3,42 +3,42 @@ import { Check, Star, Zap, Crown, ArrowRight, ShieldCheck } from 'lucide-react'
 
 const PLANS = [
   {
-    icon: Zap, name: 'Starter', min: '$50', max: '$499', roi: '0.5%',
-    duration: 'Until 200% return',
-    features: ['Daily ROI payouts', 'Direct referral bonus', '15-level team income', 'Standard support'],
+    icon: Zap, name: 'Starter', min: '$25', max: '$499', roi: '2.0%',
+    duration: 'Paid until 200% return',
+    features: ['Daily profit payouts', 'Direct referral bonus', '15-level team bonus', 'Standard support'],
     featured: false, accent: '#64748b',
   },
   {
-    icon: Star, name: 'Standard', min: '$500', max: '$4,999', roi: '1.0%',
-    duration: 'Until 200% return',
-    features: ['Increased daily yield', 'Priority team bonuses', 'Detailed trade reports', 'Advanced dashboard', '24/7 Priority support'],
+    icon: Star, name: 'Standard', min: '$500', max: '$4,999', roi: '2.0%',
+    duration: 'Paid until 200% return',
+    features: ['Higher daily profits', 'Priority team bonuses', 'Detailed daily reports', 'Personal dashboard', '24/7 Priority support'],
     featured: true, badge: 'Most Popular', accent: '#0d9488',
   },
   {
     icon: Crown, name: 'Premium', min: '$5,000', max: 'Unlimited', roi: '2.0%',
-    duration: 'Until 200% return',
-    features: ['Maximum daily ROI', 'VIP referral rates', 'Account manager', 'Private trade signals', 'Instant withdrawals'],
+    duration: 'Paid until 200% return',
+    features: ['Maximum daily profits', 'VIP referral rates', 'Dedicated manager', 'Priority withdrawals', 'Exclusive bonuses'],
     featured: false, accent: '#3b82f6',
   },
 ]
 
 export default function PlansSection() {
   return (
-    <section id="plans" style={{ padding: '5rem 0', background: '#f8fafc', position: 'relative', overflow: 'hidden' }}>
+    <section id="plans" style={{ padding: '6rem 0', background: '#f8fafc', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to bottom, #fff, transparent)', pointerEvents: 'none' }} />
 
       <div className="container">
-        <div style={{ textAlign: 'center', maxWidth: '40rem', margin: '0 auto 4rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#fff', border: '1px solid var(--border-subtle)', borderRadius: 9999, marginBottom: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-            <ShieldCheck size={14} style={{ color: 'var(--primary)' }} />
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Flexible Packages</span>
+        <div style={{ textAlign: 'center', maxWidth: '40rem', margin: '0 auto 5rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 9999, marginBottom: '1.5rem', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <ShieldCheck size={14} style={{ color: '#0d9488' }} />
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Flexible Plans</span>
           </div>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
-            Tailored Investment{' '}
-            <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Strategies</span>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif', marginBottom: '1.25rem', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            Choose Your{' '}
+            <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Investment Plan</span>
           </h2>
-          <p style={{ fontSize: '1.0625rem', color: 'var(--text-sub)', lineHeight: 1.75 }}>
-            Choose a plan that fits your financial goals. Every package is powered by our core AI engine for consistent, transparent yields.
+          <p style={{ fontSize: '1.0625rem', color: '#64748b', lineHeight: 1.75, fontWeight: 500 }}>
+            Pick a package that fits your goals. Every plan is designed to grow your money daily with full transparency and security.
           </p>
         </div>
 
@@ -47,59 +47,61 @@ export default function PlansSection() {
             <div key={plan.name} style={{
               position: 'relative',
               background: '#fff',
-              border: plan.featured ? `2px solid var(--primary)` : '1.5px solid var(--border-subtle)',
+              border: plan.featured ? `2px solid #0d9488` : '1.5px solid #e2e8f0',
               borderRadius: 32,
-              padding: plan.featured ? '2.5rem 2rem' : '2rem',
-              boxShadow: plan.featured ? '0 20px 60px rgba(13,148,136,0.12)' : '0 4px 16px rgba(0,0,0,0.04)',
-              transition: 'transform 0.3s, box-shadow 0.3s',
-              marginTop: plan.featured ? 0 : 0,
+              padding: plan.featured ? '3rem 2rem' : '2.5rem 2rem',
+              boxShadow: plan.featured ? '0 32px 80px rgba(13,148,136,0.12)' : '0 4px 20px rgba(0,0,0,0.04)',
+              transition: 'all 0.3s ease',
             }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 24px 64px rgba(0,0,0,0.1)' }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = plan.featured ? '0 20px 60px rgba(13,148,136,0.12)' : '0 4px 16px rgba(0,0,0,0.04)' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-6px)'; e.currentTarget.style.boxShadow = '0 32px 80px rgba(0,0,0,0.1)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = plan.featured ? '0 32px 80px rgba(13,148,136,0.12)' : '0 4px 20px rgba(0,0,0,0.04)' }}
             >
               {plan.badge && (
                 <div style={{
                   position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
-                  background: 'var(--primary)', color: '#fff',
-                  fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
-                  padding: '0.375rem 1rem', borderRadius: 9999,
-                  boxShadow: '0 4px 12px rgba(13,148,136,0.3)',
+                  background: '#0d9488', color: '#fff',
+                  fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.12em',
+                  padding: '0.5rem 1.25rem', borderRadius: 9999,
+                  boxShadow: '0 8px 20px rgba(13,148,136,0.3)',
                   whiteSpace: 'nowrap',
                 }}>
                   {plan.badge}
                 </div>
               )}
 
-              <div style={{ marginBottom: '1.75rem' }}>
+              <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
                 <div style={{
-                  width: 52, height: 52, borderRadius: 16, marginBottom: '1.25rem',
-                  background: plan.featured ? 'var(--primary)' : '#f8fafc',
+                  width: 60, height: 60, borderRadius: 20, marginBottom: '1.25rem',
+                  background: plan.featured ? '#0d9488' : '#f8fafc',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: plan.featured ? '0 8px 24px rgba(13,148,136,0.25)' : 'none',
+                  margin: '0 auto 1.5rem',
                 }}>
-                  <plan.icon size={26} style={{ color: plan.featured ? '#fff' : plan.accent }} />
+                  <plan.icon size={28} style={{ color: plan.featured ? '#fff' : plan.accent }} />
                 </div>
-                <h3 style={{ fontSize: '1.375rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif', marginBottom: '0.25rem' }}>{plan.name}</h3>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 600 }}>Investment: {plan.min} – {plan.max}</p>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif', marginBottom: '0.5rem' }}>{plan.name}</h3>
+                <div style={{ padding: '0.375rem 0.875rem', background: '#f1f5f9', borderRadius: 9999, display: 'inline-block' }}>
+                   <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 800, margin: 0 }}>Investment: {plan.min} – {plan.max}</p>
+                </div>
               </div>
 
-              <div style={{ background: '#f8fafc', borderRadius: 16, padding: '1.25rem', marginBottom: '1.75rem', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.375rem', marginBottom: '0.25rem' }}>
-                  <span style={{ fontSize: '2.75rem', fontWeight: 900, color: plan.featured ? 'var(--primary)' : 'var(--text-main)', fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>{plan.roi}</span>
-                  <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-muted)' }}>Daily</span>
+              <div style={{ background: '#f8fafc', borderRadius: 20, padding: '1.5rem', marginBottom: '2rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '0.375rem', marginBottom: '0.25rem' }}>
+                  <span style={{ fontSize: '2.5rem', fontWeight: 900, color: plan.featured ? '#0d9488' : '#0f172a', fontFamily: 'Outfit, sans-serif', lineHeight: 1 }}>{plan.roi.split(' - ')[1] || plan.roi}</span>
+                  <span style={{ fontSize: '1rem', fontWeight: 800, color: '#94a3b8' }}>Daily</span>
                 </div>
-                <p style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{plan.duration}</p>
+                <p style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{plan.duration}</p>
               </div>
 
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.875rem', marginBottom: '2rem' }}>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2.5rem', padding: 0 }}>
                 {plan.features.map(f => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-sub)' }}>
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', fontSize: '0.9375rem', fontWeight: 600, color: '#475569' }}>
                     <div style={{
-                      width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                      width: 24, height: 24, borderRadius: '50%', flexShrink: 0,
                       background: plan.featured ? 'rgba(13,148,136,0.1)' : '#f1f5f9',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <Check size={12} style={{ color: plan.featured ? 'var(--primary)' : '#94a3b8' }} strokeWidth={3} />
+                      <Check size={14} style={{ color: plan.featured ? '#0d9488' : '#94a3b8' }} strokeWidth={3} />
                     </div>
                     {f}
                   </li>
@@ -107,28 +109,31 @@ export default function PlansSection() {
               </ul>
 
               <Link to="/register" style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                width: '100%', padding: '0.875rem',
-                background: plan.featured ? 'var(--primary)' : '#fff',
-                color: plan.featured ? '#fff' : 'var(--text-main)',
-                border: plan.featured ? 'none' : '1.5px solid var(--border-medium)',
-                borderRadius: 16, fontWeight: 800, fontSize: '0.9375rem',
-                textDecoration: 'none', transition: 'background 0.2s, box-shadow 0.2s',
-                boxShadow: plan.featured ? '0 4px 16px rgba(13,148,136,0.2)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.625rem',
+                width: '100%', padding: '1rem', boxSizing: 'border-box',
+                background: plan.featured ? '#0d9488' : '#ffffff',
+                color: plan.featured ? '#fff' : '#0f172a',
+                border: plan.featured ? 'none' : '1.5px solid #e2e8f0',
+                borderRadius: 16, fontWeight: 800, fontSize: '1rem',
+                textDecoration: 'none', transition: 'all 0.2s',
+                boxShadow: plan.featured ? '0 8px 24px rgba(13,148,136,0.3)' : 'none',
+                fontFamily: 'Outfit, sans-serif',
               }}
-                onMouseEnter={e => { e.currentTarget.style.background = plan.featured ? 'var(--primary-hover)' : '#f8fafc' }}
-                onMouseLeave={e => { e.currentTarget.style.background = plan.featured ? 'var(--primary)' : '#fff' }}
+                onMouseEnter={e => { if (!plan.featured) { e.currentTarget.style.borderColor = '#0d9488'; e.currentTarget.style.background = '#f0fdfa' } }}
+                onMouseLeave={e => { if (!plan.featured) { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#ffffff' } }}
               >
-                Deploy Now <ArrowRight size={18} />
+                Join This Plan <ArrowRight size={20} />
               </Link>
             </div>
           ))}
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-          <ShieldCheck size={16} style={{ color: '#10b981' }} />
-          Capital is managed through professional quantitative strategies with strict risk protocols.
-        </p>
+        <div style={{ marginTop: '4rem', padding: '1.25rem 2rem', background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: 24, display: 'inline-flex', alignItems: 'center', gap: '1rem', width: '100%', boxSizing: 'border-box', justifyContent: 'center' }}>
+          <ShieldCheck size={20} style={{ color: '#10b981' }} />
+          <p style={{ fontSize: '0.9375rem', color: '#64748b', fontWeight: 600, margin: 0 }}>
+             Your capital is managed by experts with a focus on <strong style={{ color: '#0f172a' }}>consistent growth</strong> and <strong style={{ color: '#0f172a' }}>maximum security</strong>.
+          </p>
+        </div>
       </div>
 
       <style>{`

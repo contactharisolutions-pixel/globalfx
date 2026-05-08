@@ -22,7 +22,7 @@ router.use(authenticate)
 // ─── POST /api/deposits/create ────────────────────────────────
 router.post('/create', upload.single('screenshot'), async (req, res, next) => {
   const { amount, tx_hash } = req.body
-  if (!amount || amount < 10) return res.status(400).json({ error: 'Minimum deposit is $10' })
+  if (!amount || amount < 25) return res.status(400).json({ error: 'Minimum deposit is $25' })
   if (!req.file)             return res.status(400).json({ error: 'Payment screenshot required' })
 
   try {

@@ -1,97 +1,105 @@
 import { ShieldCheck, Zap, Shield, Users, Headphones, BadgeDollarSign, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const REASONS = [
   {
     icon: ShieldCheck,
-    title: 'Full Transparency',
-    desc: 'Audit every single AI-executed trade in real-time. No hidden operations.',
-    color: 'text-primary',
-    bg: 'bg-primary/5'
+    title: 'Fully Transparent',
+    desc: 'See exactly how your money is working. Daily profit reports are available to every member.',
+    color: '#0d9488', bg: '#f0fdfa', border: 'rgba(13,148,136,0.15)',
   },
   {
     icon: Zap,
-    title: 'Instant Rewards',
-    desc: 'Receive referral bonuses the moment your network deploys their capital.',
-    color: 'text-orange-500',
-    bg: 'bg-orange-50'
+    title: 'Instant Bonuses',
+    desc: 'When someone you refer deposits, you receive your referral bonus immediately.',
+    color: '#f97316', bg: '#fff7ed', border: 'rgba(249,115,22,0.15)',
   },
   {
     icon: Shield,
-    title: 'Asset Protection',
-    desc: 'Cold-storage wallets and multi-sig protocols for institutional security.',
-    color: 'text-success',
-    bg: 'bg-success/5'
+    title: 'Your Funds Are Safe',
+    desc: 'We use bank-grade security to protect your funds and personal information at all times.',
+    color: '#10b981', bg: '#f0fdf4', border: 'rgba(16,185,129,0.15)',
   },
   {
     icon: Users,
-    title: 'Network Growth',
-    desc: 'Earn from a powerful 15-level team structure as your alliance expands.',
-    color: 'text-accent',
-    bg: 'bg-accent/5'
+    title: 'Earn From Your Team',
+    desc: 'Build a team and earn bonuses from up to 15 levels of your network.',
+    color: '#3b82f6', bg: '#eff6ff', border: 'rgba(59,130,246,0.15)',
   },
   {
     icon: Headphones,
-    title: 'Expert Support',
-    desc: '24/7 access to dedicated support agents and technical specialists.',
-    color: 'text-indigo-600',
-    bg: 'bg-indigo-50'
+    title: 'Always Available',
+    desc: 'Our support team is online 24/7. Got a question? We respond quickly.',
+    color: '#7c3aed', bg: '#f5f3ff', border: 'rgba(124,58,237,0.15)',
   },
   {
     icon: BadgeDollarSign,
-    title: 'No Entry Fees',
-    desc: 'Zero registration or monthly maintenance fees. You keep what you earn.',
-    color: 'text-rose-500',
-    bg: 'bg-rose-50'
+    title: 'No Joining Fees',
+    desc: 'Registering is completely free. You only invest what you choose — and you keep all your profits.',
+    color: '#f43f5e', bg: '#fff1f2', border: 'rgba(244,63,94,0.15)',
   },
 ]
 
 export default function WhyUsSection() {
   return (
-    <section id="why-us" className="section bg-slate-50 relative overflow-hidden">
-      {/* Architectural decoration */}
-      <div className="absolute top-0 right-0 w-[40%] h-full bg-white skew-x-[-15deg] translate-x-1/2 pointer-events-none border-l border-slate-100 shadow-2xl" />
+    <section id="why-us" style={{ padding: '6rem 0', background: '#f8fafc', position: 'relative', overflow: 'hidden' }}>
+      {/* Arch decoration */}
+      <div style={{ position: 'absolute', top: 0, right: 0, width: '35%', height: '100%', background: 'linear-gradient(135deg, #ffffff, #f8fafc)', clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0% 100%)', pointerEvents: 'none', borderLeft: '1px solid #f1f5f9' }} />
 
-      <div className="container relative z-10">
-        <div className="grid lg:grid-cols-12 gap-16 items-center">
-          
-          <div className="lg:col-span-4 space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-border-subtle rounded-full text-primary text-[10px] font-black uppercase tracking-widest shadow-sm">
-              <ShieldCheck size={14} /> The GlobalFX Edge
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '5rem', alignItems: 'start' }} id="why-grid">
+
+          {/* Left: Header */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', position: 'sticky', top: '7rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#f0fdfa', border: '1.5px solid rgba(13,148,136,0.2)', borderRadius: 9999, alignSelf: 'flex-start' }}>
+              <ShieldCheck size={13} style={{ color: '#0d9488' }} />
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Why Choose Us</span>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-black text-text-main leading-tight tracking-tight">
-              Built for the <br />
-              <span className="gradient-text">Next Generation</span> <br />
-              of Investors
+
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 3.5vw, 2.625rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0 }}>
+              Built for You,<br />
+              <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>By Experts</span>
             </h2>
-            <p className="text-lg text-text-sub leading-relaxed">
-              We've eliminated the barriers to high-performance trading. Thousands of users trust us because our platform is engineered for consistency and security.
+
+            <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>
+              Thousands of members trust us because we built a platform that's honest, secure, and delivers results consistently.
             </p>
-            <div className="pt-4">
-               <button className="flex items-center gap-3 font-black text-text-main group">
-                  EXPLORE OUR TECHNOLOGY <div className="w-10 h-10 rounded-full bg-white border border-border-subtle flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-sm"><ArrowRight size={18} /></div>
-               </button>
-            </div>
+
+            <Link
+              to="/register"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.9rem 1.75rem', background: 'linear-gradient(135deg, #0d9488, #0f766e)', color: '#fff', fontWeight: 800, fontSize: '0.9375rem', borderRadius: 12, textDecoration: 'none', boxShadow: '0 6px 20px rgba(13,148,136,0.25)', alignSelf: 'flex-start', fontFamily: 'Outfit, sans-serif' }}
+            >
+              Join Free <ArrowRight size={16} />
+            </Link>
           </div>
 
-          <div className="lg:col-span-8 grid sm:grid-cols-2 gap-6">
-            {REASONS.map((item, i) => (
-              <div 
-                key={i} 
-                className="group p-8 rounded-[32px] bg-white border border-border-subtle hover:border-transparent hover:shadow-2xl transition-all duration-300"
-              >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border-2 border-white shadow-xl group-hover:scale-110 transition-transform ${item.bg} ${item.color}`}>
-                  <item.icon size={28} />
+          {/* Right: Feature Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }} id="why-cards">
+            {REASONS.map((item, i) => {
+              const Icon = item.icon
+              return (
+                <div
+                  key={i}
+                  style={{ padding: '1.75rem', background: '#ffffff', border: `1.5px solid ${item.border}`, borderRadius: 20, transition: 'all 0.2s ease', cursor: 'default' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 12px 32px ${item.color}18` }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+                >
+                  <div style={{ width: 48, height: 48, borderRadius: 14, background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', border: `1px solid ${item.border}` }}>
+                    <Icon size={22} style={{ color: item.color }} strokeWidth={2} />
+                  </div>
+                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.625rem' }}>{item.title}</h3>
+                  <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>{item.desc}</p>
                 </div>
-                <h3 className="text-xl font-black text-text-main mb-3">{item.title}</h3>
-                <p className="text-text-sub text-sm font-semibold leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
+              )
+            })}
           </div>
-
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1023px) { #why-grid { grid-template-columns: 1fr !important; gap: 3rem !important; } #why-cards { grid-template-columns: 1fr 1fr !important; } }
+        @media (max-width: 639px)  { #why-cards { grid-template-columns: 1fr !important; } }
+      `}</style>
     </section>
   )
 }
