@@ -72,9 +72,17 @@ router.all('/run', verifyCronSecret, async (req, res) => {
       results.daily_roi = 'skipped (weekend)'
     }
 
-    // 3. Reward Maturation — every day (time-based: 30-day lock, must stay in cron)
+    // 3. Reward Maturation — every day
     await matureRewards()
     results.reward_maturation = 'completed'
+
+    // 4. Global Rank & Royalty Update — every day
+    //    Ensures uplines are promoted as their team business grows.
+    const { processRewards } = require('../services/rewardEngine')
+    const { updateRoyaltyRanks } = require('../services/royaltyEngine')
+    await processRewards()
+    await updateRoyaltyRanks()
+    results.rank_updates = 'completed'
 
     const duration = ((Date.now() - startTime) / 1000).toFixed(2)
     console.log(`[CronTrigger] Completed in ${duration}s`, results)

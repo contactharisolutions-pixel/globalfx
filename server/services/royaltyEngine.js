@@ -54,22 +54,33 @@ async function updateRoyaltyRanks() {
 async function distributeMonthlyRoyalty() {
   console.log('[RoyaltyEngine] Starting monthly royalty distribution...')
   
-  // Calculate company turnover for the previous month
+  // Calculate company turnover for the previous month in IST
+  // IST is UTC+5:30. We want the full calendar month that just ended.
   const now = new Date()
-  const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const IST_OFFSET = 5.5 * 60 * 60 * 1000
+  const istNow = new Date(now.getTime() + IST_OFFSET)
+  
+  // First day of CURRENT month IST
+  const firstDayThisMonthIST = new Date(istNow.getUTCFullYear(), istNow.getUTCMonth(), 1)
+  // First day of PREVIOUS month IST
+  const firstDayLastMonthIST = new Date(istNow.getUTCFullYear(), istNow.getUTCMonth() - 1, 1)
+  
+  // Convert these IST boundaries back to UTC for Prisma queries
+  const startUTC = new Date(firstDayLastMonthIST.getTime() - IST_OFFSET)
+  const endUTC   = new Date(firstDayThisMonthIST.getTime() - IST_OFFSET)
   
   const turnoverRes = await prisma.tradePackage.aggregate({
     where: {
       started_at: {
-        gte: firstDayLastMonth,
-        lt:  firstDayThisMonth
+        gte: startUTC,
+        lt:  endUTC
       }
     },
     _sum: { amount: true }
   })
 
   const turnover = parseFloat(turnoverRes._sum.amount || 0)
+  console.log(`[RoyaltyEngine] turnover audit: IST Month Boundaries: ${firstDayLastMonthIST.toDateString()} to ${firstDayThisMonthIST.toDateString()}`)
   console.log(`[RoyaltyEngine] Company Turnover (Last Month): $${turnover}`)
 
   if (turnover <= 0) {

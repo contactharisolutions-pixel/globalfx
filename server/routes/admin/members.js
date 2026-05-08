@@ -48,11 +48,22 @@ router.get('/', async (req, res, next) => {
           referral_code: true, created_at: true,
           sponsor: { select: { user_id: true, name: true } },
           _count:  { select: { referrals: true, packages: true } },
+          packages: {
+            where: { status: 'active' },
+            select: { amount: true }
+          }
         },
       }),
       prisma.user.count({ where }),
     ])
-    res.json({ members, total, page, pages: Math.ceil(total / pageSize) })
+
+    const membersWithTotal = members.map(m => {
+      const total_fund = m.packages.reduce((acc, p) => acc + parseFloat(p.amount || 0), 0)
+      const { packages, ...rest } = m
+      return { ...rest, total_fund }
+    })
+
+    res.json({ members: membersWithTotal, total, page, pages: Math.ceil(total / pageSize) })
   } catch (err) { next(err) }
 })
 
@@ -119,36 +130,46 @@ router.post('/:id/add-balance', async (req, res, next) => {
   try {
     const field = wallet === 'fund' ? 'fund_wallet_balance' : 'income_wallet_balance'
     await prisma.$transaction(async (tx) => {
+      const target = await tx.user.findUnique({ where: { id: parseInt(req.params.id) } })
+      if (!target) throw new Error('Member not found')
+
+      const wasInactive    = target.status === 'inactive'
+      const shouldActivate = wasInactive || target.status === 'blocked'
+      const finalRemarks   = shouldActivate ? `${remarks} (Account Activated)` : remarks
+
       const updated = await tx.user.update({
         where: { id: parseInt(req.params.id) },
-        data:  { [field]: { increment: parseFloat(amount) } },
+        data:  { 
+          [field]: { increment: amt },
+          ...(shouldActivate && { status: 'active' })
+        },
       })
+
       if (wallet === 'income') {
         await tx.incomeLedger.create({
           data: {
             user_id:       parseInt(req.params.id),
             type:          'credit',
-            amount:        parseFloat(amount),
+            amount:        amt,
             balance_after: updated.income_wallet_balance,
-            remarks:       remarks || `Admin credit by ${req.admin.email}`,
+            remarks:       finalRemarks || `Manual allocation by ${req.admin.email}`,
             reference_type: 'admin_credit',
           },
         })
       } else {
-        // Fund wallet — write to FundLedger for audit trail
         await tx.fundLedger.create({
           data: {
             user_id:       parseInt(req.params.id),
             type:          'credit',
-            amount:        parseFloat(amount),
+            amount:        amt,
             balance_after: updated.fund_wallet_balance,
-            remarks:       remarks || `Admin fund credit by ${req.admin.email}`,
+            remarks:       finalRemarks || `Manual allocation by ${req.admin.email}`,
             reference_type: 'admin_credit',
           },
         })
       }
     })
-    res.json({ message: `$${amount} added to ${wallet} wallet` })
+    res.json({ message: `$${amount} successfully allocated to ${wallet} wallet. Entity state synchronized.` })
   } catch (err) { next(err) }
 })
 
@@ -221,7 +242,7 @@ router.post('/:id/activate-package', async (req, res, next) => {
 
     // Trigger bonuses for target's sponsor chain
     if (target.sponsor_id) {
-      triggerDirectAndLevelBonus(target.id, amt).catch(console.error)
+      await triggerDirectAndLevelBonus(target.id, amt).catch(console.error)
     }
     // Instant rank/royalty re-evaluation
     processRewards().catch(console.error)

@@ -5,7 +5,7 @@ const PLANS = [
   {
     icon: Zap, name: 'Starter', min: '$25', max: '$499', roi: '2.0%',
     duration: 'Paid until 200% return',
-    features: ['Daily profit payouts', 'Direct referral bonus', '15-level team bonus', 'Standard support'],
+    features: ['Daily profit payouts', 'Direct referral bonus', '5-level team bonus', 'Standard support'],
     featured: false, accent: '#64748b',
   },
   {

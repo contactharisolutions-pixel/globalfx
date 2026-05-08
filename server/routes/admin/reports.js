@@ -75,6 +75,27 @@ router.get('/csv', async (req, res, next) => {
         b.level || '', b.remarks || '',
         b.created_at.toISOString(),
       ])
+    } else if (type === 'adjustments') {
+      const [fundAdj, incomeAdj] = await Promise.all([
+        prisma.fundLedger.findMany({
+          where: { ...dateRange, reference_type: 'admin_credit' },
+          include: { user: { select: { user_id: true, name: true } } }
+        }),
+        prisma.incomeLedger.findMany({
+          where: { ...dateRange, reference_type: 'admin_credit' },
+          include: { user: { select: { user_id: true, name: true } } }
+        })
+      ])
+      headers = ['Type', 'User ID', 'Name', 'Amount', 'Balance After', 'Remarks', 'Date']
+      const allAdj = [
+        ...fundAdj.map(a => ({ ...a, wallet: 'Fund' })),
+        ...incomeAdj.map(a => ({ ...a, wallet: 'Income' }))
+      ].sort((a, b) => b.created_at - a.created_at)
+
+      rows = allAdj.map(a => [
+        a.wallet, a.user.user_id, a.user.name, a.amount, a.balance_after, a.remarks || '',
+        a.created_at.toISOString()
+      ])
     }
 
     if (format === 'excel') {
@@ -127,19 +148,59 @@ router.get('/business', async (req, res, next) => {
 // ─── GET /api/admin/reports/incomes ─────────────────────────
 // Detailed income reporting for ROI, Direct, Level, Reward, Royalty
 router.get('/incomes', async (req, res, next) => {
-  // The client tab uses 'roi' as the ID but the Bonus enum stores it as 'trading'
   const rawType = req.query.type || 'roi'
   const type    = rawType === 'roi' ? 'trading' : rawType
 
   const search = req.query.search || ''
   const from   = req.query.from ? new Date(req.query.from) : undefined
-  // Make 'to' end-of-day so records created ON that date are included
   const toRaw  = req.query.to
   const to     = toRaw ? (() => { const d = new Date(toRaw); d.setHours(23, 59, 59, 999); return d })() : undefined
   const page   = parseInt(req.query.page  || '1')
   const limit  = parseInt(req.query.limit || '20')
 
   try {
+    if (type === 'adjustment') {
+      const where = {
+        reference_type: 'admin_credit',
+        ...( (from || to) && { created_at: { ...(from && { gte: from }), ...(to && { lte: to }) } } ),
+        ...(search && {
+          user: {
+            OR: [
+              { user_id: { contains: search, mode: 'insensitive' } },
+              { name:    { contains: search, mode: 'insensitive' } },
+            ]
+          }
+        })
+      }
+
+      // We need to fetch from both ledgers. For simplicity in the UI, we'll merge them.
+      // But pagination is tricky. Let's just return both for now or focus on one if needed.
+      // Actually, let's just query both and merge.
+      const [fund, income] = await Promise.all([
+        prisma.fundLedger.findMany({ where, include: { user: { select: { user_id: true, name: true } } }, orderBy: { created_at: 'desc' } }),
+        prisma.incomeLedger.findMany({ where, include: { user: { select: { user_id: true, name: true } } }, orderBy: { created_at: 'desc' } }),
+      ])
+
+      const all = [...fund.map(f=>({...f, wallet: 'Fund'})), ...income.map(i=>({...i, wallet: 'Income'}))]
+        .sort((a,b) => b.created_at - a.created_at)
+
+      const total = all.length
+      const paginated = all.slice((page-1)*limit, page*limit)
+
+      // Format to look like Bonus records for UI compatibility
+      const reports = paginated.map(a => ({
+        id: a.id,
+        amount: a.amount,
+        created_at: a.created_at,
+        remarks: a.remarks,
+        user: a.user,
+        type: `Manual (${a.wallet})`,
+        from_user: null
+      }))
+
+      return res.json({ reports, total, pages: Math.ceil(total / limit) })
+    }
+
     const where = {
       ...(type !== 'all' && { type }),
       ...( (from || to) && { created_at: { ...(from && { gte: from }), ...(to && { lte: to }) } } ),

@@ -9,6 +9,7 @@ const REPORTS = [
   { key: 'deposits', label: 'Ingress History', desc: 'Audit trail of capital injections and tx hashes.', icon: Database, color: 'var(--green)', badge: 'FINANCIAL' },
   { key: 'withdrawals', label: 'Liquidation Log', desc: 'Detailed registry of asset exits and settlements.', icon: CreditCard, color: 'var(--orange)', badge: 'SETTLEMENT' },
   { key: 'bonuses', label: 'Commission Nexus', desc: 'Audit of all yield distributions and team bonuses.', icon: Activity, color: 'var(--purple)', badge: 'INCENTIVE' },
+  { key: 'adjustments', label: 'Manual Adjustments', desc: 'Audit log of all manual asset allocations and administrative credits.', icon: Database, color: 'var(--orange)', badge: 'AUDIT' },
 ]
 
 export default function ReportsPage() {

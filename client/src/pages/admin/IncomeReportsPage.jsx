@@ -1,15 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Search, Filter, Calendar, Activity, User, Network, Trophy, Award, Loader2, Download, FileSpreadsheet } from 'lucide-react'
+import { Search, Filter, Calendar, Activity, User, Network, Trophy, Award, Loader2, Download, FileSpreadsheet, Database } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { adminApi } from '../../store/useAdminStore'
 import { AdminPageHeader, Panel, AdminTable, AdminSpinner, Pagination, StatusBadge } from '../../components/admin/ui'
 
 const INCOME_TYPES = [
-  { id: 'roi',      label: 'Daily ROI',    icon: Activity, color: 'var(--cyan)' },
-  { id: 'direct',   label: 'Direct Bonus', icon: User,     color: 'var(--green)' },
-  { id: 'level',    label: 'Level Income', icon: Network,  color: 'var(--purple)' },
-  { id: 'reward',   label: 'Rewards',      icon: Trophy,   color: 'var(--orange)' },
-  { id: 'royalty',  label: 'Royalty',      icon: Award,    color: 'var(--cyan)' },
+  { id: 'roi',        label: 'Daily ROI',    icon: Activity, color: 'var(--cyan)' },
+  { id: 'direct',     label: 'Direct Bonus', icon: User,     color: 'var(--green)' },
+  { id: 'level',      label: 'Level Income', icon: Network,  color: 'var(--purple)' },
+  { id: 'reward',     label: 'Rewards',      icon: Trophy,   color: 'var(--orange)' },
+  { id: 'royalty',    label: 'Royalty',      icon: Award,    color: 'var(--cyan)' },
+  { id: 'adjustment', label: 'Adjustments',  icon: Database, color: 'var(--orange)' },
 ]
 
 export default function IncomeReportsPage() {

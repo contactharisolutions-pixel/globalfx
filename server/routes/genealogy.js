@@ -26,7 +26,7 @@ router.get('/level-report', async (req, res, next) => {
       WITH RECURSIVE tree AS (
         SELECT id, 1 AS lvl FROM "User" WHERE sponsor_id = ${req.user.id}
         UNION ALL
-        SELECT u.id, t.lvl + 1 FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 10
+        SELECT u.id, t.lvl + 1 FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 5
       )
       SELECT lvl, COUNT(*) as count FROM tree GROUP BY lvl ORDER BY lvl
     `
@@ -41,7 +41,7 @@ router.get('/level-report', async (req, res, next) => {
           FROM "User" WHERE sponsor_id = ${req.user.id}
           UNION ALL
           SELECT u.id, u.user_id, u.name, u.status, u.created_at, t.lvl + 1
-          FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 10
+          FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 5
         )
         SELECT t.id, t.user_id, t.name, t.status, t.lvl, t.created_at,
                COALESCE(SUM(tp.amount), 0) AS total_invested
@@ -63,7 +63,7 @@ router.get('/level-report', async (req, res, next) => {
         WITH RECURSIVE tree AS (
           SELECT id, status, 1 AS lvl FROM "User" WHERE sponsor_id = ${req.user.id}
           UNION ALL
-          SELECT u.id, u.status, t.lvl + 1 FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 10
+          SELECT u.id, u.status, t.lvl + 1 FROM "User" u INNER JOIN tree t ON u.sponsor_id = t.id WHERE t.lvl < 5
         )
         SELECT t.lvl, COUNT(t.id) as count, COUNT(t.id) FILTER (WHERE t.status = 'active') as active_count,
                COALESCE(SUM(tp.amount), 0) as total_invested

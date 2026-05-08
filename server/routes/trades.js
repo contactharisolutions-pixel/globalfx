@@ -101,11 +101,11 @@ router.post('/activate-for-other', async (req, res, next) => {
 
     // Trigger bonuses + instant rank/royalty checks for target's sponsor chain
     if (target.sponsor_id) {
-      triggerDirectAndLevelBonus(target.id, amt).catch(console.error)
+      await triggerDirectAndLevelBonus(target.id, amt).catch(console.error)
     }
     // Performance rank and royalty rank re-evaluated immediately after activation
-    processRewards().catch(console.error)
-    updateRoyaltyRanks().catch(console.error)
+    await processRewards().catch(console.error)
+    await updateRoyaltyRanks().catch(console.error)
 
     res.status(201).json({ message: `Successfully activated ID ${targetUserId} for $${amt}` })
   } catch (err) {
@@ -159,11 +159,11 @@ router.post('/invest', async (req, res, next) => {
 
     // Trigger direct + level bonuses for sponsor chain
     if (user.sponsor_id) {
-      triggerDirectAndLevelBonus(req.user.id, parseFloat(amount)).catch(console.error)
+      await triggerDirectAndLevelBonus(req.user.id, parseFloat(amount)).catch(console.error)
     }
     // Performance rank and royalty rank re-evaluated immediately after activation
-    processRewards().catch(console.error)
-    updateRoyaltyRanks().catch(console.error)
+    await processRewards().catch(console.error)
+    await updateRoyaltyRanks().catch(console.error)
 
     res.status(201).json({ message: 'Trade package activated', package_id: pkg.id })
   } catch (err) {

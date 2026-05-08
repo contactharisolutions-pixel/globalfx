@@ -11,7 +11,7 @@
 
 const prisma = require('../lib/prisma')
 
-// Default commission rates
+// Default commission rates (5 levels as per business model)
 const DEFAULT_RATES = {
   direct: 5.0,
   levels: [0, 25, 20, 15, 10, 5], // index = level (1–5 only)
@@ -151,10 +151,11 @@ async function triggerROIMatchingBonus(memberId, memberUserId, roiAmount) {
   const LEVEL_RATES = rates.levels
 
   let currentId = memberId
-  let level = 1
+  let level     = 1
+  const maxLevel = LEVEL_RATES.length - 1
 
-  // Walk up the sponsor chain up to 5 levels only
-  while (level <= 5) {
+  // Walk up the sponsor chain
+  while (level <= maxLevel) {
     const current = await prisma.user.findUnique({
       where:  { id: currentId },
       select: { sponsor_id: true },

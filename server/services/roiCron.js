@@ -77,7 +77,7 @@ async function distributeROI() {
   for (const pkg of toProcess) {
     const amount      = parseFloat(pkg.amount)
     const totalEarned = parseFloat(pkg.total_earned)
-    const dailyRoi    = 2.0
+    const dailyRoi    = parseFloat(pkg.daily_roi_percent || 2.0)
     const maxReturn   = amount * 2
 
     const roiEarned   = parseFloat((amount * dailyRoi / 100).toFixed(2))

@@ -16,6 +16,7 @@ const COLS = [
   { key: 'status',     label: 'Status',  render: (v) => <StatusBadge status={v} /> },
   { key: 'fund_wallet_balance',   label: 'Deposit Wallet',   render: (v) => <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>${(+v).toLocaleString()}</span> },
   { key: 'income_wallet_balance', label: 'Profit Wallet', render: (v) => <span style={{ fontWeight: 800, color: 'var(--green)' }}>${(+v).toLocaleString()}</span> },
+  { key: 'total_fund',            label: 'Total Fund',    render: (v) => <span style={{ fontWeight: 900, color: 'var(--cyan)' }}>${(+v).toLocaleString()}</span> },
   { key: 'created_at', label: 'Joined',  render: (v) => <span style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>{new Date(v).toLocaleDateString()}</span> },
 ]
 
@@ -291,6 +292,11 @@ export default function MembersPage() {
       {modal?.type === 'balance' && (
         <AdminModal title={`Manual Asset Allocation â€” ${modal.member.name}`} onClose={() => setModal(null)}>
           <form onSubmit={addBalance} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div style={{ padding: '0.75rem 1rem', background: 'rgba(16,185,129,0.05)', borderRadius: 8, border: '1px solid rgba(16,185,129,0.2)' }}>
+               <p style={{ fontSize: '0.75rem', color: 'var(--green)', lineHeight: 1.4 }}>
+                  Executing this protocol will manually credit the selected reserve and automatically transition the member's state to <b>ACTIVE</b> if currently inactive.
+               </p>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase' }}>CHOOSE TARGET RESERVE</label>
               <select name="wallet" className="input">
