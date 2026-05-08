@@ -79,6 +79,7 @@ const CORS_ORIGINS = process.env.CORS_ORIGINS
       'https://www.globalfx.vip',
       'https://member.globalfx.vip',
       'https://admin.globalfx.vip',
+      /\.vercel\.app$/, // Allow all Vercel subdomains (including previews)
     ]
 
 app.use(cors({
