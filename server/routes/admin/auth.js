@@ -8,11 +8,26 @@ router.post('/login', async (req, res, next) => {
   if (!email || !password) return res.status(400).json({ error: 'Email and password required' })
 
   try {
+    console.log(`[Admin Login Attempt] Email: ${email}`)
     const admin = await prisma.admin.findUnique({ where: { email } })
-    if (!admin || !admin.is_active) return res.status(401).json({ error: 'Invalid credentials' })
+    
+    if (!admin) {
+      console.log(`[Admin Login Failed] Admin not found: ${email}`)
+      return res.status(401).json({ error: 'Invalid credentials' })
+    }
+
+    if (!admin.is_active) {
+      console.log(`[Admin Login Failed] Account inactive: ${email}`)
+      return res.status(401).json({ error: 'Account is inactive' })
+    }
 
     const valid = await bcrypt.compare(password, admin.password_hash)
-    if (!valid) return res.status(401).json({ error: 'Invalid credentials' })
+    if (!valid) {
+      console.log(`[Admin Login Failed] Password mismatch: ${email}`)
+      return res.status(401).json({ error: 'Invalid credentials' })
+    }
+
+    console.log(`[Admin Login Success] ${email}`)
 
     const token = jwt.sign(
       { adminId: admin.id, email: admin.email, role: admin.role },

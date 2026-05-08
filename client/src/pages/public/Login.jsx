@@ -33,7 +33,9 @@ export default function Login() {
       toast.success('Welcome back!')
       navigate('/dashboard')
     } catch (err) {
-      toast.error(err?.response?.data?.error || 'Incorrect ID or password. Please try again.')
+      console.error('Login error:', err)
+      const errorMsg = err?.response?.data?.error || err.message || 'Incorrect ID or password. Please try again.'
+      toast.error(errorMsg)
     }
   }
 

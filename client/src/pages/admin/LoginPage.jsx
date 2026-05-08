@@ -25,7 +25,9 @@ export default function AdminLogin() {
       toast.success('Administrative session established.')
       navigate('/admin')
     } catch (err) {
-      toast.error(err?.response?.data?.error || 'Authorization failed. Invalid credentials.')
+      console.error('Login error:', err)
+      const errorMsg = err?.response?.data?.error || err.message || 'Authorization failed. Invalid credentials.'
+      toast.error(errorMsg)
     }
   }
 

@@ -71,10 +71,12 @@ app.use(helmet())
 // Dynamic CORS: allow origins from env (comma-separated) or fall back to localhost defaults
 const CORS_ORIGINS = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
-  : [
+    : [
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
+      'https://globalfx.pro',
+      'https://www.globalfx.pro',
       'https://globalfx.vip',
       'https://www.globalfx.vip',
       'https://member.globalfx.vip',

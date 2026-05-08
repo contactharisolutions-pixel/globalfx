@@ -1,11 +1,10 @@
 const prisma = require('../lib/prisma')
-async function check() {
-  const users = await prisma.user.findMany()
-  console.log('Users found:', users.length)
-  users.forEach(u => {
-    console.log(`- ID: ${u.user_id}, Name: ${u.name}, Email: ${u.email}, Status: ${u.status}`)
-  })
-  await prisma.$disconnect()
+async function main() {
+  const users = await prisma.user.findMany({ select: { email: true, user_id: true } })
+  const admins = await prisma.admin.findMany({ select: { email: true } })
+  console.log('--- USERS ---')
+  console.table(users)
+  console.log('--- ADMINS ---')
+  console.table(admins)
 }
-
-check()
+main().finally(() => prisma.$disconnect())
