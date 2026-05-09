@@ -124,8 +124,9 @@ router.put('/:id/status', async (req, res, next) => {
 // ─── POST /api/admin/members/:id/add-balance ─────────────────
 router.post('/:id/add-balance', async (req, res, next) => {
   const { wallet, amount, remarks } = req.body
+  const amt = parseFloat(amount)
   if (!['fund', 'income'].includes(wallet)) return res.status(400).json({ error: 'wallet must be fund or income' })
-  if (!amount || amount <= 0)              return res.status(400).json({ error: 'Amount must be positive' })
+  if (!amt || amt <= 0)                    return res.status(400).json({ error: 'Amount must be positive' })
 
   try {
     const field = wallet === 'fund' ? 'fund_wallet_balance' : 'income_wallet_balance'
