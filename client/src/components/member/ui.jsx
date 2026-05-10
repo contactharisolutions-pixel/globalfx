@@ -134,8 +134,9 @@ export function Badge({ status }) {
     closed:      { bg: '#f8fafc', color: '#475569', border: 'rgba(100,116,139,0.25)', label: 'Closed'    },
     blocked:     { bg: '#fef2f2', color: '#991b1b', border: 'rgba(239,68,68,0.3)',  label: 'Blocked'     },
     qualified:   { bg: '#f0fdf4', color: '#065f46', border: 'rgba(16,185,129,0.3)', label: 'Qualified'   },
+    next_goal:   { bg: '#eff6ff', color: '#1e40af', border: 'rgba(59,130,246,0.3)', label: 'Next Goal'  },
   }
-  const s = styles[status?.toLowerCase()] || styles.completed
+  const s = styles[status?.toLowerCase()?.replace(/\s+/g, '_')] || { bg: '#f1f5f9', color: '#475569', border: 'rgba(100,116,139,0.2)' }
   const displayLabel = s.label || (status?.replace(/_/g, ' ') || 'Unknown')
   return (
     <span style={{

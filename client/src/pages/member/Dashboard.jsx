@@ -137,15 +137,23 @@ export default function Dashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }} id="dash-stats">
         <StatCard label="Deposit Wallet"   value={fmt(stats?.fund_wallet)}           icon={Wallet}     color="cyan"   sub="Available"  />
         <StatCard label="Earnings Wallet"  value={fmt(stats?.income_wallet)}          icon={DollarSign} color="green"  sub="Earned"    />
-        <StatCard label="Total Profit"     value={fmt(stats?.total_roi)}              icon={TrendingUp} color="purple" sub="Lifetime"  />
+        <StatCard label="Active Packages"  value={fmt(stats?.total_active_packages)}  icon={Zap}        color="orange" sub="Working"   />
         <StatCard label="Team Investment"  value={fmt(stats?.total_team_business)}    icon={BarChart3}  color="blue"   sub="Volume"    />
+      </div>
+
+      {/* Income Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }} id="dash-income">
+        <StatCard label="Total ROI"            value={fmt(stats?.total_roi)}            icon={TrendingUp} color="purple" sub="Packages"  />
+        <StatCard label="Total Sponsor Income" value={fmt(stats?.total_sponsor_income)} icon={Users}      color="green"  sub="Direct"    />
+        <StatCard label="Total Level Income"   value={fmt(stats?.total_level_income)}   icon={Network}    color="blue"   sub="Network"   />
+        <StatCard label="Total Profit"         value={fmt(stats?.total_earning)}        icon={Award}      color="orange" sub="All Time"  />
       </div>
 
       {/* Secondary Stat Strip */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} id="dash-secondary">
         {[
-          { label: "Today's Earnings",  val: fmt(stats?.today_roi),               color: '#0d9488', bg: '#f0fdfa', icon: Zap           },
-          { label: 'Referral Bonus',    val: fmt(stats?.total_sponsor_income),    color: '#3b82f6', bg: '#eff6ff', icon: Users         },
+          { label: "Today's ROI",       val: fmt(stats?.today_roi),               color: '#0d9488', bg: '#f0fdfa', icon: Zap           },
+          { label: "Today's Business",  val: fmt(stats?.today_business),          color: '#3b82f6', bg: '#eff6ff', icon: BarChart3      },
           { label: 'Active Members',    val: fmtN(stats?.active_team),            color: '#10b981', bg: '#f0fdf4', icon: ShieldCheck   },
           { label: 'Total Team',        val: fmtN(stats?.team_total),             color: '#7c3aed', bg: '#f5f3ff', icon: Network       },
         ].map((s, i) => (
@@ -359,9 +367,9 @@ export default function Dashboard() {
       <style>{`
         @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.6; transform:scale(1.5); } }
         @keyframes spin   { to { transform: rotate(360deg); } }
-        @media (max-width: 1279px) { #dash-stats { grid-template-columns: repeat(2, 1fr) !important; } #dash-secondary { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 1279px) { #dash-stats, #dash-income { grid-template-columns: repeat(2, 1fr) !important; } #dash-secondary { grid-template-columns: repeat(2, 1fr) !important; } }
         @media (max-width: 1023px) { #dash-main-row { grid-template-columns: 1fr !important; } }
-        @media (max-width: 639px)  { #dash-stats { grid-template-columns: 1fr !important; } #dash-secondary { grid-template-columns: repeat(2, 1fr) !important; } }
+        @media (max-width: 639px)  { #dash-stats, #dash-income { grid-template-columns: 1fr !important; } #dash-secondary { grid-template-columns: repeat(2, 1fr) !important; } }
       `}</style>
     </div>
   )

@@ -21,9 +21,10 @@ router.get('/dashboard', async (req, res, next) => {
     if (!user) return res.status(404).json({ error: 'User not found' })
 
     const [
-      totalTopup, totalWithdraw, totalEarning, todayRoiSum, totalRoiSum, todaySponsorSum, totalSponsorSum, todayLevelSum, totalLevelSum, teamData
+      totalTopup, totalActivePackages, totalWithdraw, totalEarning, todayRoiSum, totalRoiSum, todaySponsorSum, totalSponsorSum, todayLevelSum, totalLevelSum, teamData
     ] = await Promise.all([
       prisma.tradePackage.aggregate({ where: { user_id: req.user.id }, _sum: { amount: true } }),
+      prisma.tradePackage.aggregate({ where: { user_id: req.user.id, status: 'active' }, _sum: { amount: true } }),
       prisma.withdrawal.aggregate({ where: { user_id: req.user.id, status: 'approved' }, _sum: { amount: true } }),
       prisma.bonus.aggregate({ where: { user_id: req.user.id }, _sum: { amount: true } }),
 
@@ -68,6 +69,7 @@ router.get('/dashboard', async (req, res, next) => {
         fund_wallet:    user.fund_wallet_balance,
         income_wallet:  user.income_wallet_balance,
         total_topup:    totalTopup._sum.amount       || 0,
+        total_active_packages: totalActivePackages._sum.amount || 0,
         total_withdraw: totalWithdraw._sum.amount     || 0,
         total_earning:  totalEarning._sum.amount     || 0,
         team_total:     Number(stats.team_total      || 0),
