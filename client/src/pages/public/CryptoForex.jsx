@@ -84,7 +84,7 @@ export default function CryptoForex() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1.5rem', fontFamily: 'Outfit, sans-serif' }}>Bridging the Gap</h2>
-            <p style={{ fontSize: '1.125rem', color: 'var(--text-sub)', maxWidth: '700px', margin: '0 auto' }}>GlobalFX provides the tools to navigate both high-volatility crypto assets and high-liquidity currency pairs.</p>
+            <p style={{ fontSize: '1.125rem', color: 'var(--text-sub)', maxWidth: '700px', margin: '0 auto' }}>BitLance provides the tools to navigate both high-volatility crypto assets and high-liquidity currency pairs.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
             <div style={{ padding: '3rem', background: '#f8fafc', borderRadius: 32, border: '1px solid #e2e8f0' }}>

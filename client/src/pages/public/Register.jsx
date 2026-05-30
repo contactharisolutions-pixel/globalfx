@@ -47,7 +47,7 @@ function SuccessModal({ data, onClose }) {
         </div>
 
         <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', margin: '0 0 0.75rem' }}>
-          Welcome to GlobalFX!
+          Welcome to BitLance!
         </h2>
         <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, marginBottom: '2rem' }}>
           Your account is ready. Please save your login details below — you'll need them to sign in.
@@ -168,7 +168,7 @@ export default function Register() {
           <div style={{ width: 44, height: 44, background: 'linear-gradient(135deg, #0d9488, #3b82f6)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(13,148,136,0.35)' }}>
             <TrendingUp size={22} style={{ color: '#ffffff' }} />
           </div>
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.375rem', color: '#ffffff', letterSpacing: '-0.01em' }}>GlobalFX</span>
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.375rem', color: '#ffffff', letterSpacing: '-0.01em' }}>BitLance</span>
         </div>
 
         <div style={{ position: 'relative', zIndex: 1, marginBottom: '3rem' }}>
@@ -178,7 +178,7 @@ export default function Register() {
             <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Start earning today.</span>
           </h2>
           <p style={{ fontSize: '0.9375rem', color: '#94a3b8', lineHeight: 1.7, fontWeight: 500, maxWidth: '22rem', margin: 0 }}>
-            Join over 50,000 members who are growing their wealth with GlobalFX every day.
+            Join over 50,000 members who are growing their wealth with BitLance every day.
           </p>
         </div>
 
@@ -222,7 +222,7 @@ export default function Register() {
             <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg, #0d9488, #3b82f6)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <TrendingUp size={18} style={{ color: '#fff' }} />
             </div>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.125rem', color: '#0f172a' }}>GlobalFX</span>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.125rem', color: '#0f172a' }}>BitLance</span>
           </div>
 
           <div style={{ marginBottom: '2.5rem' }}>

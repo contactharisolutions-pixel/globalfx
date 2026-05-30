@@ -46,7 +46,7 @@ export default function FAQSection() {
               <span className="gradient-text">We Have Answers.</span>
             </h2>
             <p className="text-lg text-text-sub leading-relaxed max-w-sm">
-              Everything you need to know about GlobalFX. Can't find what you're looking for? Our team is standing by.
+              Everything you need to know about BitLance. Can't find what you're looking for? Our team is standing by.
             </p>
             
             <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100 space-y-6">

@@ -136,7 +136,7 @@ function ProfileInfo({ profile, setProfile }) {
   const infoItems = [
     { label: 'Email Address',   value: profile?.email,                                              icon: Mail     },
     { label: 'Joined On',       value: profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '—', icon: Calendar  },
-    { label: 'Referred By',     value: profile?.sponsor?.user_id || 'GlobalFX Admin',              icon: UserCheck },
+    { label: 'Referred By',     value: profile?.sponsor?.user_id || 'BitLance Admin',              icon: UserCheck },
   ]
 
   return (

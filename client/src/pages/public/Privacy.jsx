@@ -38,12 +38,12 @@ export default function Privacy() {
       </Section>
       <Section title="6. Your Rights">
         <p>You may request access to, correction of, or deletion of your personal data by contacting us at{' '}
-          <a href="mailto:support@globalfx.vip" className="text-primary font-bold hover:underline">support@globalfx.vip</a>.
+          <a href="mailto:support@bitlance.pro" className="text-primary font-bold hover:underline">support@bitlance.pro</a>.
         </p>
       </Section>
       <Section title="7. Contact">
         <p>For privacy-related inquiries, email us at{' '}
-          <a href="mailto:support@globalfx.vip" className="text-primary font-bold hover:underline">support@globalfx.vip</a>.
+          <a href="mailto:support@bitlance.pro" className="text-primary font-bold hover:underline">support@bitlance.pro</a>.
         </p>
       </Section>
     </LegalPage>

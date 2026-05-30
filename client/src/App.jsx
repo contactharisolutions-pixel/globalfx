@@ -107,7 +107,7 @@ export default function App() {
             <Route path="/disclaimer"    element={<Disclaimer />} />
             <Route path="/what-is-crypto" element={<WhatIsCrypto />} />
             <Route path="/crypto-forex"   element={<CryptoForex />} />
-            <Route path="/why-globalfx"   element={<WhyGlobalFX />} />
+            <Route path="/why-bitlance"   element={<WhyGlobalFX />} />
           </Route>
 
           {/* ── Member Panel (JWT protected) ─────────────────── */}

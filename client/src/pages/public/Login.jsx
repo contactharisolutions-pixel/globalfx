@@ -57,7 +57,7 @@ export default function Login() {
           <div style={{ width: 44, height: 44, background: 'linear-gradient(135deg, #0d9488, #3b82f6)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(13,148,136,0.35)' }}>
             <TrendingUp size={22} style={{ color: '#ffffff' }} />
           </div>
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.375rem', color: '#ffffff', letterSpacing: '-0.01em' }}>GlobalFX</span>
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.375rem', color: '#ffffff', letterSpacing: '-0.01em' }}>BitLance</span>
         </div>
 
         {/* Headline */}
@@ -108,7 +108,7 @@ export default function Login() {
             <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg, #0d9488, #3b82f6)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <TrendingUp size={18} style={{ color: '#fff' }} />
             </div>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.125rem', color: '#0f172a' }}>GlobalFX</span>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 900, fontSize: '1.125rem', color: '#0f172a' }}>BitLance</span>
           </div>
 
           <div style={{ marginBottom: '2.5rem' }}>

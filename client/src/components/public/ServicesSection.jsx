@@ -1,23 +1,27 @@
-import { TrendingUp, DollarSign, Briefcase, Users, ShieldCheck, Lock, ChevronRight } from 'lucide-react'
+import { TrendingUp, DollarSign, Cpu, Users, ShieldCheck, Lock, ChevronRight } from 'lucide-react'
+
+const NAVY    = '#1e3a5f'
+const PRIMARY = '#00b4a6'
+const ACCENT  = '#0d9dc0'
 
 const SERVICES = [
   {
+    icon: Cpu,
+    title: 'AI Algorithmic Trading',
+    desc: 'Our neural network processes millions of data points per second to execute optimal crypto trades 24/7.',
+    color: PRIMARY, bg: '#e6faf9', border: 'rgba(0,180,166,0.2)',
+  },
+  {
     icon: TrendingUp,
-    title: 'Smart Investing',
-    desc: 'We manage your investment 24 hours a day and pay you a fixed daily profit — no experience needed.',
-    color: '#0d9488', bg: '#f0fdfa', border: 'rgba(13,148,136,0.2)',
+    title: 'Daily Profit Payouts',
+    desc: 'We manage your investment and pay a fixed daily profit directly to your account — no experience needed.',
+    color: NAVY, bg: 'rgba(30,58,95,0.05)', border: 'rgba(30,58,95,0.15)',
   },
   {
     icon: DollarSign,
-    title: 'Forex Trading',
-    desc: 'We trade major global currency pairs and share the profits directly with our members daily.',
-    color: '#3b82f6', bg: '#eff6ff', border: 'rgba(59,130,246,0.2)',
-  },
-  {
-    icon: Briefcase,
-    title: 'Hands-Off Growth',
-    desc: 'Just deposit, choose a plan, and let our team handle everything. You earn while you live your life.',
-    color: '#f97316', bg: '#fff7ed', border: 'rgba(249,115,22,0.2)',
+    title: 'USDT & Crypto Markets',
+    desc: 'We trade major crypto pairs and stablecoins, sharing profits directly with our members every day.',
+    color: ACCENT, bg: '#e8f7fc', border: 'rgba(13,157,192,0.2)',
   },
   {
     icon: Users,
@@ -27,14 +31,14 @@ const SERVICES = [
   },
   {
     icon: ShieldCheck,
-    title: 'Daily Reports',
-    desc: 'Every member gets a full daily profit report. No guessing — you can always see what\'s happening.',
+    title: 'Daily Profit Reports',
+    desc: 'Every member receives a full daily profit statement. No guessing — full transparency at all times.',
     color: '#7c3aed', bg: '#f5f3ff', border: 'rgba(124,58,237,0.2)',
   },
   {
     icon: Lock,
-    title: 'Secure Platform',
-    desc: 'Your account and funds are protected with the highest level of security available.',
+    title: 'Enterprise Security',
+    desc: 'Your account and funds are protected with bank-grade encryption and multi-layer security protocols.',
     color: '#f43f5e', bg: '#fff1f2', border: 'rgba(244,63,94,0.2)',
   },
 ]
@@ -47,14 +51,14 @@ export default function ServicesSection() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '4rem' }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
             <div style={{ maxWidth: 560 }}>
-              <p style={{ fontSize: '0.7rem', fontWeight: 900, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '0.875rem' }}>What We Offer</p>
-              <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0 }}>
+              <p style={{ fontSize: '0.7rem', fontWeight: 900, color: PRIMARY, textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '0.875rem' }}>What We Offer</p>
+              <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, color: NAVY, lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0 }}>
                 Everything You Need<br />
-                <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>To Grow Your Money</span>
+                <span style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${NAVY})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>To Grow Intelligently</span>
               </h2>
             </div>
-            <p style={{ fontSize: '1rem', color: '#64748b', maxWidth: 320, lineHeight: 1.7, fontWeight: 500, borderLeft: '3px solid rgba(13,148,136,0.3)', paddingLeft: '1.25rem' }}>
-              We give you the tools, the team, and the technology — so you can focus on your goals.
+            <p style={{ fontSize: '1rem', color: '#64748b', maxWidth: 320, lineHeight: 1.7, fontWeight: 500, borderLeft: `3px solid rgba(0,180,166,0.35)`, paddingLeft: '1.25rem' }}>
+              We give you the AI, the team, and the technology — so you can focus on your goals.
             </p>
           </div>
         </div>
@@ -72,16 +76,16 @@ export default function ServicesSection() {
                   borderRadius: 24, position: 'relative', overflow: 'hidden',
                   transition: 'all 0.25s ease', cursor: 'default',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 16px 40px ${item.color}18` }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 16px 40px ${item.color}22` }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
               >
-                {/* Subtle corner blob */}
-                <div style={{ position: 'absolute', top: -20, right: -20, width: 80, height: 80, background: item.bg, borderRadius: '50%', opacity: 0.6 }} />
+                {/* Corner blob */}
+                <div style={{ position: 'absolute', top: -20, right: -20, width: 80, height: 80, background: item.bg, borderRadius: '50%', opacity: 0.7 }} />
 
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: item.bg, border: `1px solid ${item.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', position: 'relative', zIndex: 1 }}>
                   <Icon size={22} style={{ color: item.color }} strokeWidth={2} />
                 </div>
-                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.625rem', position: 'relative', zIndex: 1 }}>{item.title}</h3>
+                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: NAVY, margin: '0 0 0.625rem', position: 'relative', zIndex: 1 }}>{item.title}</h3>
                 <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: '0 0 1.25rem', position: 'relative', zIndex: 1 }}>{item.desc}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', fontWeight: 800, color: item.color, position: 'relative', zIndex: 1 }}>
                   Learn more <ChevronRight size={14} />

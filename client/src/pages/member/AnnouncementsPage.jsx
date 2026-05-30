@@ -75,7 +75,7 @@ export default function AnnouncementsPage() {
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-lg)', maxWidth: 800 }}>
-      <PageHeader title="Announcements" subtitle="Latest news and updates from the GlobalFX team" />
+      <PageHeader title="Announcements" subtitle="Latest news and updates from the BitLance team" />
 
       {loading ? <Spinner /> : (
         announcements.length === 0 ? (

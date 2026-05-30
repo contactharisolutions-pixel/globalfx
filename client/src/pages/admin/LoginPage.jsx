@@ -53,11 +53,11 @@ export default function AdminLogin() {
             <div style={{
               width: 'auto', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
-              <img src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png" alt="GlobalFX Logo" style={{ height: 56, width: 'auto' }} />
+              <img src="/bitlance-logo.png" alt="BitLance Logo" style={{ height: 56, width: 'auto' }} />
             </div>
             <div style={{ textAlign: 'left' }}>
               <p style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-main)', lineHeight: 1.1 }}>
-                GLOBALFX
+                BITLANCE
               </p>
               <p style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
                 Command Center
@@ -104,7 +104,7 @@ export default function AdminLogin() {
                 <input
                   {...register('email')}
                   type="email"
-                  placeholder="admin@globalfx.system"
+                  placeholder="admin@BITLANCE.system"
                   className="input"
                   style={{
                     paddingLeft: '3rem', height: 52, fontSize: '0.9375rem',

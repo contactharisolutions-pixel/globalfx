@@ -35,7 +35,7 @@ export default function LegalPage({ title, children }) {
                 <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
                    <span className="font-black text-lg italic">G</span>
                 </div>
-                <p className="text-sm font-black text-text-main">GlobalFX Integrity Desk</p>
+                <p className="text-sm font-black text-text-main">BitLance Integrity Desk</p>
              </div>
              <p className="text-[10px] font-black text-text-faint uppercase tracking-[0.2em]">Secured Legal Document</p>
           </div>

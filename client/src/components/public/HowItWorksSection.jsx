@@ -5,12 +5,12 @@ const STEPS = [
   {
     num: '01', icon: UserPlus, title: 'Create Your Account',
     desc: 'Sign up for free in under 2 minutes. No hidden fees, no documents required to start.',
-    color: '#0d9488', bg: '#f0fdfa', border: 'rgba(13,148,136,0.15)',
+    color: '#00b4a6', bg: '#e6faf9', border: 'rgba(0,180,166,0.15)',
   },
   {
     num: '02', icon: Wallet, title: 'Add Your Funds',
     desc: 'Deposit as little as $25 using USDT (BEP20). Your money is always secure and tracked.',
-    color: '#3b82f6', bg: '#eff6ff', border: 'rgba(59,130,246,0.15)',
+    color: '#0d9dc0', bg: '#e8f7fc', border: 'rgba(13,157,192,0.15)',
   },
   {
     num: '03', icon: TrendingUp, title: 'Choose an Investment Plan',
@@ -33,11 +33,11 @@ export default function HowItWorksSection() {
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 5rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#f0fdfa', border: '1.5px solid rgba(13,148,136,0.2)', borderRadius: 9999, marginBottom: '1.5rem' }}>
-            <CheckCircle2 size={13} style={{ color: '#0d9488' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Simple 4-Step Process</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#e6faf9', border: '1.5px solid rgba(0,180,166,0.2)', borderRadius: 9999, marginBottom: '1.5rem' }}>
+            <CheckCircle2 size={13} style={{ color: '#00b4a6' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#00b4a6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Simple 4-Step Process</span>
           </div>
-          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 1.25rem' }}>
+          <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, color: '#1e3a5f', lineHeight: 1.2, letterSpacing: '-0.02em', margin: '0 0 1.25rem' }}>
             How Does It Work?
           </h2>
           <p style={{ fontSize: '1.0625rem', color: '#64748b', lineHeight: 1.8, fontWeight: 500, margin: 0 }}>
@@ -48,7 +48,7 @@ export default function HowItWorksSection() {
         {/* Steps Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', position: 'relative' }} id="steps-grid">
           {/* Connector line (desktop only) */}
-          <div style={{ position: 'absolute', top: '4.5rem', left: '12.5%', right: '12.5%', height: 2, background: 'linear-gradient(90deg, #0d9488, #3b82f6, #7c3aed, #f97316)', zIndex: 0, borderRadius: 9999 }} id="step-line" />
+          <div style={{ position: 'absolute', top: '4.5rem', left: '12.5%', right: '12.5%', height: 2, background: 'linear-gradient(90deg, #00b4a6, #0d9dc0, #7c3aed, #f97316)', zIndex: 0, borderRadius: 9999 }} id="step-line" />
 
           {STEPS.map((step, i) => {
             const Icon = step.icon
@@ -67,7 +67,7 @@ export default function HowItWorksSection() {
                 </div>
 
                 <div>
-                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.625rem' }}>{step.title}</h3>
+                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#1e3a5f', margin: '0 0 0.625rem' }}>{step.title}</h3>
                   <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>{step.desc}</p>
                 </div>
               </div>
@@ -78,15 +78,15 @@ export default function HowItWorksSection() {
         {/* Bottom CTA */}
         <div style={{ textAlign: 'center', marginTop: '4rem' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1.25rem', padding: '0.875rem 1.5rem', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 9999, marginBottom: '2rem' }}>
-            <div style={{ width: 32, height: 32, background: '#f0fdfa', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CheckCircle2 size={17} style={{ color: '#0d9488' }} />
+            <div style={{ width: 32, height: 32, background: '#e6faf9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <CheckCircle2 size={17} style={{ color: '#00b4a6' }} />
             </div>
             <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#475569' }}>Average setup time: <strong style={{ color: '#0f172a' }}>less than 5 minutes</strong></span>
           </div>
           <br />
           <Link
             to="/register"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.9375rem 2rem', background: 'linear-gradient(135deg, #0d9488, #0f766e)', color: '#fff', fontWeight: 800, fontSize: '1rem', borderRadius: 14, textDecoration: 'none', boxShadow: '0 8px 24px rgba(13,148,136,0.3)', fontFamily: 'Outfit, sans-serif' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.9375rem 2rem', background: 'linear-gradient(135deg, #1e3a5f, #00b4a6)', color: '#fff', fontWeight: 800, fontSize: '1rem', borderRadius: 14, textDecoration: 'none', boxShadow: '0 8px 24px rgba(0,180,166,0.3)', fontFamily: 'Outfit, sans-serif' }}
           >
             Get Started Today <ArrowRight size={18} />
           </Link>

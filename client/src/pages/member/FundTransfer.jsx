@@ -135,7 +135,7 @@ export default function FundTransfer() {
               <li>Transfer from <strong>Fund Wallet</strong> only.</li>
               <li>Instantly credited to receiver's Fund Wallet.</li>
               <li>Zero internal transfer fees.</li>
-              <li>Recipient must be a valid GlobalFX member.</li>
+              <li>Recipient must be a valid BitLance member.</li>
               <li>Wallet to Wallet transfers are final and non-reversible.</li>
             </ul>
           </Panel>

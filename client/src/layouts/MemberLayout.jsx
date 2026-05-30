@@ -102,8 +102,8 @@ function SidebarContent({ onClose = () => {} }) {
           boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
         }}>
           <img
-            src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png"
-            alt="GlobalFX"
+            src="/bitlance-logo.png"
+            alt="BitLance"
             style={{ height: 36, width: 'auto', display: 'block' }}
           />
         </div>
@@ -415,7 +415,7 @@ export default function MemberLayout() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }} id="layout-footer">
           <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
-            © 2025 GlobalFX. All rights reserved.
+            © 2026 BitLance. All rights reserved.
           </p>
           <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
             Member ID: <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#64748b' }}>{user?.user_id}</span>

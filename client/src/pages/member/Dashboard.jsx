@@ -304,7 +304,7 @@ export default function Dashboard() {
               </div>
 
               <button
-                onClick={() => { if (navigator.share) navigator.share({ title: 'GlobalFX', url: referralLink }); else copyReferral() }}
+                onClick={() => { if (navigator.share) navigator.share({ title: 'BitLance', url: referralLink }); else copyReferral() }}
                 style={{
                   width: '100%', padding: '0.75rem',
                   background: 'rgba(255,255,255,0.15)',

@@ -6,7 +6,7 @@ const REASONS = [
     icon: ShieldCheck,
     title: 'Fully Transparent',
     desc: 'See exactly how your money is working. Daily profit reports are available to every member.',
-    color: '#0d9488', bg: '#f0fdfa', border: 'rgba(13,148,136,0.15)',
+    color: '#00b4a6', bg: '#e6faf9', border: 'rgba(0,180,166,0.15)',
   },
   {
     icon: Zap,
@@ -24,7 +24,7 @@ const REASONS = [
     icon: Users,
     title: 'Earn From Your Team',
     desc: 'Build a team and earn bonuses from up to 15 levels of your network.',
-    color: '#3b82f6', bg: '#eff6ff', border: 'rgba(59,130,246,0.15)',
+    color: '#0d9dc0', bg: '#e8f7fc', border: 'rgba(13,157,192,0.15)',
   },
   {
     icon: Headphones,
@@ -51,14 +51,14 @@ export default function WhyUsSection() {
 
           {/* Left: Header */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', position: 'sticky', top: '7rem' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#f0fdfa', border: '1.5px solid rgba(13,148,136,0.2)', borderRadius: 9999, alignSelf: 'flex-start' }}>
-              <ShieldCheck size={13} style={{ color: '#0d9488' }} />
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Why Choose Us</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#e6faf9', border: '1.5px solid rgba(0,180,166,0.2)', borderRadius: 9999, alignSelf: 'flex-start' }}>
+              <ShieldCheck size={13} style={{ color: '#00b4a6' }} />
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#00b4a6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Why Choose Us</span>
             </div>
 
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 3.5vw, 2.625rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0 }}>
               Built for You,<br />
-              <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>By Experts</span>
+              <span style={{ background: 'linear-gradient(135deg, #1e3a5f, #00b4a6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>By Experts</span>
             </h2>
 
             <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>
@@ -67,7 +67,7 @@ export default function WhyUsSection() {
 
             <Link
               to="/register"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.9rem 1.75rem', background: 'linear-gradient(135deg, #0d9488, #0f766e)', color: '#fff', fontWeight: 800, fontSize: '0.9375rem', borderRadius: 12, textDecoration: 'none', boxShadow: '0 6px 20px rgba(13,148,136,0.25)', alignSelf: 'flex-start', fontFamily: 'Outfit, sans-serif' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.9rem 1.75rem', background: 'linear-gradient(135deg, #1e3a5f, #00b4a6)', color: '#fff', fontWeight: 800, fontSize: '0.9375rem', borderRadius: 12, textDecoration: 'none', boxShadow: '0 6px 20px rgba(0,180,166,0.25)', alignSelf: 'flex-start', fontFamily: 'Outfit, sans-serif' }}
             >
               Join Free <ArrowRight size={16} />
             </Link>
@@ -87,7 +87,7 @@ export default function WhyUsSection() {
                   <div style={{ width: 48, height: 48, borderRadius: 14, background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem', border: `1px solid ${item.border}` }}>
                     <Icon size={22} style={{ color: item.color }} strokeWidth={2} />
                   </div>
-                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.625rem' }}>{item.title}</h3>
+                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.0625rem', fontWeight: 800, color: '#1e3a5f', margin: '0 0 0.625rem' }}>{item.title}</h3>
                   <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>{item.desc}</p>
                 </div>
               )

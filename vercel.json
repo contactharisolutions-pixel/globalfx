@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "globalfx-platform",
+  "name": "bitlance-platform",
   "builds": [
     {
       "src": "server/index.js",

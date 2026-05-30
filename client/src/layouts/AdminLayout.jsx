@@ -62,8 +62,8 @@ function Sidebar({ onClose = () => {} }) {
             boxShadow: '0 4px 16px rgba(0,0,0,0.35)',
           }}>
             <img
-              src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/GlobalFX%20Logo.png"
-              alt="GlobalFX"
+              src="/bitlance-logo.png"
+              alt="BitLance"
               style={{ height: 36, width: 'auto', display: 'block' }}
             />
           </div>

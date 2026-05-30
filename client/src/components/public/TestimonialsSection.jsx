@@ -7,21 +7,21 @@ const TESTIMONIALS = [
     name: 'Arjun Mehta',
     location: 'Mumbai, India',
     initials: 'AM',
-    color: '#0d9488',
+    color: '#00b4a6',
     rating: 5,
-    quote: 'I started with the basic plan and within 3 months I had more than doubled my investment. The daily profits just kept adding up and I could see everything clearly.',
+    quote: 'I started with the basic plan and within 3 months I had more than doubled my investment. The BitLance AI daily profits kept adding up and I could see everything clearly.',
     earned: '$2,400',
-    plan: 'Standard Plan',
+    plan: 'Growth Plan',
   },
   {
     name: 'Sarah Williams',
     location: 'London, UK',
     initials: 'SW',
-    color: '#3b82f6',
+    color: '#0d9dc0',
     rating: 5,
-    quote: 'I referred my friends and now my team of 84 people generates extra income for me every single day. GlobalFX completely changed how I think about money.',
+    quote: 'I referred my friends and now my team of 84 people generates extra income for me every single day. BitLance completely changed how I think about money.',
     earned: '$8,760',
-    plan: 'Premium Plan',
+    plan: 'Elite Plan',
   },
   {
     name: 'Ahmed Al-Rashid',
@@ -58,18 +58,18 @@ export default function TestimonialsSection() {
 
           {/* Left: Header + Controls */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#f0fdfa', border: '1.5px solid rgba(13,148,136,0.2)', borderRadius: 9999, alignSelf: 'flex-start' }}>
-              <ShieldCheck size={13} style={{ color: '#0d9488' }} />
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Real Members</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 1rem', background: '#e6faf9', border: '1.5px solid rgba(0,180,166,0.2)', borderRadius: 9999, alignSelf: 'flex-start' }}>
+              <ShieldCheck size={13} style={{ color: '#00b4a6' }} />
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#00b4a6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Real Members</span>
             </div>
 
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0 }}>
               What Our Members<br />
-              <span style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Are Saying</span>
+              <span style={{ background: 'linear-gradient(135deg, #1e3a5f, #00b4a6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Are Saying</span>
             </h2>
 
             <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.7, fontWeight: 500, margin: 0 }}>
-              Thousands of people from around the world are earning with GlobalFX every day. Join them and start your journey.
+              Thousands of people from around the world are earning with BitLance every day. Join them and start your crypto growth journey.
             </p>
 
             {/* Dot indicators */}
@@ -78,7 +78,7 @@ export default function TestimonialsSection() {
                 <button
                   key={i}
                   onClick={() => setIdx(i)}
-                  style={{ width: i === idx ? 28 : 8, height: 8, borderRadius: 9999, background: i === idx ? '#0d9488' : '#e2e8f0', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease' }}
+                  style={{ width: i === idx ? 28 : 8, height: 8, borderRadius: 9999, background: i === idx ? '#00b4a6' : '#e2e8f0', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease' }}
                 />
               ))}
             </div>
@@ -92,8 +92,8 @@ export default function TestimonialsSection() {
                     key={i}
                     onClick={fn}
                     style={{ width: 48, height: 48, borderRadius: '50%', border: '1.5px solid #e2e8f0', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#0f172a', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = '#0d9488'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#0d9488' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.borderColor = '#e2e8f0' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#00b4a6'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#00b4a6' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#1e3a5f'; e.currentTarget.style.borderColor = '#e2e8f0' }}
                   >
                     <Ic size={20} />
                   </button>
@@ -103,7 +103,7 @@ export default function TestimonialsSection() {
 
             <Link
               to="/register"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.75rem', background: 'linear-gradient(135deg, #0d9488, #0f766e)', color: '#fff', fontWeight: 800, fontSize: '0.9375rem', borderRadius: 12, textDecoration: 'none', boxShadow: '0 6px 20px rgba(13,148,136,0.25)', alignSelf: 'flex-start', fontFamily: 'Outfit, sans-serif' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.75rem', background: 'linear-gradient(135deg, #1e3a5f, #00b4a6)', color: '#fff', fontWeight: 800, fontSize: '0.9375rem', borderRadius: 12, textDecoration: 'none', boxShadow: '0 6px 20px rgba(0,180,166,0.25)', alignSelf: 'flex-start', fontFamily: 'Outfit, sans-serif' }}
             >
               Join Our Members →
             </Link>
@@ -111,7 +111,7 @@ export default function TestimonialsSection() {
 
           {/* Right: Testimonial Card */}
           <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', top: -32, right: -32, width: 200, height: 200, background: 'rgba(13,148,136,0.04)', borderRadius: '50%', filter: 'blur(60px)' }} />
+            <div style={{ position: 'absolute', top: -32, right: -32, width: 200, height: 200, background: 'rgba(0,180,166,0.04)', borderRadius: '50%', filter: 'blur(60px)' }} />
             <div
               style={{
                 background: '#ffffff', borderRadius: 32,
