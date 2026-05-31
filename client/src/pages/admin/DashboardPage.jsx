@@ -3,18 +3,30 @@ import { Link } from 'react-router-dom'
 import {
   Users, CreditCard, ArrowUpFromLine, ShieldCheck,
   Ticket, TrendingUp, AlertCircle, Activity,
-  Zap, Network, Trophy, Crown, DollarSign,
+  Zap, Network, Trophy, Crown, DollarSign, Gift, Star,
 } from 'lucide-react'
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import toast from 'react-hot-toast'
 import { adminApi } from '../../store/useAdminStore'
 import { AdminPageHeader, AdminStatCard, AdminSpinner, Panel, Badge } from '../../components/admin/ui'
 
 const PENDING_LINKS = [
   { key: 'deposits',    label: 'Pending Deposits',    to: '/admin/deposits?status=pending',    accent: '#f59e0b', icon: CreditCard    },
-  { key: 'withdrawals', label: 'Pending Withdrawals', to: '/admin/withdrawals?status=pending', accent: '#f97316', icon: ArrowUpFromLine },
+  { key: 'withdrawals', label: 'Pending Withdrawals', to: '/admin/withdrawals?status=pending', accent: '#02d8dc', icon: ArrowUpFromLine },
   { key: 'kyc',         label: 'KYC Reviews',         to: '/admin/kyc?status=pending',         accent: '#3b82f6', icon: ShieldCheck   },
-  { key: 'tickets',     label: 'Open Tickets',        to: '/admin/tickets?status=open',        accent: '#7c3aed', icon: Ticket        },
+  { key: 'tickets',     label: 'Open Tickets',        to: '/admin/tickets?status=open',        accent: '#8b5cf6', icon: Ticket        },
+]
+
+// New income engine: 8 income types
+const INCOME_TYPES = [
+  { key: 'trading',        label: 'Daily ROI',       color: '#02d8dc', icon: Activity,  field: 'roi_paid'            },
+  { key: 'sponsor_l1',     label: 'Sponsor L1',      color: '#22d3ee', icon: Zap,       field: 'sponsor_l1_paid'     },
+  { key: 'sponsor_l2',     label: 'Sponsor L2',      color: '#06b6d4', icon: Network,   field: 'sponsor_l2_paid'     },
+  { key: 'sponsor_l3',     label: 'Sponsor L3',      color: '#1e3a5f', icon: Network,   field: 'sponsor_l3_paid'     },
+  { key: 'match_reward',   label: 'Match Reward',    color: '#f59e0b', icon: Trophy,    field: 'match_reward_paid'   },
+  { key: 'monthly_salary', label: 'Monthly Salary',  color: '#a78bfa', icon: Star,      field: 'monthly_salary_paid' },
+  { key: 'royalty',        label: 'Royalty',         color: '#34d399', icon: Crown,     field: 'royalty_paid'        },
+  { key: 'monsoon',        label: 'Monsoon Bonanza', color: '#818cf8', icon: Gift,      field: 'monsoon_paid'        },
 ]
 
 export default function AdminDashboard() {
@@ -41,22 +53,13 @@ export default function AdminDashboard() {
 
   const { members, pending_actions, financials } = data
 
-
-  const INCOME_TYPES = [
-    { key: 'trading', label: 'Daily ROI',    color: '#f97316', icon: Activity   },
-    { key: 'direct',  label: 'Direct Bonus', color: '#22d3ee', icon: Zap        },
-    { key: 'level',   label: 'Level Income', color: '#a78bfa', icon: Network    },
-    { key: 'reward',  label: 'Rewards',      color: '#f59e0b', icon: Trophy     },
-    { key: 'royalty', label: 'Royalty',      color: '#34d399', icon: Crown      },
-  ]
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
       <AdminPageHeader title="System Overview" subtitle="Real-time platform analytics and performance metrics" />
 
       {/* Primary stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }} id="admin-stat-grid">
-        <AdminStatCard label="Total Users"   value={members.total.toLocaleString()}         icon={Users}      color="orange" sub="Total registrations" />
+        <AdminStatCard label="Total Users"   value={members.total.toLocaleString()}         icon={Users}      color="teal"   sub="Total registrations" />
         <AdminStatCard label="Active Members" value={members.active.toLocaleString()}        icon={Activity}   color="green"  sub="Verified and trading" />
         <AdminStatCard label="New This Week" value={members.new_this_week.toLocaleString()} icon={TrendingUp} color="blue"   sub="Recent registrations" />
         <AdminStatCard
@@ -72,7 +75,7 @@ export default function AdminDashboard() {
         {/* Pending Actions */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
-            <AlertCircle size={18} style={{ color: '#f97316' }} />
+            <AlertCircle size={18} style={{ color: '#02d8dc' }} />
             <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Pending Actions</h3>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }} id="admin-pending-grid">
@@ -125,8 +128,8 @@ export default function AdminDashboard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }} id="admin-fin-grid">
             {[
               { label: 'Total Deposits',    value: financials.total_deposits,    color: '#22c55e'  },
-              { label: 'Total Withdrawals', value: financials.total_withdrawals,  color: '#ef4444'    },
-              { label: 'Total Profits',     value: financials.total_bonuses,      color: '#f59e0b' },
+              { label: 'Total Withdrawals', value: financials.total_withdrawals,  color: '#ef4444'  },
+              { label: 'Total Profits',     value: financials.total_bonuses,      color: '#f59e0b'  },
             ].map(({ label, value, color }) => (
               <div key={label} style={{
                 background: '#0d1526', border: '1px solid rgba(255,255,255,0.07)',
@@ -142,16 +145,15 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* ── All Income KPI Cards ── */}
+      {/* ── All Income KPI Cards (8 income types) ── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
           <DollarSign size={18} style={{ color: '#06b6d4' }} />
-          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Income Distribution</h3>
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: 0 }}>Income Distribution — BitLance Engine</h3>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1rem' }} id="admin-income-grid">
-          {INCOME_TYPES.map(({ key, label, color, icon: Icon }) => {
-            const fieldMap = { trading: 'roi_paid', direct: 'direct_paid', level: 'level_paid', reward: 'reward_paid', royalty: 'royalty_paid' }
-            const val = financials[fieldMap[key]] || 0
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} id="admin-income-grid">
+          {INCOME_TYPES.map(({ key, label, color, icon: Icon, field }) => {
+            const val = financials[field] || 0
             return (
               <div key={key} style={{
                 background: '#0d1526', border: `1px solid ${color}22`,
@@ -185,7 +187,7 @@ export default function AdminDashboard() {
         {roi.length > 0 ? (
           <div style={{ height: 300, width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={roi} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barSize={36}>
+              <BarChart data={roi} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barSize={28}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
                 <XAxis
                   dataKey="date"
@@ -208,10 +210,10 @@ export default function AdminDashboard() {
                 />
                 <Legend
                   formatter={(val) => INCOME_TYPES.find(t => t.key === val)?.label || val}
-                  wrapperStyle={{ fontSize: '0.75rem', paddingTop: '1rem' }}
+                  wrapperStyle={{ fontSize: '0.7rem', paddingTop: '1rem' }}
                 />
                 {INCOME_TYPES.map(t => (
-                  <Bar key={t.key} dataKey={t.key} stackId="a" fill={t.color} radius={t.key === 'royalty' ? [4, 4, 0, 0] : [0, 0, 0, 0]} />
+                  <Bar key={t.key} dataKey={t.key} stackId="a" fill={t.color} radius={t.key === 'monsoon' ? [4, 4, 0, 0] : [0, 0, 0, 0]} />
                 ))}
               </BarChart>
             </ResponsiveContainer>
@@ -234,13 +236,13 @@ export default function AdminDashboard() {
           #admin-stat-grid    { grid-template-columns: repeat(2, 1fr) !important; }
           #admin-pending-grid { grid-template-columns: repeat(2, 1fr) !important; }
           #admin-fin-grid     { grid-template-columns: repeat(3, 1fr) !important; }
-          #admin-income-grid  { grid-template-columns: repeat(3, 1fr) !important; }
+          #admin-income-grid  { grid-template-columns: repeat(4, 1fr) !important; }
         }
         @media (min-width: 1024px) {
           #admin-stat-grid    { grid-template-columns: repeat(4, 1fr) !important; }
           #admin-pending-grid { grid-template-columns: repeat(4, 1fr) !important; }
           #admin-mid-grid     { grid-template-columns: 1.3fr 1fr !important; }
-          #admin-income-grid  { grid-template-columns: repeat(5, 1fr) !important; }
+          #admin-income-grid  { grid-template-columns: repeat(4, 1fr) !important; }
         }
       `}</style>
     </div>

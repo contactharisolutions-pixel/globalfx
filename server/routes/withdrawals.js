@@ -1,86 +1,109 @@
+/**
+ * withdrawals.js — Income Withdrawal Route
+ *
+ * Rules (Incomeengine.md):
+ * - Minimum: $20 in multiples of $20
+ * - Fee: 20% admin charge on withdrawal amount
+ * - Income wallet locked for 60 days from latest active package
+ */
+
 const router       = require('express').Router()
 const bcrypt       = require('bcryptjs')
 const authenticate = require('../middleware/authenticate')
 const prisma = require('../lib/prisma')
-const FEE_PERCENT = 10  // 10% withdrawal fee
+
+const FEE_PERCENT = 20  // 20% admin charge
 
 router.use(authenticate)
 
-// ─── POST /api/withdrawals/request ───────────────────────────
+// ── POST /api/withdrawals/request ─────────────────────────────
 router.post('/request', async (req, res, next) => {
   const { amount, pin } = req.body
-  
-  // 1. Time & Day Check (Mon-Fri, 6:00 AM - 11:00 AM IST)
-  // Use UTC offset math to get reliable IST time (UTC+5:30 = +330 minutes)
-  // avoids the Node.js toLocaleString + new Date() timezone bug on Vercel (UTC servers)
-  const now = new Date()
-  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000 // 5 hours 30 minutes
-  const istDate = new Date(now.getTime() + IST_OFFSET_MS)
-  const day  = istDate.getUTCDay()   // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
-  const hour = istDate.getUTCHours()
 
-  if (day === 0 || day === 6) {
-    return res.status(400).json({ error: 'Withdrawals are allowed from Monday to Friday only.' })
-  }
-  if (hour < 6 || hour >= 11) {
-    return res.status(400).json({ error: 'Withdrawal window is 6:00 AM to 11:00 AM IST.' })
-  }
-
-  // 2. Amount Validation
+  // 1. Amount Validation
   const amt = parseFloat(amount)
   if (!amt || amt < 20) {
     return res.status(400).json({ error: 'Minimum withdrawal amount is $20.' })
   }
-  if (amt > 5000) {
-    return res.status(400).json({ error: 'Maximum withdrawal amount is $5,000 per request.' })
-  }
-  if (amt % 10 !== 0) {
-    return res.status(400).json({ error: 'Withdrawal amount must be in multiples of $10 (e.g., $20, $30, $40).' })
+  if (amt % 20 !== 0) {
+    return res.status(400).json({ error: 'Withdrawal amount must be in multiples of $20 (e.g., $20, $40, $60).' })
   }
 
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } })
-    if (!user.bep20_wallet)          return res.status(400).json({ error: 'No withdrawal wallet address set. Please add your wallet in Wallet Setup.' })
-    if (!user.transaction_pin_hash)  return res.status(400).json({ error: 'Transaction PIN not set' })
-    const valid = await bcrypt.compare(pin, user.transaction_pin_hash)
-    if (!valid)                      return res.status(401).json({ error: 'Invalid transaction PIN' })
-    if (parseFloat(user.income_wallet_balance) < amt) return res.status(400).json({ error: 'Insufficient income wallet balance' })
 
+    if (!user.bep20_wallet) {
+      return res.status(400).json({ error: 'No withdrawal wallet address set. Please add your wallet in Wallet Setup.' })
+    }
+    if (!user.transaction_pin_hash) {
+      return res.status(400).json({ error: 'Transaction PIN not set.' })
+    }
+
+    const valid = await bcrypt.compare(pin, user.transaction_pin_hash)
+    if (!valid) return res.status(401).json({ error: 'Invalid transaction PIN.' })
+
+    if (parseFloat(user.income_wallet_balance) < amt) {
+      return res.status(400).json({ error: 'Insufficient income wallet balance.' })
+    }
+
+    // 2. Check 60-day income lock from any active package
+    const activePackage = await prisma.tradePackage.findFirst({
+      where: {
+        user_id: req.user.id,
+        status:  'active',
+        income_locked_until: { gt: new Date() },
+      },
+      orderBy: { income_locked_until: 'desc' },
+    })
+    if (activePackage) {
+      const lockDate = new Date(activePackage.income_locked_until)
+      return res.status(400).json({
+        error: `Income withdrawal is locked until ${lockDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} (60-day lock on your active package).`,
+      })
+    }
+
+    // 3. Calculate fee
     const fee        = parseFloat((amt * FEE_PERCENT / 100).toFixed(2))
     const net_amount = parseFloat((amt - fee).toFixed(2))
 
     await prisma.$transaction(async (tx) => {
       const updated = await tx.user.update({
         where: { id: req.user.id },
-        data:  { income_wallet_balance: { decrement: parseFloat(amount) } },
+        data:  { income_wallet_balance: { decrement: amt } },
       })
       await tx.withdrawal.create({
         data: {
-          user_id:       req.user.id,
-          amount:        parseFloat(amount),
+          user_id:        req.user.id,
+          amount:         amt,
           fee,
           net_amount,
           wallet_address: user.bep20_wallet,
-          status:        'pending',
+          status:         'pending',
         },
       })
       await tx.incomeLedger.create({
         data: {
           user_id:        req.user.id,
           type:           'debit',
-          amount:         parseFloat(amount),
+          amount:         amt,
           balance_after:  updated.income_wallet_balance,
-          remarks:        `Withdrawal request ($${net_amount} net)`,
+          remarks:        `Withdrawal request — $${amt} gross, $${fee} fee (20%), $${net_amount} net`,
           reference_type: 'withdrawal',
         },
       })
     })
 
-    res.status(201).json({ message: 'Withdrawal request submitted. Processing within 24 hours.', net_amount })
+    res.status(201).json({
+      message:    'Withdrawal request submitted. Processing within 24 hours.',
+      gross:      amt,
+      fee,
+      net_amount,
+      fee_note:   '20% admin charge deducted',
+    })
   } catch (err) { next(err) }
 })
 
-// ─── GET /api/withdrawals/history ────────────────────────────
+// ── GET /api/withdrawals/history ──────────────────────────────
 router.get('/history', async (req, res, next) => {
   try {
     const withdrawals = await prisma.withdrawal.findMany({

@@ -120,7 +120,7 @@ export default function ActivateID() {
             <button
               onClick={fetchBalance}
               disabled={balanceLoading}
-              style={{ background: 'transparent', border: '1px solid var(--border)', borderRadius: 8, padding: '0.4rem', cursor: 'pointer', color: 'var(--text-faint)' }}
+              style={{ background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '0.4rem', cursor: 'pointer', color: 'var(--text-faint)' }}
               title="Refresh balance"
             >
               <RefreshCw size={14} style={{ animation: balanceLoading ? 'spin 1s linear infinite' : 'none' }} />
@@ -185,7 +185,7 @@ export default function ActivateID() {
 
         {/* Rules panel */}
         <div>
-          <Panel style={{ background: 'rgba(168,85,247,0.02)', border: '1px solid rgba(168,85,247,0.2)' }}>
+          <Panel style={{ background: 'rgba(124,58,237,0.02)', border: '1px solid rgba(124,58,237,0.2)' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '1rem' }}>ID Activation Rules</h3>
             <ul style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.8, paddingLeft: '1.25rem' }}>
               <li>Activation uses your <strong>Fund Wallet</strong> balance.</li>

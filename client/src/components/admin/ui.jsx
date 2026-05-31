@@ -1,24 +1,39 @@
 /* ─── Shared Admin UI Primitives ───────────────────────────────────────
-   All styles use hardcoded values to guarantee rendering.
-   Admin theme: Deep Navy / Dark Slate with Orange accent.
+   BitLance Brand Theme: Deep Navy #1e3a5f + Electric Cyan #02d8dc + Dark BG
+   Extracted from logo color palette.
 ──────────────────────────────────────────────────────────────────────── */
 
-// ── Color constants ──────────────────────────────────────────────────
+// ── Brand Color Constants ─────────────────────────────────────────────
 const C = {
-  panelBg:    '#0d1526',
-  navyCard:   '#111827',
-  border:     'rgba(255,255,255,0.08)',
-  borderHov:  'rgba(255,255,255,0.15)',
-  orange:     '#f97316',
-  red:        '#ef4444',
+  // Backgrounds
+  panelBg:    '#0a1628',
+  navyCard:   '#0d1f35',
+  pageBg:     '#060e1c',
+
+  // Brand
+  teal:       '#02d8dc',
+  tealDim:    'rgba(2,216,220,0.1)',
+  tealBorder: 'rgba(2,216,220,0.25)',
+  navy:       '#1e3a5f',
+  navyGlow:   'rgba(30,58,95,0.35)',
+
+  // Borders
+  border:     'rgba(255,255,255,0.07)',
+  borderHov:  'rgba(2,216,220,0.3)',
+
+  // Functional
   green:      '#10b981',
-  blue:       '#3b82f6',
+  red:        '#ef4444',
+  orange:     '#f59e0b',
   purple:     '#8b5cf6',
-  cyan:       '#06b6d4',
+  blue:       '#3b82f6',
+
+  // Text
   textPrim:   '#f1f5f9',
   textSub:    '#cbd5e1',
   textMuted:  '#94a3b8',
   textFaint:  '#64748b',
+
   radiusMd:   '12px',
   radiusLg:   '20px',
 }
@@ -47,16 +62,17 @@ export function AdminPageHeader({ title, subtitle, action }) {
   )
 }
 
-export function AdminStatCard({ label, value, icon: Icon, color = 'orange', sub }) {
+export function AdminStatCard({ label, value, icon: Icon, color = 'teal', sub }) {
   const palette = {
-    orange: { accent: C.orange,  glow: 'rgba(249,115,22,0.08)',  border: 'rgba(249,115,22,0.2)'  },
+    teal:   { accent: C.teal,    glow: 'rgba(2,216,220,0.08)',   border: 'rgba(2,216,220,0.2)'   },
+    orange: { accent: '#f59e0b', glow: 'rgba(245,158,11,0.08)',  border: 'rgba(245,158,11,0.2)'  },
     red:    { accent: C.red,     glow: 'rgba(239,68,68,0.08)',   border: 'rgba(239,68,68,0.2)'   },
     green:  { accent: C.green,   glow: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.2)'  },
     blue:   { accent: C.blue,    glow: 'rgba(59,130,246,0.08)',  border: 'rgba(59,130,246,0.2)'  },
     purple: { accent: C.purple,  glow: 'rgba(139,92,246,0.08)',  border: 'rgba(139,92,246,0.2)'  },
-    cyan:   { accent: C.cyan,    glow: 'rgba(6,182,212,0.08)',   border: 'rgba(6,182,212,0.2)'   },
+    cyan:   { accent: C.teal,    glow: 'rgba(2,216,220,0.08)',   border: 'rgba(2,216,220,0.2)'   },
   }
-  const p = palette[color] || palette.orange
+  const p = palette[color] || palette.teal
 
   return (
     <div
@@ -80,7 +96,7 @@ export function AdminStatCard({ label, value, icon: Icon, color = 'orange', sub 
         e.currentTarget.style.borderColor = C.border
       }}
     >
-      {/* Left accent bar */}
+      {/* Left accent bar — teal brand color */}
       <div style={{ position: 'absolute', left: 0, top: '1.25rem', bottom: '1.25rem', width: 3, background: p.accent, borderRadius: '0 4px 4px 0' }} />
 
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
@@ -134,9 +150,9 @@ export function AdminTable({ columns, data, emptyText = 'No records found.' }) {
                 padding: '0.875rem 1.25rem',
                 fontSize: '0.65rem', fontWeight: 900,
                 textTransform: 'uppercase', letterSpacing: '0.1em',
-                color: C.textMuted,
+                color: C.teal,
                 borderBottom: `1px solid ${C.border}`,
-                background: 'rgba(255,255,255,0.02)',
+                background: 'rgba(2,216,220,0.03)',
                 whiteSpace: 'nowrap',
               }}>
                 {c.label}
@@ -149,7 +165,7 @@ export function AdminTable({ columns, data, emptyText = 'No records found.' }) {
             <tr
               key={i}
               style={{ borderBottom: i < data.length - 1 ? `1px solid rgba(255,255,255,0.04)` : 'none' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(2,216,220,0.03)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               {columns.map((c) => (
@@ -175,11 +191,11 @@ export function StatusBadge({ status }) {
     pending:     { bg: 'rgba(245,158,11,0.1)',  text: '#f59e0b', border: 'rgba(245,158,11,0.2)'  },
     approved:    { bg: 'rgba(16,185,129,0.1)',  text: '#10b981', border: 'rgba(16,185,129,0.2)'  },
     rejected:    { bg: 'rgba(239,68,68,0.1)',   text: '#ef4444', border: 'rgba(239,68,68,0.2)'   },
-    active:      { bg: 'rgba(16,185,129,0.1)',  text: '#10b981', border: 'rgba(16,185,129,0.2)'  },
+    active:      { bg: 'rgba(2,216,220,0.1)',   text: '#02d8dc', border: 'rgba(2,216,220,0.2)'   },
     inactive:    { bg: 'rgba(100,116,139,0.1)', text: '#94a3b8', border: 'rgba(100,116,139,0.2)' },
     blocked:     { bg: 'rgba(239,68,68,0.1)',   text: '#ef4444', border: 'rgba(239,68,68,0.2)'   },
     open:        { bg: 'rgba(59,130,246,0.1)',  text: '#3b82f6', border: 'rgba(59,130,246,0.2)'  },
-    in_progress: { bg: 'rgba(249,115,22,0.1)',  text: '#f97316', border: 'rgba(249,115,22,0.2)'  },
+    in_progress: { bg: 'rgba(2,216,220,0.1)',   text: '#02d8dc', border: 'rgba(2,216,220,0.2)'   },
     closed:      { bg: 'rgba(100,116,139,0.1)', text: '#94a3b8', border: 'rgba(100,116,139,0.2)' },
     completed:   { bg: 'rgba(16,185,129,0.1)',  text: '#10b981', border: 'rgba(16,185,129,0.2)'  },
   }
@@ -201,22 +217,21 @@ export function AdminModal({ title, onClose, children }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div
-        style={{ position: 'absolute', inset: 0, background: 'rgba(2,6,23,0.9)', backdropFilter: 'blur(16px)' }}
+        style={{ position: 'absolute', inset: 0, background: 'rgba(2,6,23,0.92)', backdropFilter: 'blur(16px)' }}
         className="fade-in"
         onClick={onClose}
       />
       <div style={{
         position: 'relative', zIndex: 10, width: '100%', maxWidth: 520,
         background: C.panelBg,
-        border: `1px solid ${C.border}`,
-        borderRadius: C.radiusLg,
-        boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+        border: `1px solid rgba(2,216,220,0.2)`,
+        boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 60px rgba(2,216,220,0.05)',
         overflow: 'hidden',
         maxHeight: '90vh',
         display: 'flex', flexDirection: 'column',
       }} className="scale-in">
-        {/* Accent bar */}
-        <div style={{ height: 3, background: 'linear-gradient(90deg, #f97316, #dc2626, #7c3aed)', flexShrink: 0 }} />
+        {/* Teal brand accent bar */}
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #1e3a5f, #02d8dc, #1e3a5f)', flexShrink: 0 }} />
         <div style={{ padding: '1.5rem', flex: 1, overflowY: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
             <h3 style={{ fontWeight: 900, fontSize: '1.125rem', fontFamily: 'Outfit, sans-serif', color: C.textPrim, letterSpacing: '-0.01em', margin: 0 }}>
@@ -230,7 +245,7 @@ export function AdminModal({ title, onClose, children }) {
                 color: C.textMuted, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '1.25rem', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = C.textPrim; e.currentTarget.style.borderColor = C.borderHov }}
+              onMouseEnter={e => { e.currentTarget.style.color = C.teal; e.currentTarget.style.borderColor = C.tealBorder }}
               onMouseLeave={e => { e.currentTarget.style.color = C.textMuted; e.currentTarget.style.borderColor = C.border }}
             >
               ×
@@ -247,8 +262,8 @@ export function AdminSpinner() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '8rem 2rem', gap: '1.25rem' }}>
       <div style={{ position: 'relative', width: 48, height: 48 }}>
-        <div style={{ position: 'absolute', inset: 0, border: '4px solid rgba(249,115,22,0.08)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', inset: 0, border: '4px solid transparent', borderTopColor: '#f97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div style={{ position: 'absolute', inset: 0, border: '4px solid rgba(2,216,220,0.08)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', inset: 0, border: '4px solid transparent', borderTopColor: C.teal, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
       </div>
       <p style={{ fontSize: '0.65rem', fontWeight: 900, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.2em', margin: 0 }}>
         Loading...
@@ -269,9 +284,9 @@ export function Pagination({ page, pages, onPage }) {
 
   const btnStyle = (active) => ({
     minWidth: 40, height: 40, borderRadius: 10, fontSize: '0.875rem', fontWeight: 800,
-    background: active ? 'rgba(249,115,22,0.12)' : 'rgba(255,255,255,0.03)',
-    color: active ? '#f97316' : C.textMuted,
-    border: active ? '1px solid rgba(249,115,22,0.25)' : `1px solid ${C.border}`,
+    background: active ? 'rgba(2,216,220,0.12)' : 'rgba(255,255,255,0.03)',
+    color: active ? C.teal : C.textMuted,
+    border: active ? '1px solid rgba(2,216,220,0.3)' : `1px solid ${C.border}`,
     cursor: 'pointer', transition: 'all 0.2s', padding: '0 0.75rem',
   })
 
@@ -309,9 +324,9 @@ export function Panel({ children, style = {} }) {
 export function Badge({ children, status }) {
   return (
     <span style={{
-      background: 'rgba(249,115,22,0.08)',
-      color: '#f97316',
-      border: '1px solid rgba(249,115,22,0.2)',
+      background: 'rgba(2,216,220,0.08)',
+      color: C.teal,
+      border: `1px solid rgba(2,216,220,0.2)`,
       padding: '0.2rem 0.6rem',
       borderRadius: 999,
       fontSize: '0.65rem',
@@ -336,13 +351,13 @@ export function AdminInput({ label, error, style = {}, ...props }) {
       <input
         style={{
           width: '100%', padding: '0.75rem 1rem',
-          background: 'rgba(255,255,255,0.04)',
+          background: 'rgba(255,255,255,0.03)',
           border: `1.5px solid ${error ? '#ef4444' : C.border}`,
           borderRadius: 10,
           color: C.textPrim, fontSize: '0.9rem', fontFamily: 'inherit',
           outline: 'none', transition: 'border-color 0.2s',
         }}
-        onFocus={e => e.target.style.borderColor = '#f97316'}
+        onFocus={e => e.target.style.borderColor = C.teal}
         onBlur={e => e.target.style.borderColor = error ? '#ef4444' : C.border}
         {...props}
       />

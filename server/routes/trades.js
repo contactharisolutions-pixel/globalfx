@@ -1,11 +1,22 @@
+/**
+ * trades.js — Package Investment & Capital Withdrawal Routes
+ *
+ * Rules (Incomeengine.md):
+ * - Fixed package amounts: $150, $300, $500, $1000, $2000, $5000
+ * - 2% daily compounding ROI — unlimited days
+ * - Income withdrawal locked 60 days from activation
+ * - Capital withdrawal: 30% penalty if withdrawn before 30 days
+ */
+
 const router       = require('express').Router()
 const bcrypt       = require('bcryptjs')
 const authenticate = require('../middleware/authenticate')
-const { triggerDirectAndLevelBonus } = require('../services/bonusEngine')
-const { processRewards }              = require('../services/rewardEngine')
-const { updateRoyaltyRanks }          = require('../services/royaltyEngine')
-
+const { triggerSponsorIncome } = require('../services/sponsorEngine')
+const { processBusinessMatch } = require('../services/rewardEngine')
+const { processMonsoonBonanza } = require('../services/monsoonEngine')
+const { PACKAGE_AMOUNTS } = require('../lib/ranks')
 const prisma = require('../lib/prisma')
+
 router.use(authenticate)
 
 /** Verify the user's transaction PIN */
@@ -16,34 +27,111 @@ async function verifyPin(userId, pin) {
   if (!valid) throw new Error('Invalid transaction PIN')
 }
 
-/** Credit income wallet + write ledger entry */
-async function creditIncome(tx, userId, amount, remarks, refType = null, refId = null) {
-  const user = await tx.user.update({
-    where: { id: userId },
-    data:  { income_wallet_balance: { increment: amount } },
-  })
-  await tx.incomeLedger.create({
-    data: {
-      user_id:        userId,
-      type:           'credit',
-      amount,
-      balance_after:  user.income_wallet_balance,
-      remarks,
-      reference_type: refType,
-      reference_id:   refId,
-    },
-  })
-}
+// ── POST /api/trades/invest ────────────────────────────────────
+router.post('/invest', async (req, res, next) => {
+  const { amount, source, pin } = req.body
+  if (!amount || !source || !pin) return res.status(400).json({ error: 'amount, source and pin required' })
 
-// ─── Shared investment constants ──────────────────────────────
-const MIN_AMOUNT = 25
-const MAX_AMOUNT = 5000
+  const amt = parseFloat(amount)
 
+  // Validate fixed package amount
+  if (!PACKAGE_AMOUNTS.includes(amt)) {
+    return res.status(400).json({
+      error: `Invalid package amount. Choose from: $${PACKAGE_AMOUNTS.join(', $')}`,
+    })
+  }
+
+  try {
+    await verifyPin(req.user.id, pin)
+
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } })
+
+    const balanceField = source === 'fund' ? 'fund_wallet_balance' : 'income_wallet_balance'
+    if (parseFloat(user[balanceField]) < amt) {
+      return res.status(400).json({ error: 'Insufficient balance' })
+    }
+
+    // Income lock: 60 days | Capital lock: 30 days (penalty threshold)
+    const now = new Date()
+    const incomeLock   = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)
+    const capitalLock  = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+    const pkg = await prisma.$transaction(async (tx) => {
+      const p = await tx.tradePackage.create({
+        data: {
+          user_id:              req.user.id,
+          amount:               amt,
+          daily_roi_percent:    2.0,
+          max_return:           null, // unlimited compounding
+          status:               'active',
+          income_locked_until:  incomeLock,
+          capital_locked_until: capitalLock,
+        },
+      })
+
+      await tx.user.update({
+        where: { id: req.user.id },
+        data:  { [balanceField]: { decrement: amt } },
+      })
+
+      if (user.status === 'inactive') {
+        await tx.user.update({
+          where: { id: req.user.id },
+          data:  { status: 'active' },
+        })
+      }
+
+      // Fund wallet ledger entry
+      if (source === 'fund') {
+        const updated = await tx.user.findUnique({ where: { id: req.user.id } })
+        await tx.fundLedger.create({
+          data: {
+            user_id:        req.user.id,
+            type:           'debit',
+            amount:         amt,
+            balance_after:  updated.fund_wallet_balance,
+            remarks:        `Package Activated — $${amt}`,
+            reference_type: 'investment',
+            reference_id:   p.id,
+          },
+        })
+      }
+
+      return p
+    })
+
+    // Fire-and-forget: sponsor income + business match + monsoon
+    if (user.sponsor_id) {
+      triggerSponsorIncome(req.user.id, amt).catch(console.error)
+    }
+    processBusinessMatch().catch(console.error)
+    processMonsoonBonanza().catch(console.error)
+
+    res.status(201).json({
+      message:    `Package $${amt} activated successfully`,
+      package_id: pkg.id,
+      income_locked_until:  incomeLock.toISOString(),
+      capital_locked_until: capitalLock.toISOString(),
+    })
+  } catch (err) {
+    if (err.message.includes('PIN') || err.message.includes('balance') || err.message.includes('package')) {
+      return res.status(400).json({ error: err.message })
+    }
+    next(err)
+  }
+})
+
+// ── POST /api/trades/activate-for-other ───────────────────────
 router.post('/activate-for-other', async (req, res, next) => {
   const { targetUserId, amount, pin } = req.body
   const amt = parseFloat(amount)
 
-  if (!targetUserId || !amt || !pin) return res.status(400).json({ error: 'Target Member ID, amount and pin required' })
+  if (!targetUserId || !amt || !pin) {
+    return res.status(400).json({ error: 'Target Member ID, amount and pin required' })
+  }
+  if (!PACKAGE_AMOUNTS.includes(amt)) {
+    return res.status(400).json({ error: `Invalid package amount. Choose: $${PACKAGE_AMOUNTS.join(', $')}` })
+  }
 
   try {
     await verifyPin(req.user.id, pin)
@@ -52,129 +140,119 @@ router.post('/activate-for-other', async (req, res, next) => {
     const target = await prisma.user.findUnique({ where: { user_id: targetUserId } })
 
     if (!target) return res.status(404).json({ error: 'Target member not found' })
-    if (parseFloat(sender.fund_wallet_balance) < amt) return res.status(400).json({ error: 'Insufficient fund wallet balance' })
+    if (parseFloat(sender.fund_wallet_balance) < amt) {
+      return res.status(400).json({ error: 'Insufficient fund wallet balance' })
+    }
 
-    if (amt < MIN_AMOUNT) return res.status(400).json({ error: `Minimum investment is $${MIN_AMOUNT}` })
-    if (amt > MAX_AMOUNT) return res.status(400).json({ error: `Maximum investment is $${MAX_AMOUNT.toLocaleString()}` })
-
-    // Flat 2× max return — no early adopter cap
-    const maxReturn = amt * 2
+    const now = new Date()
+    const incomeLock  = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000)
+    const capitalLock = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
     await prisma.$transaction(async (tx) => {
-      // 1. Deduct from sender fund wallet
       const updatedSender = await tx.user.update({
         where: { id: sender.id },
-        data: { fund_wallet_balance: { decrement: amt } }
+        data:  { fund_wallet_balance: { decrement: amt } },
       })
 
-      // 2. Create package for target (daily_roi set to 2% — cron will keep in sync)
       await tx.tradePackage.create({
         data: {
-          user_id:           target.id,
-          amount:            amt,
-          daily_roi_percent: 2.0,
-          max_return:        maxReturn,
-          status:            'active',
-        }
+          user_id:              target.id,
+          amount:               amt,
+          daily_roi_percent:    2.0,
+          max_return:           null,
+          status:               'active',
+          income_locked_until:  incomeLock,
+          capital_locked_until: capitalLock,
+        },
       })
 
-      // 3. Activate target if inactive
       if (target.status === 'inactive') {
-        await tx.user.update({
-          where: { id: target.id },
-          data: { status: 'active' }
-        })
+        await tx.user.update({ where: { id: target.id }, data: { status: 'active' } })
       }
 
-      // 4. Record ledger for sender
       await tx.fundLedger.create({
         data: {
           user_id:        sender.id,
           type:           'debit',
           amount:         amt,
           balance_after:  updatedSender.fund_wallet_balance,
-          remarks:        `External Activation for ${targetUserId} (${target.name})`,
-          reference_type: 'external_activation'
-        }
+          remarks:        `External Activation for ${targetUserId}`,
+          reference_type: 'external_activation',
+        },
       })
     })
 
-    // Trigger bonuses + instant rank/royalty checks for target's sponsor chain
     if (target.sponsor_id) {
-      await triggerDirectAndLevelBonus(target.id, amt).catch(console.error)
+      triggerSponsorIncome(target.id, amt).catch(console.error)
     }
-    // Performance rank and royalty rank re-evaluated immediately after activation
-    await processRewards().catch(console.error)
-    await updateRoyaltyRanks().catch(console.error)
+    processBusinessMatch().catch(console.error)
+    processMonsoonBonanza().catch(console.error)
 
-    res.status(201).json({ message: `Successfully activated ID ${targetUserId} for $${amt}` })
+    res.status(201).json({ message: `Successfully activated ${targetUserId} with $${amt}` })
   } catch (err) {
     res.status(400).json({ error: err.message })
   }
 })
 
-// ─── POST /api/trades/invest ──────────────────────────────────
-router.post('/invest', async (req, res, next) => {
-  const { amount, source, pin } = req.body
-  if (!amount || !source || !pin) return res.status(400).json({ error: 'amount, source and pin required' })
+// ── POST /api/trades/withdraw-capital ─────────────────────────
+// Withdraw capital from an active package (30% penalty if < 30 days)
+router.post('/withdraw-capital', async (req, res, next) => {
+  const { package_id, pin } = req.body
+  if (!package_id || !pin) return res.status(400).json({ error: 'package_id and pin required' })
 
   try {
     await verifyPin(req.user.id, pin)
 
-    const user = await prisma.user.findUnique({ where: { id: req.user.id } })
+    const pkg = await prisma.tradePackage.findFirst({
+      where: { id: parseInt(package_id), user_id: req.user.id, status: 'active' },
+    })
+    if (!pkg) return res.status(404).json({ error: 'Active package not found' })
 
-    if (parseFloat(amount) < MIN_AMOUNT) return res.status(400).json({ error: `Minimum investment is $${MIN_AMOUNT}` })
-    if (parseFloat(amount) > MAX_AMOUNT) return res.status(400).json({ error: `Maximum investment is $${MAX_AMOUNT.toLocaleString()}` })
+    const principal = parseFloat(pkg.amount)
+    const now       = new Date()
+    const isPenalty = pkg.capital_locked_until && now < new Date(pkg.capital_locked_until)
+    const penalty   = isPenalty ? parseFloat((principal * 0.30).toFixed(2)) : 0
+    const refund    = parseFloat((principal - penalty).toFixed(2))
 
-    const balanceField = source === 'fund' ? 'fund_wallet_balance' : 'income_wallet_balance'
-    if (parseFloat(user[balanceField]) < parseFloat(amount)) return res.status(400).json({ error: 'Insufficient balance' })
+    await prisma.$transaction(async (tx) => {
+      // Mark package as completed
+      await tx.tradePackage.update({
+        where: { id: pkg.id },
+        data:  { status: 'completed', completed_at: now },
+      })
 
-    // Flat 2× max return — no early adopter cap
-    const maxReturn = parseFloat(amount) * 2
+      // Refund to fund wallet
+      const updated = await tx.user.update({
+        where: { id: req.user.id },
+        data:  { fund_wallet_balance: { increment: refund } },
+      })
 
-    // Atomic: deduct balance, create package, activate user if needed
-    const pkg = await prisma.$transaction(async (tx) => {
-      const p = await tx.tradePackage.create({
+      await tx.fundLedger.create({
         data: {
-          user_id:           req.user.id,
-          amount:            parseFloat(amount),
-          daily_roi_percent: 2.0,  // flat 2% daily
-          max_return:        maxReturn,
-          status:            'active',
+          user_id:        req.user.id,
+          type:           'credit',
+          amount:         refund,
+          balance_after:  updated.fund_wallet_balance,
+          remarks:        isPenalty
+            ? `Capital withdrawal (30% penalty applied — $${penalty} deducted)`
+            : 'Capital withdrawal (no penalty)',
+          reference_type: 'capital_refund',
+          reference_id:   pkg.id,
         },
       })
-      await tx.user.update({
-        where: { id: req.user.id },
-        data:  { [balanceField]: { decrement: parseFloat(amount) } },
-      })
-      
-      if (user.status === 'inactive') {
-        await tx.user.update({
-          where: { id: req.user.id },
-          data:  { status: 'active' },
-        })
-      }
-      return p
     })
 
-    // Trigger direct + level bonuses for sponsor chain
-    if (user.sponsor_id) {
-      await triggerDirectAndLevelBonus(req.user.id, parseFloat(amount)).catch(console.error)
-    }
-    // Performance rank and royalty rank re-evaluated immediately after activation
-    await processRewards().catch(console.error)
-    await updateRoyaltyRanks().catch(console.error)
-
-    res.status(201).json({ message: 'Trade package activated', package_id: pkg.id })
-  } catch (err) {
-    if (err.message.includes('PIN') || err.message.includes('balance')) {
-      return res.status(400).json({ error: err.message })
-    }
-    next(err)
-  }
+    res.json({
+      message:   `Capital refunded: $${refund}`,
+      principal,
+      penalty,
+      refund,
+      penalty_applied: isPenalty,
+    })
+  } catch (err) { next(err) }
 })
 
-// ─── GET /api/trades/active ───────────────────────────────────
+// ── GET /api/trades/active ─────────────────────────────────────
 router.get('/active', async (req, res, next) => {
   try {
     const packages = await prisma.tradePackage.findMany({
@@ -185,7 +263,7 @@ router.get('/active', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-// ─── GET /api/trades/history ──────────────────────────────────
+// ── GET /api/trades/history ────────────────────────────────────
 router.get('/history', async (req, res, next) => {
   try {
     const packages = await prisma.tradePackage.findMany({
@@ -194,6 +272,24 @@ router.get('/history', async (req, res, next) => {
     })
     res.json({ packages })
   } catch (err) { next(err) }
+})
+
+// ── GET /api/trades/packages ───────────────────────────────────
+// Return available fixed package options
+router.get('/packages', (_req, res) => {
+  const { SPONSOR_INCOME_TABLE } = require('../lib/ranks')
+  const options = PACKAGE_AMOUNTS.map(amt => ({
+    amount:        amt,
+    daily_roi:     '2.0%',
+    roi_type:      'Daily Compounding',
+    duration:      'Unlimited Days',
+    l1_sponsor:    `$${SPONSOR_INCOME_TABLE[amt][0]}`,
+    l2_sponsor:    `$${SPONSOR_INCOME_TABLE[amt][1]}`,
+    l3_sponsor:    `$${SPONSOR_INCOME_TABLE[amt][2]}`,
+    income_lock:   '60 days',
+    capital_lock:  '30 days (30% penalty if early)',
+  }))
+  res.json({ packages: options })
 })
 
 module.exports = router

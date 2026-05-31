@@ -3,7 +3,6 @@ import LiveMarketSection  from '../../components/public/LiveMarketSection'
 import AboutSection       from '../../components/public/AboutSection'
 import ServicesSection    from '../../components/public/ServicesSection'
 import HowItWorksSection  from '../../components/public/HowItWorksSection'
-import PlansSection       from '../../components/public/PlansSection'
 import WhyUsSection       from '../../components/public/WhyUsSection'
 import TestimonialsSection from '../../components/public/TestimonialsSection'
 import FAQSection         from '../../components/public/FAQSection'
@@ -20,7 +19,6 @@ export default function Home() {
       <AboutSection />
       <ServicesSection />
       <HowItWorksSection />
-      <PlansSection />
       <WhyUsSection />
       <TestimonialsSection />
       <FAQSection />

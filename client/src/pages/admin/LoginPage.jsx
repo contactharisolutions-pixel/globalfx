@@ -3,9 +3,17 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { TrendingUp, Eye, EyeOff, Loader2, Shield, Mail, Lock, ArrowRight, ShieldAlert, Cpu } from 'lucide-react'
+import { Eye, EyeOff, Loader2, Shield, Mail, Lock, ArrowLeft, ShieldAlert, Cpu } from 'lucide-react'
 import toast from 'react-hot-toast'
 import useAdminStore from '../../store/useAdminStore'
+
+const BG       = '#080f1e'
+const SURFACE  = '#0e1a2e'
+const SURFACE2 = '#111f33'
+const BORDER   = 'rgba(255,255,255,0.08)'
+const PRIMARY  = '#02d8dc'
+const TEXT     = '#f1f5f9'
+const TEXT_SUB = '#94a3b8'
 
 const schema = z.object({
   email:    z.string().email('Enter a valid administrative email'),
@@ -36,105 +44,133 @@ export default function AdminLogin() {
       minHeight: '100vh',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '2rem 1.25rem',
-      background: '#f8fafc',
+      background: BG,
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
     }}>
-      {/* Background glow */}
+      {/* Background glows */}
+      <div style={{ position: 'fixed', top: '-10%', left: '-5%', width: '50%', height: '60%', background: 'radial-gradient(ellipse, rgba(2,216,220,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', bottom: '-10%', right: '-5%', width: '40%', height: '60%', background: 'radial-gradient(ellipse, rgba(30,58,95,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+      {/* Grid pattern overlay */}
       <div style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 60% 60% at 50% 30%, rgba(13,148,136,0.04) 0%, transparent 70%)',
+        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
+        backgroundSize: '48px 48px',
       }} />
 
-      <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 10 }}>
+      <div style={{ width: '100%', maxWidth: 460, position: 'relative', zIndex: 10 }}>
+
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="fade-in">
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-            <div style={{
-              width: 'auto', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <img src="/bitlance-logo.png" alt="BitLance Logo" style={{ height: 56, width: 'auto' }} />
-            </div>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          {/* Logo */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.875rem', marginBottom: '2rem' }}>
+            <img
+              src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/Logo.png"
+              alt="BitLance Logo"
+              style={{ height: 52, width: 'auto', objectFit: 'contain' }}
+            />
             <div style={{ textAlign: 'left' }}>
-              <p style={{ fontSize: '1.5rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-main)', lineHeight: 1.1 }}>
+              <p style={{ fontSize: '1.375rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: TEXT, lineHeight: 1.1, margin: 0, letterSpacing: '-0.01em' }}>
                 BITLANCE
               </p>
-              <p style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              <p style={{ fontSize: '0.625rem', color: PRIMARY, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0 }}>
                 Command Center
               </p>
             </div>
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--text-main)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
+
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: TEXT, marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
             System Authorization
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', fontWeight: 500 }}>
-            Restricted access protocol — level 10 clearance required
+          <p style={{ color: TEXT_SUB, fontSize: '0.9375rem', fontWeight: 500, margin: 0 }}>
+            Restricted access — admin clearance required
           </p>
         </div>
 
         {/* Security Warning */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'center',
-          background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)',
-          borderRadius: 'var(--radius-md)', padding: '0.75rem 1.25rem', marginBottom: '2rem',
-          fontSize: '0.8125rem', color: 'var(--red)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em'
-        }} className="scale-in">
-          <ShieldAlert size={16} />
+          background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+          borderRadius: 14, padding: '0.875rem 1.25rem', marginBottom: '1.75rem',
+          fontSize: '0.75rem', color: '#f87171', fontWeight: 700,
+          textTransform: 'uppercase', letterSpacing: '0.06em',
+        }}>
+          <ShieldAlert size={15} />
           Unauthorized access attempts are logged
         </div>
 
         {/* Login Card */}
         <div style={{
-          background: '#ffffff',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--radius-lg)',
+          background: SURFACE,
+          border: `1.5px solid ${BORDER}`,
+          borderRadius: 28,
           padding: '2.5rem',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.06)',
-        }} className="scale-in">
+          boxShadow: '0 32px 80px rgba(0,0,0,0.5)',
+          position: 'relative', overflow: 'hidden',
+        }}>
+          {/* Top color bar */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, #1e3a5f, ${PRIMARY})`, borderRadius: '28px 28px 0 0' }} />
 
+          {/* AI badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', padding: '0.5rem 1rem', background: 'rgba(2,216,220,0.08)', border: '1px solid rgba(2,216,220,0.15)', borderRadius: 10, width: 'fit-content' }}>
+            <Cpu size={13} style={{ color: PRIMARY }} />
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: PRIMARY, textTransform: 'uppercase', letterSpacing: '0.12em' }}>AI-Secured Access Portal</span>
+          </div>
 
           <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
             {/* Email */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <label style={{ fontSize: '0.7rem', fontWeight: 800, color: TEXT_SUB, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 Administrative Email
               </label>
               <div style={{ position: 'relative' }}>
-                <Mail size={18} style={{ position: 'absolute', left: '1.125rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)' }} />
+                <Mail size={16} style={{ position: 'absolute', left: '1.125rem', top: '50%', transform: 'translateY(-50%)', color: TEXT_SUB, pointerEvents: 'none' }} />
                 <input
                   {...register('email')}
                   type="email"
-                  placeholder="admin@BITLANCE.system"
-                  className="input"
+                  placeholder="admin@bitlance.system"
                   style={{
-                    paddingLeft: '3rem', height: 52, fontSize: '0.9375rem',
-                    color: 'var(--text-main)', background: '#f8fafc',
-                    border: '1.5px solid var(--border-subtle)'
+                    width: '100%', height: 52, paddingLeft: '3rem', paddingRight: '1rem',
+                    fontSize: '0.9375rem', borderRadius: 12,
+                    color: TEXT,
+                    background: SURFACE2,
+                    border: `1.5px solid ${errors.email ? 'rgba(239,68,68,0.5)' : BORDER}`,
+                    outline: 'none', fontFamily: 'inherit', transition: 'border-color 0.2s',
+                    boxSizing: 'border-box',
                   }}
+                  onFocus={e => e.target.style.borderColor = PRIMARY}
+                  onBlur={e => e.target.style.borderColor = errors.email ? 'rgba(239,68,68,0.5)' : BORDER}
                   autoComplete="email"
                 />
               </div>
-              {errors.email && <p style={{ color: 'var(--red)', fontSize: '0.75rem', fontWeight: 600 }}>{errors.email.message}</p>}
+              {errors.email && <p style={{ color: '#f87171', fontSize: '0.75rem', fontWeight: 600, margin: 0 }}>{errors.email.message}</p>}
             </div>
 
             {/* Password */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <label style={{ fontSize: '0.7rem', fontWeight: 800, color: TEXT_SUB, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 System Access Key
               </label>
               <div style={{ position: 'relative' }}>
-                <Lock size={18} style={{ position: 'absolute', left: '1.125rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)' }} />
+                <Lock size={16} style={{ position: 'absolute', left: '1.125rem', top: '50%', transform: 'translateY(-50%)', color: TEXT_SUB, pointerEvents: 'none' }} />
                 <input
                   {...register('password')}
                   type={showPw ? 'text' : 'password'}
                   placeholder="••••••••••••"
-                  className="input"
                   style={{
-                    paddingLeft: '3rem', paddingRight: '3rem', height: 52,
-                    fontSize: '0.9375rem', letterSpacing: '0.1em',
-                    color: 'var(--text-main)', background: '#f8fafc',
-                    border: '1.5px solid var(--border-subtle)'
+                    width: '100%', height: 52,
+                    paddingLeft: '3rem', paddingRight: '3.5rem',
+                    fontSize: '0.9375rem', letterSpacing: '0.1em', borderRadius: 12,
+                    color: TEXT,
+                    background: SURFACE2,
+                    border: `1.5px solid ${errors.password ? 'rgba(239,68,68,0.5)' : BORDER}`,
+                    outline: 'none', fontFamily: 'inherit', transition: 'border-color 0.2s',
+                    boxSizing: 'border-box',
                   }}
+                  onFocus={e => e.target.style.borderColor = PRIMARY}
+                  onBlur={e => e.target.style.borderColor = errors.password ? 'rgba(239,68,68,0.5)' : BORDER}
                   autoComplete="current-password"
                 />
                 <button
@@ -142,47 +178,67 @@ export default function AdminLogin() {
                   onClick={() => setShowPw(!showPw)}
                   style={{
                     position: 'absolute', right: '1.125rem', top: '50%', transform: 'translateY(-50%)',
-                    background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-faint)', display: 'flex',
-                    transition: 'color 0.2s'
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: TEXT_SUB, display: 'flex', padding: 0, transition: 'color 0.2s',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'white'}
-                  onMouseLeave={e => e.currentTarget.style.color = 'var(--text-faint)'}
+                  onMouseEnter={e => e.currentTarget.style.color = TEXT}
+                  onMouseLeave={e => e.currentTarget.style.color = TEXT_SUB}
                 >
-                  {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPw ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
-              {errors.password && <p style={{ color: 'var(--red)', fontSize: '0.75rem', fontWeight: 600 }}>{errors.password.message}</p>}
+              {errors.password && <p style={{ color: '#f87171', fontSize: '0.75rem', fontWeight: 600, margin: 0 }}>{errors.password.message}</p>}
             </div>
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary"
               style={{
-                width: '100%', height: 56, marginTop: '0.5rem', fontSize: '1rem',
-                fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em',
-                background: 'linear-gradient(135deg, var(--orange), var(--red))',
-                color: '#ffffff',
-                borderColor: 'transparent', boxShadow: '0 8px 30px rgba(249,115,22,0.4)'
+                width: '100%', height: 56, marginTop: '0.5rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.625rem',
+                fontSize: '0.9375rem', fontWeight: 800,
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+                background: loading ? SURFACE2 : `linear-gradient(135deg, #1e3a5f, ${PRIMARY})`,
+                color: '#ffffff', border: 'none', borderRadius: 14,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                boxShadow: loading ? 'none' : '0 8px 28px rgba(2,216,220,0.3)',
+                transition: 'all 0.2s', fontFamily: 'Outfit, sans-serif',
               }}
+              onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(2,216,220,0.4)' } }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = loading ? 'none' : '0 8px 28px rgba(2,216,220,0.3)' }}
             >
               {loading
-                ? <Loader2 size={24} className="animate-spin" />
-                : <><Shield size={20} /> <span style={{ color: '#fff' }}>Initialize Authorization</span></>
+                ? <><Loader2 size={20} className="animate-spin" /> Authenticating...</>
+                : <><Shield size={18} /> Initialize Authorization</>
               }
             </button>
           </form>
         </div>
 
+        {/* Back link */}
         <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <Link to="/" style={{ fontSize: '0.875rem', color: 'var(--text-faint)', textDecoration: 'none', fontWeight: 600, transition: 'var(--transition-normal)', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.transform = 'translateX(-4px)' }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-faint)'; e.currentTarget.style.transform = 'none' }}
+          <Link to="/" style={{
+            fontSize: '0.875rem', color: TEXT_SUB, textDecoration: 'none',
+            fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+            transition: 'color 0.2s',
+          }}
+            onMouseEnter={e => e.currentTarget.style.color = PRIMARY}
+            onMouseLeave={e => e.currentTarget.style.color = TEXT_SUB}
           >
-            <ArrowRight size={16} style={{ transform: 'rotate(180deg)' }} /> Return to Public Ecosystem
+            <ArrowLeft size={16} /> Return to Public Ecosystem
           </Link>
         </div>
       </div>
+
+      <style>{`
+        input::placeholder { color: #475569 !important; }
+        input:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0 100px ${SURFACE2} inset !important;
+          -webkit-text-fill-color: ${TEXT} !important;
+          caret-color: ${TEXT};
+        }
+      `}</style>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 const XLSX              = require('xlsx')
 const router            = require('express').Router()
 const authenticateAdmin = require('../../middleware/authenticateAdmin')
-const { getLegBusiness } = require('../../services/businessUtils')
+const { getBinaryBusiness } = require('../../services/businessUtils')
 
 const prisma = require('../../lib/prisma')
 router.use(authenticateAdmin)
@@ -136,9 +136,10 @@ router.get('/business', async (req, res, next) => {
     })
 
     const detailed = await Promise.all(members.map(async (m) => {
-      const legs = await getLegBusiness(m.id)
-      const totalTeam = legs.leg1 + legs.leg2 + legs.leg3
-      return { ...m, ...legs, totalTeam }
+      const { left, right } = await getBinaryBusiness(m.id)
+      const matched   = 2 * Math.min(left, right)
+      const totalBusiness = left + right
+      return { ...m, left_leg: left, right_leg: right, matched, totalBusiness }
     }))
 
     res.json({ reports: detailed })
@@ -146,10 +147,27 @@ router.get('/business', async (req, res, next) => {
 })
 
 // ─── GET /api/admin/reports/incomes ─────────────────────────
-// Detailed income reporting for ROI, Direct, Level, Reward, Royalty
+// Income auditing — all 8 BitLance income types
 router.get('/incomes', async (req, res, next) => {
   const rawType = req.query.type || 'roi'
-  const type    = rawType === 'roi' ? 'trading' : rawType
+
+  // Map frontend tab IDs to DB BonusType enum values
+  const TYPE_MAP = {
+    roi:            'trading',
+    sponsor_l1:     'sponsor_l1',
+    sponsor_l2:     'sponsor_l2',
+    sponsor_l3:     'sponsor_l3',
+    match_reward:   'match_reward',
+    monthly_salary: 'monthly_salary',
+    royalty:        'royalty',
+    monsoon:        'monsoon',
+    // Legacy aliases kept for safety
+    direct:         'sponsor_l1',
+    level:          'sponsor_l2',
+    reward:         'match_reward',
+  }
+
+  const type = TYPE_MAP[rawType] || rawType
 
   const search = req.query.search || ''
   const from   = req.query.from ? new Date(req.query.from) : undefined
@@ -251,21 +269,28 @@ router.get('/roi', async (req, res, next) => {
     bonuses.forEach((b) => {
       const istDate = new Date(b.created_at.getTime() + IST_OFFSET_MS)
       const day = istDate.toISOString().slice(0, 10)
-      if (!byDay[day]) byDay[day] = { total: 0, trading: 0, direct: 0, level: 0, reward: 0, royalty: 0 }
-      byDay[day].total   += +b.amount
-      byDay[day][b.type] += +b.amount
+      if (!byDay[day]) byDay[day] = {
+        total: 0, trading: 0,
+        sponsor_l1: 0, sponsor_l2: 0, sponsor_l3: 0,
+        match_reward: 0, monthly_salary: 0, royalty: 0, monsoon: 0
+      }
+      byDay[day].total += +b.amount
+      if (byDay[day][b.type] !== undefined) byDay[day][b.type] += +b.amount
     })
 
     const roi_history = Object.entries(byDay)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, vals]) => ({
         date,
-        total:   +vals.total.toFixed(2),
-        trading: +vals.trading.toFixed(2),
-        direct:  +vals.direct.toFixed(2),
-        level:   +vals.level.toFixed(2),
-        reward:  +vals.reward.toFixed(2),
-        royalty: +vals.royalty.toFixed(2),
+        total:          +vals.total.toFixed(2),
+        trading:        +vals.trading.toFixed(2),
+        sponsor_l1:     +vals.sponsor_l1.toFixed(2),
+        sponsor_l2:     +vals.sponsor_l2.toFixed(2),
+        sponsor_l3:     +vals.sponsor_l3.toFixed(2),
+        match_reward:   +vals.match_reward.toFixed(2),
+        monthly_salary: +vals.monthly_salary.toFixed(2),
+        royalty:        +vals.royalty.toFixed(2),
+        monsoon:        +vals.monsoon.toFixed(2),
       }))
 
     res.json({ roi_history })

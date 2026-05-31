@@ -11,19 +11,19 @@ import toast from 'react-hot-toast'
 import api from '../../lib/api'
 import { PageHeader, StatCard, DataTable, Badge, Spinner, Panel } from '../../components/member/ui'
 
-const FEE_PERCENT = 10
+const FEE_PERCENT = 20
 
 const schema = z.object({
   amount: z.coerce.number()
-    .min(25, 'Minimum withdrawal is $25')
-    .refine(val => val === 25 || val % 10 === 0, 'Amount must be $25 or a multiple of $10'),
+    .min(20, 'Minimum withdrawal is $20')
+    .refine(val => val % 20 === 0, 'Amount must be a multiple of $20'),
   pin: z.string().length(6, 'Enter your 6-digit PIN'),
 })
 
 const HIST_COLS = [
   { label: '#',          render: (v, row, i) => <span style={{ fontWeight: 700, color: '#94a3b8' }}>{i + 1}</span> },
   { key: 'created_at',  label: 'Date',       render: (v) => <span style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: 600 }}>{new Date(v).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span> },
-  { key: 'amount',      label: 'Requested',  render: (v) => <span style={{ fontWeight: 700, color: '#0f172a' }}>${(+v).toLocaleString()}</span> },
+  { key: 'amount',      label: 'Requested',  render: (v) => <span style={{ fontWeight: 700, color: '#ffffff' }}>${(+v).toLocaleString()}</span> },
   { key: 'fee',         label: 'Fee',        render: (v) => <span style={{ color: '#ef4444', fontWeight: 600 }}>-${(+v).toLocaleString()}</span> },
   { key: 'net_amount',  label: 'You Receive',render: (v) => <span style={{ color: '#10b981', fontWeight: 800 }}>${(+v).toLocaleString()}</span> },
   { key: 'status',      label: 'Status',     render: (v) => <Badge status={v} /> },
@@ -39,7 +39,7 @@ export default function WithdrawPage() {
 
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { amount: 25, pin: '' },
+    defaultValues: { amount: 20, pin: '' },
   })
   const amount = watch('amount') || 0
   const fee    = +(amount * FEE_PERCENT / 100).toFixed(2)
@@ -103,7 +103,7 @@ export default function WithdrawPage() {
           />
 
           {/* Tab Bar */}
-          <div style={{ display: 'flex', gap: '0.25rem', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '0.25rem' }}>
+          <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '0.25rem' }}>
             {[
               { id: 'request', label: 'New Withdrawal',    icon: ArrowUpFromLine },
               { id: 'history', label: 'Withdrawal History', icon: HistoryIcon     },
@@ -113,13 +113,13 @@ export default function WithdrawPage() {
                 onClick={() => setTab(t.id)}
                 style={{
                   flex: 1, padding: '0.625rem 1rem', border: 'none',
-                  background: tab === t.id ? '#ffffff' : 'transparent',
-                  color: tab === t.id ? '#0f172a' : '#94a3b8',
+                  background: tab === t.id ? 'rgba(2,216,220,0.15)' : 'transparent',
+                  color: tab === t.id ? '#02d8dc' : '#94a3b8',
                   fontWeight: tab === t.id ? 700 : 600,
                   fontSize: '0.8125rem', cursor: 'pointer', borderRadius: 10,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                   transition: 'all 0.2s',
-                  boxShadow: tab === t.id ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+                  border: tab === t.id ? '1px solid rgba(2,216,220,0.3)' : '1px solid transparent',
                 }}
               >
                 <t.icon size={14} />
@@ -134,7 +134,7 @@ export default function WithdrawPage() {
               {/* Wallet Status */}
               <div style={{
                 marginBottom: '1.5rem', padding: '0.875rem 1.125rem',
-                background: wallet ? '#f0fdf4' : '#fffbeb',
+                background: wallet ? 'rgba(16,185,129,0.08)' : 'rgba(245,158,11,0.08)',
                 border: `1.5px solid ${wallet ? 'rgba(16,185,129,0.25)' : 'rgba(245,158,11,0.25)'}`,
                 borderRadius: 12,
                 display: 'flex', alignItems: 'center', gap: '0.875rem',
@@ -143,17 +143,17 @@ export default function WithdrawPage() {
                   <>
                     <CheckCircle size={18} style={{ color: '#10b981', flexShrink: 0 }} />
                     <div style={{ minWidth: 0 }}>
-                      <p style={{ margin: 0, fontSize: '0.6875rem', fontWeight: 800, color: '#065f46', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.25rem' }}>Withdrawal Wallet</p>
-                      <code style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono, monospace', color: '#0f172a', wordBreak: 'break-all' }}>{wallet}</code>
+                      <p style={{ margin: 0, fontSize: '0.6875rem', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.25rem' }}>Withdrawal Wallet</p>
+                      <code style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono, monospace', color: '#ffffff', wordBreak: 'break-all' }}>{wallet}</code>
                     </div>
                   </>
                 ) : (
                   <>
                     <AlertTriangle size={18} style={{ color: '#f59e0b', flexShrink: 0 }} />
                     <div>
-                      <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: 700, color: '#92400e' }}>
+                      <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: 700, color: '#f59e0b' }}>
                         No wallet configured.{' '}
-                        <Link to="/dashboard/wallet-setup" style={{ color: '#0d9488', textDecoration: 'none' }}>
+                        <Link to="/dashboard/wallet-setup" style={{ color: '#02d8dc', textDecoration: 'none' }}>
                           Add wallet address →
                         </Link>
                       </p>
@@ -173,8 +173,8 @@ export default function WithdrawPage() {
                       <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#64748b' }}>$</span>
                       <input
                         {...register('amount')}
-                        type="number" min={25} step={10} max={balance}
-                        placeholder="Min. $25"
+                        type="number" min={20} step={20} max={balance}
+                        placeholder="Min. $20"
                         className="input"
                         style={{ paddingLeft: '2rem', fontWeight: 700, fontSize: '1rem' }}
                         autoComplete="off"
@@ -203,21 +203,21 @@ export default function WithdrawPage() {
                 </div>
 
                 {/* Breakdown */}
-                {amount >= 25 && (
-                  <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 14, padding: '1.125rem 1.25rem' }}>
+                {amount >= 20 && (
+                  <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '1.125rem 1.25rem' }}>
                     <p style={{ fontSize: '0.6875rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.875rem' }}>Withdrawal Summary</p>
                     {[
-                      { label: 'Requested Amount', value: `$${(+amount).toLocaleString()}`,   color: '#0f172a' },
-                      { label: `Processing Fee (${FEE_PERCENT}%)`, value: `-$${fee.toLocaleString()}`, color: '#ef4444' },
+                      { label: 'Requested Amount', value: `$${(+amount).toLocaleString()}`,   color: '#ffffff' },
+                      { label: `Processing Fee (${FEE_PERCENT}%)`, value: `-$${fee.toLocaleString()}`, color: 'var(--red)' },
                     ].map((row) => (
                       <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                        <span style={{ fontSize: '0.875rem', color: '#64748b', fontWeight: 500 }}>{row.label}</span>
+                        <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', fontWeight: 500 }}>{row.label}</span>
                         <span style={{ fontSize: '0.875rem', fontWeight: 700, color: row.color }}>{row.value}</span>
                       </div>
                     ))}
-                    <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem', marginTop: '0.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#0f172a' }}>You Receive</span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#10b981' }}>${net.toLocaleString()}</span>
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.75rem', marginTop: '0.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#ffffff' }}>You Receive</span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--green)' }}>${net.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -249,36 +249,36 @@ export default function WithdrawPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <Panel>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fff7ed', border: '1px solid rgba(249,115,22,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Info size={18} style={{ color: '#f97316' }} />
               </div>
               <div>
-                <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Withdrawal Rules</p>
+                <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#ffffff', fontFamily: 'Outfit, sans-serif' }}>Withdrawal Rules</p>
                 <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>Please read before submitting</p>
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {[
-                { label: 'Processing Days', value: 'Monday to Friday',     color: '#0d9488' },
+                { label: 'Processing Days', value: 'Monday to Friday',     color: '#02d8dc' },
                 { label: 'Processing Hours', value: '6:00 AM – 11:00 AM (IST)', color: '#3b82f6' },
-                { label: 'Minimum Amount',  value: '$25.00',               color: '#7c3aed' },
-                { label: 'Allowed Steps',   value: '$25, then $10 steps',  color: '#f97316' },
+                { label: 'Minimum Amount',  value: '$20.00',               color: '#7c3aed' },
+                { label: 'Allowed Steps',   value: '$20 steps',            color: '#f97316' },
                 { label: 'Processing Fee',  value: `${FEE_PERCENT}%`,      color: '#ef4444' },
                 { label: 'Network',         value: 'USDT BEP20 (BSC)',     color: '#10b981' },
               ].map((item) => (
                 <div key={item.label} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: 10, border: '1px solid #f1f5f9',
+                  padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.02)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)',
                 }}>
-                  <span style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: 500 }}>{item.label}</span>
+                  <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 500 }}>{item.label}</span>
                   <span style={{ fontSize: '0.8125rem', fontWeight: 800, color: item.color }}>{item.value}</span>
                 </div>
               ))}
             </div>
 
-            <div style={{ marginTop: '1.25rem', padding: '0.875rem', background: '#fef2f2', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10 }}>
-              <p style={{ fontSize: '0.8125rem', color: '#991b1b', fontWeight: 600, lineHeight: 1.6 }}>
+            <div style={{ marginTop: '1.25rem', padding: '0.875rem', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 10 }}>
+              <p style={{ fontSize: '0.8125rem', color: '#fca5a5', fontWeight: 600, lineHeight: 1.6, margin: 0 }}>
                 ⚠️ Make sure your wallet address is correct. Funds sent to the wrong address cannot be recovered.
               </p>
             </div>

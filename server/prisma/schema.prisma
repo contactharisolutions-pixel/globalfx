@@ -31,11 +31,14 @@ enum PackageStatus {
 }
 
 enum BonusType {
-  direct
-  level
-  trading
-  reward
-  royalty
+  trading        // Daily ROI
+  sponsor_l1     // 3-level direct sponsor — level 1
+  sponsor_l2     // 3-level direct sponsor — level 2
+  sponsor_l3     // 3-level direct sponsor — level 3
+  match_reward   // Instant business match reward
+  monthly_salary // Monthly salary from business match
+  royalty        // Corporate royalty income
+  monsoon        // Monsoon Bonanza team award
 }
 
 enum LedgerType {
@@ -120,6 +123,9 @@ model User {
   ticket_replies        TicketReply[]
   kyc_document          KycDocument?
   announcements         Announcement[]  @relation("AnnouncementTarget")
+  business_match        BusinessMatch?
+  reward_matches        RewardMatch[]
+  monsoon_bonanzas      MonsBonanza[]
 
   created_at            DateTime     @default(now())
   updated_at            DateTime     @updatedAt
@@ -183,17 +189,19 @@ model Deposit {
 
 // ─── Trade Packages ───────────────────────────────────────────
 model TradePackage {
-  id                Int             @id @default(autoincrement())
-  user_id           Int
-  user              User            @relation(fields: [user_id], references: [id])
-  amount            Decimal         @db.Decimal(18, 2)
-  daily_roi_percent Decimal         @db.Decimal(5, 2)
-  total_earned      Decimal         @default(0) @db.Decimal(18, 2)
-  max_return        Decimal         @db.Decimal(18, 2)
-  status            PackageStatus   @default(active)
-  started_at        DateTime        @default(now())
-  completed_at      DateTime?
-  roi_distributions RoiDistribution[]
+  id                    Int             @id @default(autoincrement())
+  user_id               Int
+  user                  User            @relation(fields: [user_id], references: [id])
+  amount                Decimal         @db.Decimal(18, 2)
+  daily_roi_percent     Decimal         @db.Decimal(5, 2)
+  total_earned          Decimal         @default(0) @db.Decimal(18, 2)
+  max_return            Decimal?        @db.Decimal(18, 2)  // null = unlimited (compounding)
+  status                PackageStatus   @default(active)
+  started_at            DateTime        @default(now())
+  completed_at          DateTime?
+  income_locked_until   DateTime?       // Income withdrawal locked for 60 days
+  capital_locked_until  DateTime?       // 30% penalty if capital withdrawn before this
+  roi_distributions     RoiDistribution[]
 
   @@index([user_id])
   @@index([status])
@@ -369,4 +377,51 @@ model Setting {
   updated_at DateTime @updatedAt
 
   @@map("Setting")
+}
+
+// ─── Binary Business Match Tracker ───────────────────────────
+model BusinessMatch {
+  id               Int      @id @default(autoincrement())
+  user_id          Int      @unique
+  user             User     @relation(fields: [user_id], references: [id])
+  left_vol         Decimal  @default(0) @db.Decimal(18, 2)
+  right_vol        Decimal  @default(0) @db.Decimal(18, 2)
+  matched_awarded  Decimal  @default(0) @db.Decimal(18, 2) // highest matched volume already awarded
+  updated_at       DateTime @updatedAt
+
+  @@map("BusinessMatch")
+}
+
+// ─── Business Match Reward & Salary Records ───────────────────
+model RewardMatch {
+  id             Int       @id @default(autoincrement())
+  user_id        Int
+  user           User      @relation(fields: [user_id], references: [id])
+  tier_match     Decimal   @db.Decimal(18, 2)  // which tier triggered (e.g. 1000, 5000)
+  reward_amt     Decimal   @db.Decimal(18, 2)  // instant reward
+  salary_amt     Decimal   @db.Decimal(18, 2)  // monthly salary amount
+  reward_paid    Boolean   @default(false)
+  reward_paid_at DateTime?
+  salaries_paid  Int       @default(0)          // 0–12
+  next_salary_at DateTime?
+  created_at     DateTime  @default(now())
+
+  @@index([user_id])
+  @@index([reward_paid])
+  @@map("RewardMatch")
+}
+
+// ─── Monsoon Bonanza Awards ───────────────────────────────────
+model MonsBonanza {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id])
+  team_size  Int                                // milestone that triggered this
+  bonus_amt  Decimal   @db.Decimal(18, 2)
+  is_paid    Boolean   @default(false)
+  paid_at    DateTime?
+  created_at DateTime  @default(now())
+
+  @@index([user_id])
+  @@map("MonsBonanza")
 }

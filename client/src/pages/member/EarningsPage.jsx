@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import api from '../../lib/api'
 import { PageHeader, StatCard, Spinner, Panel } from '../../components/member/ui'
 
-const PIE_COLORS = ['#0d9488', '#7c3aed', '#10b981', '#f97316']
+const PIE_COLORS = ['#02d8dc', '#7c3aed', '#10b981', '#f97316']
 
 export default function EarningsPage() {
   const [summary, setSummary] = useState(null)
@@ -34,28 +34,31 @@ export default function EarningsPage() {
   const fmt = (n) => `$${(+n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`
 
   const pieData = [
-    { name: 'Daily Profit',  value: +(summary?.trading_income || 0) },
-    { name: 'Referral Bonus', value: +(summary?.direct_bonus  || 0) },
-    { name: 'Team Bonus',    value: +(summary?.level_bonus    || 0) },
-    { name: 'Reward Bonus',  value: +(summary?.reward_bonus   || 0) },
+    { name: 'Daily ROI',       value: +(summary?.trading_income || 0) },
+    { name: 'Sponsor Income',  value: +(summary?.sponsor_income || 0) },
+    { name: 'Match Reward',    value: +(summary?.match_reward   || 0) },
+    { name: 'Monthly Salary',  value: +(summary?.monthly_salary || 0) },
+    { name: 'Royalty',         value: +(summary?.royalty_income || 0) },
+    { name: 'Monsoon',         value: +(summary?.monsoon_income || 0) },
   ].filter(d => d.value > 0)
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null
     return (
-      <div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: 12, padding: '0.75rem 1rem', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1.5px solid rgba(2,216,220,0.2)', borderRadius: 12, padding: '0.75rem 1rem', boxShadow: '0 8px 24px rgba(0,0,0,0.25)' }}>
         {label && <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem', fontWeight: 600 }}>{label}</p>}
-        <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: 900 }}>{fmt(payload[0].value)}</p>
+        <p style={{ fontSize: '1rem', color: '#02d8dc', fontWeight: 900 }}>{fmt(payload[0].value)}</p>
       </div>
     )
   }
 
   const EARNING_LINKS = [
-    { label: 'Daily Profits',    to: '/dashboard/earnings/daily',   color: '#0d9488', bg: '#f0fdfa'  },
-    { label: 'Referral Bonus',   to: '/dashboard/earnings/direct',  color: '#3b82f6', bg: '#eff6ff'  },
-    { label: 'Team Bonus',       to: '/dashboard/earnings/level',   color: '#7c3aed', bg: '#f5f3ff'  },
-    { label: 'Reward Bonus',     to: '/dashboard/earnings/reward',  color: '#f97316', bg: '#fff7ed'  },
-    { label: 'Royalty Bonus',    to: '/dashboard/earnings/royalty', color: '#f59e0b', bg: '#fffbeb'  },
+    { label: 'Daily Profits',    to: '/dashboard/earnings/daily',   color: '#02d8dc', bg: 'rgba(2,216,220,0.08)'  },
+    { label: 'Sponsor Income',   to: '/dashboard/earnings/sponsor', color: '#3b82f6', bg: 'rgba(59,130,246,0.08)'  },
+    { label: 'Match Reward',     to: '/dashboard/earnings/reward',  color: '#7c3aed', bg: 'rgba(124,58,237,0.08)'  },
+    { label: 'Monthly Salary',   to: '/dashboard/earnings/salary',  color: '#f97316', bg: 'rgba(249,115,22,0.08)'  },
+    { label: 'Royalty',          to: '/dashboard/earnings/royalty', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)'  },
+    { label: 'Monsoon Bonanza',  to: '/dashboard/earnings/monsoon', color: '#818cf8', bg: 'rgba(129,140,248,0.08)'  },
   ]
 
   return (
@@ -67,10 +70,10 @@ export default function EarningsPage() {
 
       {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
-        <StatCard label="Total Earned"     value={fmt(summary?.total)}           icon={DollarSign} color="cyan"   />
-        <StatCard label="Daily Profit"     value={fmt(summary?.trading_income)}  icon={TrendingUp} color="green"  />
-        <StatCard label="Referral Bonus"   value={fmt(summary?.direct_bonus)}    icon={Users}      color="purple" />
-        <StatCard label="Team Bonus"       value={fmt(summary?.level_bonus)}     icon={Activity}   color="orange" />
+        <StatCard label="Total Earned"      value={fmt(summary?.total)}          icon={DollarSign} color="cyan"   />
+        <StatCard label="Daily ROI"          value={fmt(summary?.trading_income)} icon={TrendingUp} color="green"  />
+        <StatCard label="Sponsor Income"     value={fmt(summary?.sponsor_income)} icon={Users}      color="purple" />
+        <StatCard label="Match Reward"       value={fmt(summary?.match_reward)}   icon={Activity}   color="orange" />
       </div>
 
       {/* Chart Grid */}
@@ -80,10 +83,10 @@ export default function EarningsPage() {
         <Panel style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Daily Earnings</p>
+              <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#ffffff', fontFamily: 'Outfit, sans-serif' }}>Daily Earnings</p>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>Last 30 days</p>
             </div>
-            <Link to="/dashboard/earnings/daily" style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0d9488', textDecoration: 'none' }}>
+            <Link to="/dashboard/earnings/daily" style={{ fontSize: '0.75rem', fontWeight: 700, color: '#02d8dc', textDecoration: 'none' }}>
               View Details →
             </Link>
           </div>
@@ -94,11 +97,11 @@ export default function EarningsPage() {
                 <AreaChart data={history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#0d9488" stopOpacity={0.18} />
-                      <stop offset="95%" stopColor="#0d9488" stopOpacity={0}    />
+                      <stop offset="5%"  stopColor="#02d8dc" stopOpacity={0.18} />
+                      <stop offset="95%" stopColor="#02d8dc" stopOpacity={0}    />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                   <XAxis
                     dataKey="date"
                     tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
@@ -115,11 +118,11 @@ export default function EarningsPage() {
                   <Area
                     type="monotone"
                     dataKey="earning"
-                    stroke="#0d9488"
+                    stroke="#02d8dc"
                     strokeWidth={2.5}
                     fill="url(#areaGrad)"
                     dot={false}
-                    activeDot={{ r: 5, fill: '#fff', stroke: '#0d9488', strokeWidth: 2.5 }}
+                    activeDot={{ r: 5, fill: '#fff', stroke: '#02d8dc', strokeWidth: 2.5 }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -136,7 +139,7 @@ export default function EarningsPage() {
         {/* Pie Chart */}
         <Panel style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
-            <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>Earnings Breakdown</p>
+            <p style={{ margin: 0, fontWeight: 800, fontSize: '0.9375rem', color: '#ffffff', fontFamily: 'Outfit, sans-serif' }}>Earnings Breakdown</p>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>By income source</p>
           </div>
 
@@ -168,13 +171,13 @@ export default function EarningsPage() {
                 {pieData.map((entry, i) => {
                   const pct = summary?.total > 0 ? ((entry.value / summary.total) * 100).toFixed(1) : 0
                   return (
-                    <div key={entry.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: '#f8fafc', borderRadius: 8 }}>
+                    <div key={entry.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: 8 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
                         <div style={{ width: 10, height: 10, borderRadius: '50%', background: PIE_COLORS[i], flexShrink: 0, boxShadow: `0 0 6px ${PIE_COLORS[i]}60` }} />
-                        <span style={{ fontSize: '0.8125rem', color: '#475569', fontWeight: 600 }}>{entry.name}</span>
+                        <span style={{ fontSize: '0.8125rem', color: '#cbd5e1', fontWeight: 600 }}>{entry.name}</span>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '0.875rem', fontWeight: 800, color: '#0f172a' }}>{fmt(entry.value)}</span>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 800, color: '#ffffff' }}>{fmt(entry.value)}</span>
                         <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '0.375rem' }}>{pct}%</span>
                       </div>
                     </div>
@@ -193,7 +196,7 @@ export default function EarningsPage() {
 
       {/* Quick Links to Detailed Views */}
       <Panel>
-        <p style={{ margin: '0 0 1.25rem', fontWeight: 800, fontSize: '0.9375rem', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>View Detailed Reports</p>
+        <p style={{ margin: '0 0 1.25rem', fontWeight: 800, fontSize: '0.9375rem', color: '#ffffff', fontFamily: 'Outfit, sans-serif' }}>View Detailed Reports</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.875rem' }} id="earnings-links">
           {EARNING_LINKS.map(({ label, to, color, bg }) => (
             <Link key={to} to={to} style={{
@@ -204,7 +207,7 @@ export default function EarningsPage() {
               transition: 'all 0.2s ease',
             }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${color}20` }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = `${color}25`; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = `${color}25`; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = bg }}
             >
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, boxShadow: `0 0 8px ${color}60` }} />
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color, textAlign: 'center', lineHeight: 1.3 }}>{label}</span>

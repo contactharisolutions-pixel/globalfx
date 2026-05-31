@@ -1,7 +1,13 @@
+/**
+ * member.js — Member API Routes
+ * Updated for new BitLance income engine (sponsor_l1/l2/l3, match_reward, monthly_salary, royalty, monsoon)
+ */
 const router       = require('express').Router()
 const bcrypt       = require('bcryptjs')
 const authenticate = require('../middleware/authenticate')
 const prisma = require('../lib/prisma')
+const { getMatchedBusiness, getTeamSize } = require('../services/businessUtils')
+const { BUSINESS_MATCH_TIERS, CORPORATE_ROYALTY_TIERS, MONSOON_BONANZA_TIERS } = require('../lib/ranks')
 router.use(authenticate)
 
 // ─── GET /api/member/dashboard ─────────────────────────────────
@@ -20,23 +26,28 @@ router.get('/dashboard', async (req, res, next) => {
     })
     if (!user) return res.status(404).json({ error: 'User not found' })
 
+    const IST = 'Asia/Kolkata'
+
     const [
-      totalTopup, totalActivePackages, totalWithdraw, totalEarning, todayRoiSum, totalRoiSum, todaySponsorSum, totalSponsorSum, todayLevelSum, totalLevelSum, teamData
+      totalTopup, totalActivePackages, totalWithdraw, totalEarning,
+      todayRoiSum, totalRoiSum,
+      todaySponsorSum, totalSponsorSum,
+      teamData
     ] = await Promise.all([
       prisma.tradePackage.aggregate({ where: { user_id: req.user.id }, _sum: { amount: true } }),
       prisma.tradePackage.aggregate({ where: { user_id: req.user.id, status: 'active' }, _sum: { amount: true } }),
       prisma.withdrawal.aggregate({ where: { user_id: req.user.id, status: 'approved' }, _sum: { amount: true } }),
       prisma.bonus.aggregate({ where: { user_id: req.user.id }, _sum: { amount: true } }),
 
-      // Individual Bonus Stats
+      // Today's ROI (trading type)
       prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type = 'trading'::"BonusType" AND (created_at AT TIME ZONE 'Asia/Kolkata')::date = (NOW() AT TIME ZONE 'Asia/Kolkata')::date`,
       prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type = 'trading'::"BonusType"`,
-      prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type = 'direct'::"BonusType" AND (created_at AT TIME ZONE 'Asia/Kolkata')::date = (NOW() AT TIME ZONE 'Asia/Kolkata')::date`,
-      prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type = 'direct'::"BonusType"`,
-      prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type = 'level'::"BonusType" AND (created_at AT TIME ZONE 'Asia/Kolkata')::date = (NOW() AT TIME ZONE 'Asia/Kolkata')::date`,
-      prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type = 'level'::"BonusType"`,
 
-      // COMPREHENSIVE TEAM METRICS (Single recursive pass)
+      // Today's Sponsor (L1+L2+L3)
+      prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type IN ('sponsor_l1'::"BonusType",'sponsor_l2'::"BonusType",'sponsor_l3'::"BonusType") AND (created_at AT TIME ZONE 'Asia/Kolkata')::date = (NOW() AT TIME ZONE 'Asia/Kolkata')::date`,
+      prisma.$queryRaw`SELECT SUM(amount) as total FROM "Bonus" WHERE user_id = ${req.user.id} AND type IN ('sponsor_l1'::"BonusType",'sponsor_l2'::"BonusType",'sponsor_l3'::"BonusType")`,
+
+      // Team metrics
       prisma.$queryRaw`
         WITH RECURSIVE tree AS (
           SELECT id, status, created_at FROM "User" WHERE sponsor_id = ${req.user.id}
@@ -49,7 +60,7 @@ router.get('/dashboard', async (req, res, next) => {
           FROM "TradePackage"
           WHERE user_id IN (SELECT id FROM tree)
         )
-        SELECT 
+        SELECT
           COUNT(id) as team_total,
           COUNT(id) FILTER (WHERE status = 'active') as active_team,
           COUNT(id) FILTER (WHERE (created_at AT TIME ZONE 'Asia/Kolkata')::date = (NOW() AT TIME ZONE 'Asia/Kolkata')::date) as today_joining,
@@ -66,24 +77,22 @@ router.get('/dashboard', async (req, res, next) => {
     res.json({
       user,
       stats: {
-        fund_wallet:    user.fund_wallet_balance,
-        income_wallet:  user.income_wallet_balance,
-        total_topup:    totalTopup._sum.amount       || 0,
-        total_active_packages: totalActivePackages._sum.amount || 0,
-        total_withdraw: totalWithdraw._sum.amount     || 0,
-        total_earning:  totalEarning._sum.amount     || 0,
-        team_total:     Number(stats.team_total      || 0),
-        active_team:    Number(stats.active_team     || 0),
-        today_joining:  Number(stats.today_joining   || 0),
-        today_business: Number(stats.today_business  || 0),
-        today_activation: Number(stats.today_activation || 0),
-        total_team_business: Number(stats.total_team_business || 0),
-        today_roi: Number(todayRoiSum[0]?.total || 0),
-        total_roi: Number(totalRoiSum[0]?.total || 0),
-        today_sponsor_income: Number(todaySponsorSum[0]?.total || 0),
-        total_sponsor_income: Number(totalSponsorSum[0]?.total || 0),
-        today_level_income: Number(todayLevelSum[0]?.total || 0),
-        total_level_income: Number(totalLevelSum[0]?.total || 0),
+        fund_wallet:           user.fund_wallet_balance,
+        income_wallet:         user.income_wallet_balance,
+        total_topup:           totalTopup._sum.amount               || 0,
+        total_active_packages: totalActivePackages._sum.amount       || 0,
+        total_withdraw:        totalWithdraw._sum.amount             || 0,
+        total_earning:         totalEarning._sum.amount              || 0,
+        team_total:            Number(stats.team_total               || 0),
+        active_team:           Number(stats.active_team              || 0),
+        today_joining:         Number(stats.today_joining            || 0),
+        today_business:        Number(stats.today_business           || 0),
+        today_activation:      Number(stats.today_activation         || 0),
+        total_team_business:   Number(stats.total_team_business      || 0),
+        today_roi:             Number(todayRoiSum[0]?.total          || 0),
+        total_roi:             Number(totalRoiSum[0]?.total          || 0),
+        today_sponsor_income:  Number(todaySponsorSum[0]?.total      || 0),
+        total_sponsor_income:  Number(totalSponsorSum[0]?.total      || 0),
       },
     })
   } catch (err) { next(err) }
@@ -155,7 +164,6 @@ router.put('/wallet-address', async (req, res, next) => {
   if (!bep20_wallet || bep20_wallet.length < 20) return res.status(400).json({ error: 'Invalid wallet address' })
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } })
-    
     if (user.transaction_pin_hash) {
       const valid = await bcrypt.compare(pin, user.transaction_pin_hash)
       if (!valid) return res.status(401).json({ error: 'Invalid transaction PIN' })
@@ -165,42 +173,59 @@ router.put('/wallet-address', async (req, res, next) => {
   } catch (err) { next(err) }
 })
 
-const { getLegBusiness } = require('../services/businessUtils')
-
-const { REWARD_RANKS, ROYALTY_RANKS } = require('../lib/ranks')
-
-// ─── GET /api/member/performance ────────────────────────────────
+// ─── GET /api/member/performance ─────────────────────────────────
+// Updated: 50:50 binary business match, all new income tiers
 router.get('/performance', async (req, res, next) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-      select: { rank: true, rank_id: true, royalty_rank: true, royalty_rank_id: true }
-    })
+    const [user, { left, right, matched }, teamSize] = await Promise.all([
+      prisma.user.findUnique({
+        where:  { id: req.user.id },
+        select: { royalty_rank: true, royalty_rank_id: true },
+      }),
+      getMatchedBusiness(req.user.id),
+      getTeamSize(req.user.id),
+    ])
 
-    const { leg1, leg2, leg3 } = await getLegBusiness(req.user.id)
-    
-    // Calculate current achievement status for reward ranks
-    const reward_progress = REWARD_RANKS.map(r => {
-      const T = r.target
-      // Rule: 40%-30%-30%
-      const achieved = (leg1 >= 0.4 * T && leg2 >= 0.3 * T && leg3 >= 0.3 * T)
-      return { ...r, achieved }
-    })
+    // Business match tier progress
+    const match_progress = BUSINESS_MATCH_TIERS.map(tier => ({
+      match:   tier.match,
+      reward:  tier.reward,
+      salary:  tier.salary,
+      achieved: matched >= tier.match,
+      progress_pct: Math.min(100, (matched / tier.match) * 100).toFixed(1),
+    })).reverse() // ascending for display
 
-    const royalty_progress = ROYALTY_RANKS.map(r => {
-      const T = r.target
-      const achieved = (leg1 >= 0.4 * T && leg2 >= 0.3 * T && leg3 >= 0.3 * T)
-      return { ...r, achieved }
+    // Corporate royalty tier progress
+    const royalty_progress = CORPORATE_ROYALTY_TIERS.map(tier => ({
+      business:    tier.business,
+      percent:     tier.percent,
+      achieved:    matched >= tier.business,
+      progress_pct: Math.min(100, (matched / tier.business) * 100).toFixed(1),
+    }))
+
+    // Monsoon bonanza milestone progress
+    const monsoon_progress = MONSOON_BONANZA_TIERS.map(tier => ({
+      teamSize:    tier.teamSize,
+      bonus:       tier.bonus,
+      achieved:    teamSize >= tier.teamSize,
+      progress_pct: Math.min(100, (teamSize / tier.teamSize) * 100).toFixed(1),
+    }))
+
+    // Already awarded reward tiers
+    const awardedTiers = await prisma.rewardMatch.findMany({
+      where:  { user_id: req.user.id },
+      select: { tier_match: true, reward_paid: true, salaries_paid: true, salary_amt: true },
     })
 
     res.json({
-      current_rank: user.rank,
-      current_rank_id: user.rank_id,
-      current_royalty: user.royalty_rank,
+      binary: { left, right, matched, total: left + right },
+      team_size: teamSize,
+      current_royalty:    user.royalty_rank,
       current_royalty_id: user.royalty_rank_id,
-      legs: { leg1, leg2, leg3, total: leg1 + leg2 + leg3 },
-      reward_progress,
-      royalty_progress
+      match_progress,
+      royalty_progress,
+      monsoon_progress,
+      awarded_tiers: awardedTiers,
     })
   } catch (err) { next(err) }
 })
@@ -211,7 +236,7 @@ router.get('/search', async (req, res, next) => {
   if (!userId) return res.status(400).json({ error: 'userId query required' })
   try {
     const target = await prisma.user.findUnique({
-      where: { user_id: userId },
+      where:  { user_id: userId },
       select: { name: true, id: true }
     })
     if (!target || target.id === req.user.id) {

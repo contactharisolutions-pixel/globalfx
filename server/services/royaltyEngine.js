@@ -1,149 +1,124 @@
-const { getLegBusiness } = require('./businessUtils')
+/**
+ * royaltyEngine.js — Corporate Royalty Income Engine
+ *
+ * Rules (Incomeengine.md):
+ * - Requires 50:50 binary matched business volume
+ * - Tiers: $100K=1%, $200K=2%, $300K=3%, $400K=4%, $500K=5% of company turnover
+ * - Transferred after 72 hours
+ * - Cumulative: user qualified for highest tier they've achieved
+ */
+
 const prisma = require('../lib/prisma')
-/**
- * Royalty Ranks Configuration
- * Based on 40%-30%-30% Leg Distribution
- */
-const { ROYALTY_RANKS } = require('../lib/ranks')
+const { getMatchedBusiness } = require('./businessUtils')
+const { CORPORATE_ROYALTY_TIERS } = require('../lib/ranks')
 
 /**
- * Calculate and award royalty ranks based on cumulative business match
- * This runs daily to update the user's royalty_rank
+ * Check all active users and distribute corporate royalty based on matched business.
+ * Royalty = % of total company deposit turnover (all TradePackages ever).
  */
-async function updateRoyaltyRanks() {
-  console.log('[RoyaltyEngine] Updating royalty ranks...')
-  const users = await prisma.user.findMany({
-    select: { id: true, royalty_rank_id: true, user_id: true }
-  })
+async function processCorporateRoyalty() {
+  console.log('[RoyaltyEngine] Processing corporate royalty...')
 
-  let updateCount = 0
-
-  for (const user of users) {
-    const { leg1, leg2, leg3 } = await getLegBusiness(user.id)
-    
-    // Check highest possible royalty rank
-    let qualifiedRank = null
-    for (const rank of ROYALTY_RANKS) {
-      const T = rank.target
-      if (leg1 >= 0.4 * T && leg2 >= 0.3 * T && leg3 >= 0.3 * T) {
-        qualifiedRank = rank
-      } else {
-        break // Stop at the first rank not met
-      }
-    }
-
-    if (qualifiedRank && qualifiedRank.id > user.royalty_rank_id) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          royalty_rank:    qualifiedRank.name,
-          royalty_rank_id: qualifiedRank.id
-        }
-      })
-      updateCount++
-      console.log(`[RoyaltyEngine] User ${user.user_id} promoted to Royalty Rank: ${qualifiedRank.name}`)
-    }
-  }
-  console.log(`[RoyaltyEngine] Finished updates. Users promoted: ${updateCount}`)
-}
-
-/**
- * Distribute Monthly Royalty Income
- * Runs on the 1st of every month
- */
-async function distributeMonthlyRoyalty() {
-  console.log('[RoyaltyEngine] Starting monthly royalty distribution...')
-  
-  // Calculate company turnover for the previous month in IST
-  // IST is UTC+5:30. We want the full calendar month that just ended.
-  const now = new Date()
-  const IST_OFFSET = 5.5 * 60 * 60 * 1000
-  const istNow = new Date(now.getTime() + IST_OFFSET)
-  
-  // First day of CURRENT month IST
-  const firstDayThisMonthIST = new Date(istNow.getUTCFullYear(), istNow.getUTCMonth(), 1)
-  // First day of PREVIOUS month IST
-  const firstDayLastMonthIST = new Date(istNow.getUTCFullYear(), istNow.getUTCMonth() - 1, 1)
-  
-  // Convert these IST boundaries back to UTC for Prisma queries
-  const startUTC = new Date(firstDayLastMonthIST.getTime() - IST_OFFSET)
-  const endUTC   = new Date(firstDayThisMonthIST.getTime() - IST_OFFSET)
-  
-  const turnoverRes = await prisma.tradePackage.aggregate({
-    where: {
-      started_at: {
-        gte: startUTC,
-        lt:  endUTC
-      }
-    },
-    _sum: { amount: true }
-  })
-
-  const turnover = parseFloat(turnoverRes._sum.amount || 0)
-  console.log(`[RoyaltyEngine] turnover audit: IST Month Boundaries: ${firstDayLastMonthIST.toDateString()} to ${firstDayThisMonthIST.toDateString()}`)
-  console.log(`[RoyaltyEngine] Company Turnover (Last Month): $${turnover}`)
-
+  // Total company turnover = sum of all TradePackage amounts
+  const turnoverRes = await prisma.tradePackage.aggregate({ _sum: { amount: true } })
+  const turnover    = parseFloat(turnoverRes._sum.amount || 0)
   if (turnover <= 0) {
-    console.log('[RoyaltyEngine] No turnover last month. Skipping distribution.')
+    console.log('[RoyaltyEngine] No turnover yet. Skipping.')
     return
   }
 
-  for (const rank of ROYALTY_RANKS) {
-    // Find all users with this EXACT royalty rank (Exclusive)
-    // Or if they get share of all pools below them? 
-    // Usually royalty is exclusive to your rank or shared. 
-    // Wording: "Member will get... if his team reach X". 
-    // I'll assume they get the share of their specific pool.
-    const qualifiers = await prisma.user.findMany({
-      where: { royalty_rank_id: rank.id },
-      select: { id: true, user_id: true }
-    })
+  const users = await prisma.user.findMany({
+    where:  { status: 'active' },
+    select: { id: true, user_id: true, royalty_rank_id: true },
+  })
 
-    if (qualifiers.length === 0) continue
+  for (const user of users) {
+    try {
+      const { matched } = await getMatchedBusiness(user.id)
 
-    const poolAmount = turnover * rank.percent / 100
-    const rewardPerUser = parseFloat((poolAmount / qualifiers.length).toFixed(2))
-
-    console.log(`[RoyaltyEngine] Pool ${rank.name} (${rank.percent}%): $${poolAmount} shared by ${qualifiers.length} users ($${rewardPerUser} each)`)
-
-    for (const user of qualifiers) {
-      try {
-        await prisma.$transaction(async (tx) => {
-          // Credit income wallet
-          const updatedUser = await tx.user.update({
-            where: { id: user.id },
-            data: { income_wallet_balance: { increment: rewardPerUser } }
-          })
-
-          // Create bonus record
-          const bonus = await tx.bonus.create({
-            data: {
-              user_id: user.id,
-              type:    'royalty',
-              amount:  rewardPerUser,
-              remarks: `Monthly Royalty Income: ${rank.name} Pool`
-            }
-          })
-
-          // Create ledger entry
-          await tx.incomeLedger.create({
-            data: {
-              user_id:        user.id,
-              type:           'credit',
-              amount:         rewardPerUser,
-              balance_after:  updatedUser.income_wallet_balance,
-              remarks:        `Monthly Royalty Income - ${rank.name}`,
-              reference_type: 'royalty',
-              reference_id:   bonus.id
-            }
-          })
-        })
-      } catch (err) {
-        console.error(`[RoyaltyEngine] Error rewarding user ${user.user_id}:`, err.message)
+      // Find highest royalty tier qualified
+      let qualifiedTier = null
+      for (const tier of [...CORPORATE_ROYALTY_TIERS].reverse()) {
+        if (matched >= tier.business) { qualifiedTier = tier; break }
       }
+      if (!qualifiedTier) continue
+
+      // Find tier index (1-based) for rank tracking
+      const tierIndex = CORPORATE_ROYALTY_TIERS.indexOf(qualifiedTier) + 1
+      if (tierIndex <= user.royalty_rank_id) continue // already at or above this rank
+
+      const royaltyAmt = parseFloat((turnover * qualifiedTier.percent / 100).toFixed(2))
+      if (royaltyAmt <= 0) continue
+
+      // Create pending bonus (72h delay — credited by creditPendingRoyalty)
+      await prisma.$transaction(async (tx) => {
+        // Update royalty rank
+        await tx.user.update({
+          where: { id: user.id },
+          data: {
+            royalty_rank:    `Corporate ${qualifiedTier.percent}%`,
+            royalty_rank_id: tierIndex,
+          },
+        })
+
+        // Create bonus record (pending — not yet in income wallet)
+        await tx.bonus.create({
+          data: {
+            user_id:    user.id,
+            type:       'royalty',
+            amount:     royaltyAmt,
+            is_matured: false, // will be released after 72h
+            remarks:    `Corporate Royalty ${qualifiedTier.percent}% — $${matched.toFixed(0)} matched business`,
+          },
+        })
+      })
+
+      console.log(`[RoyaltyEngine] User ${user.user_id} qualified ${qualifiedTier.percent}% royalty — $${royaltyAmt}`)
+    } catch (err) {
+      console.error(`[RoyaltyEngine] Error for user ${user.user_id}:`, err.message)
     }
   }
-  console.log('[RoyaltyEngine] Monthly distribution finished.')
+
+  // Credit pending royalties older than 72h
+  await creditPendingRoyalties()
+  console.log('[RoyaltyEngine] Done.')
 }
 
-module.exports = { updateRoyaltyRanks, distributeMonthlyRoyalty }
+/** Credit royalty bonuses older than 72 hours to income wallet */
+async function creditPendingRoyalties() {
+  const cutoff = new Date(Date.now() - 72 * 60 * 60 * 1000)
+  const pending = await prisma.bonus.findMany({
+    where: { type: 'royalty', is_matured: false, created_at: { lte: cutoff } },
+  })
+
+  for (const bonus of pending) {
+    try {
+      await prisma.$transaction(async (tx) => {
+        const user = await tx.user.update({
+          where: { id: bonus.user_id },
+          data:  { income_wallet_balance: { increment: bonus.amount } },
+        })
+        await tx.incomeLedger.create({
+          data: {
+            user_id:        bonus.user_id,
+            type:           'credit',
+            amount:         bonus.amount,
+            balance_after:  user.income_wallet_balance,
+            remarks:        bonus.remarks || 'Corporate Royalty Income',
+            reference_type: 'royalty',
+            reference_id:   bonus.id,
+          },
+        })
+        await tx.bonus.update({
+          where: { id: bonus.id },
+          data:  { is_matured: true, matured_at: new Date() },
+        })
+      })
+      console.log(`[RoyaltyEngine] Royalty $${bonus.amount} credited to user #${bonus.user_id}`)
+    } catch (err) {
+      console.error(`[RoyaltyEngine] Error crediting royalty #${bonus.id}:`, err.message)
+    }
+  }
+}
+
+module.exports = { processCorporateRoyalty }

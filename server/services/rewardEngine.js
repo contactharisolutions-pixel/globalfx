@@ -1,124 +1,69 @@
+/**
+ * rewardEngine.js — Business Match Reward & Monthly Salary Engine
+ *
+ * Rules (Incomeengine.md):
+ * - 50:50 binary matching: Left leg = first referral subtree, Right = rest
+ * - When matched volume crosses a tier, user gets instant reward + 12 monthly salaries
+ * - Instant reward transferred after 72 hours (handled by roiCron.creditPendingRewards)
+ * - Monthly salary credited on 5th of every month for 12 months
+ * - Each tier is awarded only once (progressive, not repeating)
+ */
+
 const prisma = require('../lib/prisma')
-/**
- * Performance Rewards Configuration
- * Based on 40%-30%-30% Leg Distribution
- */
-/**
- * Performance Rewards Configuration
- * Based on 40%-30%-30% Leg Distribution
- */
-const { REWARD_RANKS: FINAL_RANKS } = require('../lib/ranks')
-
-const { getLegBusiness } = require('./businessUtils')
+const { getMatchedBusiness } = require('./businessUtils')
+const { BUSINESS_MATCH_TIERS } = require('../lib/ranks')
 
 /**
- * Check all users and award new ranks
+ * Process business match for all active users.
+ * Checks new tier unlocks and creates pending RewardMatch records.
  */
-async function processRewards() {
-  console.log('[RewardEngine] Processing performance rewards...')
+async function processBusinessMatch() {
+  console.log('[RewardEngine] Processing business match tiers...')
+
   const users = await prisma.user.findMany({
-    select: { id: true, rank_id: true, user_id: true }
+    where:  { status: 'active' },
+    select: { id: true, user_id: true },
   })
 
-  let awardedCount = 0
+  let newRewards = 0
 
   for (const user of users) {
-    const { leg1, leg2, leg3 } = await getLegBusiness(user.id)
-    
-    // Find next potential rank
-    const nextRank = FINAL_RANKS.find(r => r.id === user.rank_id + 1)
-    if (!nextRank) continue
-
-    const T = nextRank.target
-    // Rule: 40%-30%-30%
-    if (leg1 >= 0.4 * T && leg2 >= 0.3 * T && leg3 >= 0.3 * T) {
-      // Award rank!
-      await prisma.$transaction(async (tx) => {
-        await tx.user.update({
-          where: { id: user.id },
-          data: {
-            rank: nextRank.name,
-            rank_id: nextRank.id
-          }
-        })
-
-        // Create reward bonus record (locked for 30 days)
-        await tx.bonus.create({
-          data: {
-            user_id: user.id,
-            type: 'reward',
-            amount: nextRank.reward,
-            is_matured: false,
-            matured_at: null, // Will be handled by maturation cron
-            remarks: `Rank Achievement: ${nextRank.name}`
-          }
-        })
-      })
-      awardedCount++
-      console.log(`[RewardEngine] User ${user.user_id} achieved rank ${nextRank.name}!`)
-    }
-  }
-  console.log(`[RewardEngine] Finished. New ranks awarded: ${awardedCount}`)
-}
-
-/**
- * Mature rewards that are older than 30 days
- */
-async function matureRewards() {
-  console.log('[RewardEngine] Checking for matured rewards...')
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-
-  const pendingRewards = await prisma.bonus.findMany({
-    where: {
-      type: 'reward',
-      is_matured: false,
-      created_at: { lte: thirtyDaysAgo }
-    }
-  })
-
-  let maturedCount = 0
-
-  for (const reward of pendingRewards) {
     try {
-      await prisma.$transaction(async (tx) => {
-        // Mark as matured
-        await tx.bonus.update({
-          where: { id: reward.id },
-          data: {
-            is_matured: true,
-            matured_at: new Date()
-          }
-        })
+      const { matched } = await getMatchedBusiness(user.id)
+      if (matched <= 0) continue
 
-        // Credit income wallet
-        const user = await tx.user.update({
-          where: { id: reward.user_id },
-          data: {
-            income_wallet_balance: { increment: reward.amount },
-            total_reward_earned:   { increment: reward.amount }
-          }
-        })
-
-        // Create ledger entry
-        await tx.incomeLedger.create({
-          data: {
-            user_id:        reward.user_id,
-            type:           'credit',
-            amount:         reward.amount,
-            balance_after:  user.income_wallet_balance,
-            remarks:        `Matured Reward: ${reward.remarks}`,
-            reference_type: 'reward',
-            reference_id:   reward.id
-          }
-        })
+      // Get existing awarded tier records for this user
+      const existing = await prisma.rewardMatch.findMany({
+        where:  { user_id: user.id },
+        select: { tier_match: true },
+        orderBy: { tier_match: 'desc' },
       })
-      maturedCount++
+      const awardedTiers = new Set(existing.map(r => parseFloat(r.tier_match)))
+
+      // Find all tiers now qualified that haven't been awarded yet
+      const newTiers = BUSINESS_MATCH_TIERS.filter(
+        tier => matched >= tier.match && !awardedTiers.has(tier.match)
+      )
+
+      for (const tier of newTiers) {
+        await prisma.rewardMatch.create({
+          data: {
+            user_id:    user.id,
+            tier_match: tier.match,
+            reward_amt: tier.reward,
+            salary_amt: tier.salary,
+            // reward_paid stays false — will be released after 72h by creditPendingRewards
+          },
+        })
+        newRewards++
+        console.log(`[RewardEngine] User ${user.user_id} unlocked $${tier.match} tier — reward $${tier.reward}, salary $${tier.salary}/mo`)
+      }
     } catch (err) {
-      console.error(`[RewardEngine] Error maturing reward #${reward.id}:`, err.message)
+      console.error(`[RewardEngine] Error for user ${user.user_id}:`, err.message)
     }
   }
-  console.log(`[RewardEngine] Finished. Rewards matured: ${maturedCount}`)
+
+  console.log(`[RewardEngine] Done. New reward records created: ${newRewards}`)
 }
 
-module.exports = { processRewards, matureRewards }
+module.exports = { processBusinessMatch }

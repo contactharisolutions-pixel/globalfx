@@ -73,7 +73,7 @@ export default function IncomeReportPage({ type, title, subtitle, icon: Icon }) 
                   </td>
                   <td style={{ whiteSpace: 'nowrap' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(0,0,0,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Calendar size={14} style={{ color: 'var(--text-faint)' }} />
                       </div>
                       <div style={{ fontSize: '0.8125rem' }}>

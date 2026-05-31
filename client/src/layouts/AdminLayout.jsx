@@ -48,7 +48,7 @@ function Sidebar({ onClose = () => {} }) {
   const { admin, logout } = useAdminStore()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'linear-gradient(180deg, #020617 0%, #0b1120 60%, #0f172a 100%)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'linear-gradient(180deg, #040d1a 0%, #081425 60%, #0d1f35 100%)' }}>
       {/* Logo */}
       <div style={{ padding: '1.5rem 1.5rem 1.125rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <Link to="/admin" onClick={onClose} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -62,14 +62,14 @@ function Sidebar({ onClose = () => {} }) {
             boxShadow: '0 4px 16px rgba(0,0,0,0.35)',
           }}>
             <img
-              src="/bitlance-logo.png"
+              src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/Logo.png"
               alt="BitLance"
               style={{ height: 36, width: 'auto', display: 'block' }}
             />
           </div>
           <div style={{ fontSize: '0.55rem', fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginLeft: 2, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Shield size={8} style={{ color: '#f97316' }} />
-            <span style={{ color: '#f97316' }}>Admin Panel</span>
+            <Shield size={8} style={{ color: '#02d8dc' }} />
+            <span style={{ color: '#02d8dc' }}>Admin Panel</span>
           </div>
         </Link>
       </div>
@@ -78,16 +78,16 @@ function Sidebar({ onClose = () => {} }) {
       <div style={{ padding: '1rem 1.25rem 0.75rem' }}>
         <div style={{
           padding: '0.875rem 1rem', borderRadius: 14,
-          background: 'rgba(249,115,22,0.06)',
-          border: '1px solid rgba(249,115,22,0.12)',
+          background: 'rgba(2,216,220,0.06)',
+          border: '1px solid rgba(2,216,220,0.15)',
           display: 'flex', alignItems: 'center', gap: '0.75rem',
         }}>
           <div style={{
             width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-            background: 'linear-gradient(135deg, #f97316, #dc2626)',
+            background: 'linear-gradient(135deg, #1e3a5f, #02d8dc)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '0.95rem', fontWeight: 900, color: '#fff',
-            boxShadow: '0 4px 12px rgba(249,115,22,0.35)',
+            boxShadow: '0 4px 12px rgba(2,216,220,0.3)',
           }}>
             {admin?.name?.[0]?.toUpperCase() || 'A'}
           </div>
@@ -95,7 +95,7 @@ function Sidebar({ onClose = () => {} }) {
             <p style={{ fontSize: '0.85rem', fontWeight: 800, color: '#fff', margin: 0, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {admin?.name || 'Administrator'}
             </p>
-            <p style={{ fontSize: '0.6rem', color: '#f97316', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 3 }}>
+            <p style={{ fontSize: '0.6rem', color: '#02d8dc', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 3 }}>
               {admin?.role || 'Superuser'} ·{' '}
               <span style={{ color: '#10b981' }}>● Online</span>
             </p>
@@ -129,21 +129,21 @@ function Sidebar({ onClose = () => {} }) {
                       padding: '0.625rem 0.875rem',
                       borderRadius: 10,
                       color: isActive ? '#fff' : '#cbd5e1',
-                      background: isActive ? 'rgba(249,115,22,0.2)' : 'transparent',
+                      background: isActive ? 'rgba(2,216,220,0.15)' : 'transparent',
                       fontWeight: isActive ? 800 : 600,
                       fontSize: '0.85rem',
                       textDecoration: 'none',
                       transition: 'all 0.2s',
-                      border: isActive ? '1px solid rgba(249,115,22,0.3)' : '1px solid transparent',
+                      border: isActive ? '1px solid rgba(2,216,220,0.3)' : '1px solid transparent',
                     })}
                     onMouseEnter={e => {
-                      if (!e.currentTarget.style.background.includes('rgba(249')) {
+                      if (!e.currentTarget.style.background.includes('rgba(0,180')) {
                         e.currentTarget.style.color = '#fff'
                         e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
                       }
                     }}
                     onMouseLeave={e => {
-                      if (!e.currentTarget.style.background.includes('rgba(249')) {
+                      if (!e.currentTarget.style.background.includes('rgba(0,180')) {
                         e.currentTarget.style.color = '#cbd5e1'
                         e.currentTarget.style.background = ''
                       }
@@ -198,7 +198,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: '#060b17' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', background: '#060e1c' }}>
 
       {/* Desktop Sidebar */}
       <aside style={{
@@ -272,12 +272,12 @@ export default function AdminLayout() {
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '0.35rem',
                 padding: '0.3rem 0.75rem',
-                background: 'rgba(249,115,22,0.08)',
-                border: '1px solid rgba(249,115,22,0.15)',
+                background: 'rgba(2,216,220,0.08)',
+                border: '1px solid rgba(2,216,220,0.2)',
                 borderRadius: 8,
               }}>
-                <Shield size={11} style={{ color: '#f97316' }} />
-                <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Admin</span>
+                <Shield size={11} style={{ color: '#02d8dc' }} />
+                <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#02d8dc', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Admin</span>
               </div>
               <ChevronRight size={12} style={{ color: '#334155' }} />
               <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#e2e8f0', fontFamily: 'Outfit, sans-serif' }}>
@@ -309,7 +309,7 @@ export default function AdminLayout() {
             }}>
               <div style={{
                 width: 28, height: 28, borderRadius: 8,
-                background: 'linear-gradient(135deg, #f97316, #dc2626)',
+                background: 'linear-gradient(135deg, #1e3a5f, #02d8dc)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.75rem', fontWeight: 900, color: '#fff',
               }}>

@@ -43,11 +43,11 @@ function CreateTicket({ onCreated, onCancel }) {
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: '#eff6ff', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <LifeBuoy size={18} style={{ color: '#3b82f6' }} />
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(2,216,220,0.1)', border: '1px solid rgba(2,216,220,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <LifeBuoy size={18} style={{ color: '#02d8dc' }} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>New Support Request</h3>
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#ffffff', fontFamily: 'Outfit, sans-serif' }}>New Support Request</h3>
               <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>We'll respond within 24 hours</p>
             </div>
           </div>
@@ -58,7 +58,7 @@ function CreateTicket({ onCreated, onCancel }) {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }} id="ticket-meta">
           <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#475569', marginBottom: '0.625rem' }}>Category</label>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.625rem' }}>Category</label>
             <select {...register('category')} className="input" style={{ fontWeight: 600 }}>
               <option value="">Choose a topic…</option>
               {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.emoji} {c.label}</option>)}
@@ -67,14 +67,14 @@ function CreateTicket({ onCreated, onCancel }) {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#475569', marginBottom: '0.625rem' }}>Subject</label>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.625rem' }}>Subject</label>
             <input {...register('subject')} placeholder="Brief description of your issue" className="input" />
             {errors.subject && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.subject.message}</p>}
           </div>
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#475569', marginBottom: '0.625rem' }}>Details</label>
+          <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.625rem' }}>Details</label>
           <textarea {...register('message')} rows={6} placeholder="Describe your issue in detail. Include any relevant amounts, dates, or transaction IDs." className="input" style={{ resize: 'none', lineHeight: 1.6 }} />
           {errors.message && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.message.message}</p>}
         </div>
@@ -138,11 +138,11 @@ function TicketDetail({ ticketId, onBack }) {
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: 900 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button onClick={onBack} style={{ width: 38, height: 38, background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', flexShrink: 0 }}>
+        <button onClick={onBack} style={{ width: 38, height: 38, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#cbd5e1', flexShrink: 0 }}>
           <ArrowLeft size={18} />
         </button>
         <div style={{ flex: 1 }}>
-          <h2 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>{ticket.subject}</h2>
+          <h2 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Outfit, sans-serif' }}>{ticket.subject}</h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginTop: '0.375rem', flexWrap: 'wrap' }}>
             <Badge status={ticket.status} />
             <span style={{ fontSize: '0.6875rem', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -152,9 +152,9 @@ function TicketDetail({ ticketId, onBack }) {
         </div>
         {ticket.status !== 'closed' && (
           <button onClick={onClose} disabled={closing} style={{
-            padding: '0.5rem 1rem', background: '#fef2f2',
-            border: '1.5px solid rgba(239,68,68,0.25)', borderRadius: 10,
-            color: '#ef4444', fontWeight: 700, fontSize: '0.8125rem',
+            padding: '0.5rem 1rem', background: 'rgba(239,68,68,0.08)',
+            border: '1px solid rgba(239,68,68,0.25)', borderRadius: 10,
+            color: '#fca5a5', fontWeight: 700, fontSize: '0.8125rem',
             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem',
           }}>
             {closing ? <Loader2 size={14} className="animate-spin" /> : <><CheckCircle2 size={14} /><span>Mark Resolved</span></>}
@@ -181,22 +181,22 @@ function TicketDetail({ ticketId, onBack }) {
           {ticket.replies?.map((reply) => (
             <div key={reply.id} style={{ alignSelf: reply.is_admin ? 'flex-start' : 'flex-end', maxWidth: '85%' }}>
               <div style={{
-                background: reply.is_admin ? '#f0fdfa' : '#f5f3ff',
-                border: `1.5px solid ${reply.is_admin ? 'rgba(13,148,136,0.2)' : 'rgba(124,58,237,0.2)'}`,
+                background: reply.is_admin ? 'rgba(2,216,220,0.08)' : 'rgba(124,58,237,0.08)',
+                border: `1px solid ${reply.is_admin ? 'rgba(2,216,220,0.2)' : 'rgba(124,58,237,0.2)'}`,
                 padding: '1rem 1.25rem',
                 borderRadius: reply.is_admin ? '4px 18px 18px 18px' : '18px 18px 4px 18px',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                   {reply.is_admin
-                    ? <ShieldCheck size={12} style={{ color: '#0d9488' }} />
-                    : <User       size={12} style={{ color: '#7c3aed' }} />
+                    ? <ShieldCheck size={12} style={{ color: '#02d8dc' }} />
+                    : <User       size={12} style={{ color: '#c084fc' }} />
                   }
-                  <span style={{ fontSize: '0.6875rem', fontWeight: 800, color: reply.is_admin ? '#0d9488' : '#7c3aed', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: '0.6875rem', fontWeight: 800, color: reply.is_admin ? '#02d8dc' : '#c084fc', textTransform: 'uppercase' }}>
                     {reply.is_admin ? 'Support Team' : (reply.user?.name || 'You')}
                   </span>
                 </div>
-                <p style={{ fontSize: '0.875rem', color: '#0f172a', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{reply.message}</p>
-                <p style={{ fontSize: '0.625rem', color: '#94a3b8', marginTop: '0.75rem', textAlign: 'right' }}>{new Date(reply.created_at).toLocaleString()}</p>
+                <p style={{ fontSize: '0.875rem', color: '#ffffff', lineHeight: 1.7, whiteSpace: 'pre-wrap', margin: 0 }}>{reply.message}</p>
+                <p style={{ fontSize: '0.625rem', color: '#cbd5e1', marginTop: '0.75rem', textAlign: 'right' }}>{new Date(reply.created_at).toLocaleString()}</p>
               </div>
             </div>
           ))}
@@ -205,22 +205,22 @@ function TicketDetail({ ticketId, onBack }) {
 
         {/* Reply input */}
         {ticket.status !== 'closed' ? (
-          <form onSubmit={handleSubmit(onReply)} style={{ display: 'flex', gap: '0.75rem', paddingTop: '1.25rem', borderTop: '1px solid #f1f5f9' }}>
+          <form onSubmit={handleSubmit(onReply)} style={{ display: 'flex', gap: '0.75rem', paddingTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
             <textarea
               {...register('message')}
               placeholder="Write your reply…"
-              style={{ flex: 1, minHeight: 56, maxHeight: 120, resize: 'vertical', padding: '0.75rem 1rem', border: '1.5px solid #e2e8f0', borderRadius: 12, fontFamily: 'inherit', fontSize: '0.875rem', color: '#0f172a', outline: 'none', lineHeight: 1.6 }}
-              onFocus={e => { e.currentTarget.style.borderColor = '#0d9488' }}
-              onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0' }}
+              style={{ flex: 1, minHeight: 56, maxHeight: 120, resize: 'vertical', padding: '0.75rem 1rem', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, fontFamily: 'inherit', fontSize: '0.875rem', color: '#ffffff', outline: 'none', lineHeight: 1.6, background: 'rgba(0,0,0,0.2)' }}
+              onFocus={e => { e.currentTarget.style.borderColor = '#02d8dc' }}
+              onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
             />
-            <button type="submit" disabled={isSubmitting} style={{ width: 56, background: 'linear-gradient(135deg, #0d9488, #0f766e)', border: 'none', borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', transition: 'all 0.2s', boxShadow: '0 4px 14px rgba(13,148,136,0.3)', flexShrink: 0 }}>
+            <button type="submit" disabled={isSubmitting} style={{ width: 56, background: 'linear-gradient(135deg, #1e3a5f, #02d8dc)', border: 'none', borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', transition: 'all 0.2s', boxShadow: '0 4px 14px rgba(2,216,220,0.3)', flexShrink: 0 }}>
               {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
             </button>
           </form>
         ) : (
-          <div style={{ padding: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, textAlign: 'center' }}>
-            <p style={{ fontSize: '0.8125rem', color: '#64748b', fontWeight: 500 }}>
-              This ticket is closed. <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#0d9488', fontWeight: 700, cursor: 'pointer' }}>Open a new request</button>
+          <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, textAlign: 'center' }}>
+            <p style={{ fontSize: '0.8125rem', color: '#cbd5e1', fontWeight: 500, margin: 0 }}>
+              This ticket is closed. <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#02d8dc', fontWeight: 700, cursor: 'pointer' }}>Open a new request</button>
             </p>
           </div>
         )}
@@ -268,11 +268,11 @@ export default function TicketsPage() {
       {/* Summary Strip */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
         {[
-          { label: 'Total Requests',  value: tickets.length, color: '#0d9488', bg: '#f0fdfa', icon: MessageSquare },
-          { label: 'Pending Reply',   value: openCount,       color: '#f59e0b', bg: '#fffbeb', icon: Clock        },
-          { label: 'Resolved',        value: closedCount,     color: '#10b981', bg: '#f0fdf4', icon: ShieldCheck  },
+          { label: 'Total Requests',  value: tickets.length, color: '#02d8dc', bg: 'rgba(2,216,220,0.08)', icon: MessageSquare },
+          { label: 'Pending Reply',   value: openCount,       color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', icon: Clock        },
+          { label: 'Resolved',        value: closedCount,     color: '#10b981', bg: 'rgba(16,185,129,0.08)', icon: ShieldCheck  },
         ].map(({ label, value, color, bg, icon: Icon }) => (
-          <div key={label} style={{ padding: '1.125rem 1.375rem', background: '#ffffff', border: '1.5px solid #e2e8f0', borderRadius: 16, display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+          <div key={label} style={{ padding: '1.125rem 1.375rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 16, display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}>
             <div style={{ width: 40, height: 40, borderRadius: 12, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon size={18} style={{ color }} />
             </div>
@@ -287,11 +287,11 @@ export default function TicketsPage() {
       {/* Ticket List */}
       {loading ? <Spinner /> : tickets.length === 0 ? (
         <Panel style={{ textAlign: 'center', padding: '5rem 2rem' }}>
-          <div style={{ width: 64, height: 64, borderRadius: 20, background: '#eff6ff', border: '1.5px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+          <div style={{ width: 64, height: 64, borderRadius: 20, background: 'rgba(59,130,246,0.08)', border: '1.5px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
             <MessageSquare size={28} style={{ color: '#3b82f6' }} />
           </div>
-          <p style={{ fontWeight: 800, fontSize: '1.0625rem', color: '#0f172a', marginBottom: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>No requests yet</p>
-          <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '2rem', fontWeight: 500 }}>Create a support request and our team will help you out.</p>
+          <p style={{ fontWeight: 800, fontSize: '1.0625rem', color: '#ffffff', marginBottom: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>No requests yet</p>
+          <p style={{ color: '#cbd5e1', fontSize: '0.875rem', marginBottom: '2rem', fontWeight: 500 }}>Create a support request and our team will help you out.</p>
           <button onClick={() => setView('create')} className="btn-primary" style={{ margin: '0 auto' }}>Create First Request</button>
         </Panel>
       ) : (
@@ -302,19 +302,19 @@ export default function TicketsPage() {
               onClick={() => { setSelId(ticket.id); setView('detail') }}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '1rem 1.375rem', background: '#ffffff',
-                border: '1.5px solid #e2e8f0', borderRadius: 16, cursor: 'pointer',
+                padding: '1rem 1.375rem', background: 'var(--bg-card)',
+                border: '1px solid var(--border-subtle)', borderRadius: 16, cursor: 'pointer',
                 transition: 'all 0.2s', textAlign: 'left', gap: '1rem',
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#0d9488'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,148,136,0.1)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#02d8dc'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(2,216,220,0.15)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = 'none' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', minWidth: 0 }}>
-                <div style={{ width: 38, height: 38, borderRadius: 12, background: '#f0fdfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <MessageSquare size={17} style={{ color: '#0d9488' }} />
+                <div style={{ width: 38, height: 38, borderRadius: 12, background: 'rgba(2,216,220,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <MessageSquare size={17} style={{ color: '#02d8dc' }} />
                 </div>
                 <div style={{ minWidth: 0 }}>
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9375rem', color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ticket.subject}</p>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9375rem', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ticket.subject}</p>
                   <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
                     {ticket.category?.charAt(0).toUpperCase() + ticket.category?.slice(1)} · {ticket._count?.replies ?? 0} replies · {new Date(ticket.created_at).toLocaleDateString()}
                   </p>

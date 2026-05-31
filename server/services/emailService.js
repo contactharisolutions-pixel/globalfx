@@ -32,7 +32,7 @@ async function getTransporter() {
   return _transporter
 }
 
-const FROM = process.env.EMAIL_FROM || '"GlobalFX" <noreply@globalfx.vip>'
+const FROM = process.env.EMAIL_FROM || '"BitLance" <noreply@bitlance.cloud>'
 
 // ── Email helpers ──────────────────────────────────────────────
 
@@ -57,13 +57,13 @@ function baseLayout(content) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlobalFX</title>
+  <title>BitLance</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0f1e;font-family:'Segoe UI',Arial,sans-serif;color:#e2e8f0;">
   <div style="max-width:580px;margin:40px auto;background:#0d1526;border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;">
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#6C3CE1,#00D4FF);padding:28px 32px;">
-      <h1 style="margin:0;font-size:22px;color:#fff;letter-spacing:-0.5px;">GlobalFX</h1>
+      <h1 style="margin:0;font-size:22px;color:#fff;letter-spacing:-0.5px;">BitLance</h1>
       <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:2px;">Trading Platform</p>
     </div>
     <!-- Body -->
@@ -71,7 +71,7 @@ function baseLayout(content) {
     <!-- Footer -->
     <div style="padding:20px 32px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
       <p style="margin:0;font-size:12px;color:#475569;">
-        © ${new Date().getFullYear()} GlobalFX · <a href="https://globalfx.vip" style="color:#00D4FF;text-decoration:none;">globalfx.vip</a>
+        © ${new Date().getFullYear()} BitLance · <a href="https://www.bitlance.cloud" style="color:#00D4FF;text-decoration:none;">bitlance.cloud</a>
       </p>
       <p style="margin:6px 0 0;font-size:11px;color:#334155;">This is an automated message. Please do not reply.</p>
     </div>
@@ -96,7 +96,7 @@ function highlight(value) {
 async function depositApproved({ to, name, amount }) {
   await send({
     to,
-    subject: '✅ Deposit Approved — GlobalFX',
+    subject: '✅ Deposit Approved — BitLance',
     html: baseLayout(`
       <h2 style="margin:0 0 8px;color:#10B981;">Deposit Approved!</h2>
       <p style="color:#94a3b8;margin:0 0 20px;">Hi <strong style="color:#e2e8f0;">${name}</strong>, your deposit has been verified and credited to your fund wallet.</p>
@@ -105,7 +105,7 @@ async function depositApproved({ to, name, amount }) {
         <p style="margin:8px 0 0;font-size:32px;font-weight:800;color:#10B981;">$${(+amount).toFixed(2)}</p>
       </div>
       <p style="margin:20px 0 0;color:#94a3b8;font-size:14px;">Your fund wallet has been topped up. You can now activate a trading package.</p>
-      ${btn('Go to Dashboard', `${process.env.CLIENT_URL || 'https://globalfx.vip'}/dashboard`)}
+      ${btn('Go to Dashboard', `${process.env.CLIENT_URL || 'https://www.bitlance.cloud'}/dashboard`)}
     `),
   })
 }
@@ -116,7 +116,7 @@ async function depositApproved({ to, name, amount }) {
 async function withdrawalApproved({ to, name, netAmount, txHash, wallet }) {
   await send({
     to,
-    subject: '✅ Withdrawal Processed — GlobalFX',
+    subject: '✅ Withdrawal Processed — BitLance',
     html: baseLayout(`
       <h2 style="margin:0 0 8px;color:#10B981;">Withdrawal Processed!</h2>
       <p style="color:#94a3b8;margin:0 0 20px;">Hi <strong style="color:#e2e8f0;">${name}</strong>, your withdrawal has been processed and sent to your wallet.</p>
@@ -134,7 +134,7 @@ async function withdrawalApproved({ to, name, netAmount, txHash, wallet }) {
           <p style="margin:0;font-size:11px;color:#94a3b8;font-family:monospace;word-break:break-all;">${wallet}</p>
         </div>
       </div>
-      ${btn('View History', `${process.env.CLIENT_URL || 'https://globalfx.vip'}/dashboard/withdraw/history`)}
+      ${btn('View History', `${process.env.CLIENT_URL || 'https://www.bitlance.cloud'}/dashboard/withdraw/history`)}
     `),
   })
 }
@@ -145,7 +145,7 @@ async function withdrawalApproved({ to, name, netAmount, txHash, wallet }) {
 async function withdrawalRejected({ to, name, amount, reason }) {
   await send({
     to,
-    subject: '❌ Withdrawal Rejected — GlobalFX',
+    subject: '❌ Withdrawal Rejected — BitLance',
     html: baseLayout(`
       <h2 style="margin:0 0 8px;color:#EF4444;">Withdrawal Rejected</h2>
       <p style="color:#94a3b8;margin:0 0 20px;">Hi <strong style="color:#e2e8f0;">${name}</strong>, unfortunately your withdrawal request of ${highlight('$' + (+amount).toFixed(2))} was rejected.</p>
@@ -154,7 +154,7 @@ async function withdrawalRejected({ to, name, amount, reason }) {
         <p style="margin:0;color:#e2e8f0;font-size:14px;">${reason || 'Please contact support for details.'}</p>
       </div>
       <p style="margin:16px 0 0;color:#94a3b8;font-size:14px;">The amount of ${highlight('$' + (+amount).toFixed(2))} has been refunded to your income wallet. You may submit a new request.</p>
-      ${btn('Contact Support', `${process.env.CLIENT_URL || 'https://globalfx.vip'}/dashboard/tickets`)}
+      ${btn('Contact Support', `${process.env.CLIENT_URL || 'https://www.bitlance.cloud'}/dashboard/tickets`)}
     `),
   })
 }
@@ -166,7 +166,7 @@ async function bonusCredited({ to, name, amount, type, level }) {
   const label = type === 'direct' ? 'Direct Referral Bonus' : type === 'level' ? `Level ${level} Network Bonus` : 'Trading ROI'
   await send({
     to,
-    subject: `💰 ${label} Credited — GlobalFX`,
+    subject: `💰 ${label} Credited — BitLance`,
     html: baseLayout(`
       <h2 style="margin:0 0 8px;color:#6C3CE1;">${label} Received!</h2>
       <p style="color:#94a3b8;margin:0 0 20px;">Hi <strong style="color:#e2e8f0;">${name}</strong>, a bonus has been credited to your income wallet.</p>
@@ -175,7 +175,7 @@ async function bonusCredited({ to, name, amount, type, level }) {
         <p style="margin:8px 0 0;font-size:32px;font-weight:800;color:#00D4FF;">+$${(+amount).toFixed(2)}</p>
         <p style="margin:8px 0 0;font-size:12px;color:#64748b;">${label}</p>
       </div>
-      ${btn('View Earnings', `${process.env.CLIENT_URL || 'https://globalfx.vip'}/dashboard/earnings`)}
+      ${btn('View Earnings', `${process.env.CLIENT_URL || 'https://www.bitlance.cloud'}/dashboard/earnings`)}
     `),
   })
 }
@@ -187,7 +187,7 @@ async function kycStatusUpdate({ to, name, status, note }) {
   const approved = status === 'approved'
   await send({
     to,
-    subject: `${approved ? '✅' : '❌'} KYC ${approved ? 'Approved' : 'Rejected'} — GlobalFX`,
+    subject: `${approved ? '✅' : '❌'} KYC ${approved ? 'Approved' : 'Rejected'} — BitLance`,
     html: baseLayout(`
       <h2 style="margin:0 0 8px;color:${approved ? '#10B981' : '#EF4444'};">KYC ${approved ? 'Verification Approved' : 'Verification Rejected'}</h2>
       <p style="color:#94a3b8;margin:0 0 20px;">Hi <strong style="color:#e2e8f0;">${name}</strong>,</p>
@@ -199,7 +199,7 @@ async function kycStatusUpdate({ to, name, status, note }) {
            </div>
            <p style="color:#94a3b8;font-size:14px;">Please resubmit your documents addressing the issue above.</p>`
       }
-      ${btn(approved ? 'Go to Dashboard' : 'Resubmit KYC', `${process.env.CLIENT_URL || 'https://globalfx.vip'}/dashboard/${approved ? '' : 'kyc'}`)}
+      ${btn(approved ? 'Go to Dashboard' : 'Resubmit KYC', `${process.env.CLIENT_URL || 'https://www.bitlance.cloud'}/dashboard/${approved ? '' : 'kyc'}`)}
     `),
   })
 }

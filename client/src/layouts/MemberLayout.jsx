@@ -88,7 +88,7 @@ function SidebarContent({ onClose = () => {} }) {
   }, [location.pathname])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'linear-gradient(180deg, #0a0f1e 0%, #111827 100%)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'linear-gradient(180deg, #040d1a 0%, #081425 60%, #0d1f35 100%)' }}>
 
       {/* Logo */}
       <div style={{ padding: '1.25rem 1.5rem 1rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -102,7 +102,7 @@ function SidebarContent({ onClose = () => {} }) {
           boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
         }}>
           <img
-            src="/bitlance-logo.png"
+            src="https://gcbuommyucwhrznqkuuf.supabase.co/storage/v1/object/public/GlobalFX/Logo.png"
             alt="BitLance"
             style={{ height: 36, width: 'auto', display: 'block' }}
           />
@@ -112,18 +112,18 @@ function SidebarContent({ onClose = () => {} }) {
       {/* User Card */}
       <div style={{ padding: '1rem 1.25rem 0.75rem' }}>
         <div style={{
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(2,216,220,0.06)',
+          border: '1px solid rgba(2,216,220,0.15)',
           borderRadius: 14,
           padding: '0.875rem 1rem',
           display: 'flex', alignItems: 'center', gap: '0.875rem',
         }}>
           <div style={{
             width: 42, height: 42, borderRadius: 12, flexShrink: 0,
-            background: 'linear-gradient(135deg, #0d9488, #3b82f6)',
+            background: 'linear-gradient(135deg, #1e3a5f, #02d8dc)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '1.0625rem', fontWeight: 900, color: '#fff',
-            boxShadow: '0 4px 12px rgba(13,148,136,0.35)',
+            boxShadow: '0 4px 12px rgba(2,216,220,0.3)',
           }}>
             {user?.name?.[0]?.toUpperCase() || 'M'}
           </div>
@@ -254,7 +254,7 @@ export default function MemberLayout() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: '#f8fafc' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', background: '#060e1c' }}>
       <UrgentAnnouncementPopup />
 
       {/* Impersonation Banner */}
@@ -312,33 +312,33 @@ export default function MemberLayout() {
         {/* Top Header */}
         <header style={{
           position: 'sticky', top: 0, zIndex: 20,
-          background: 'rgba(255,255,255,0.95)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid #e2e8f0',
+          background: 'rgba(6,14,28,0.95)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(2,216,220,0.12)',
           padding: '0 2rem', height: 68,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          boxShadow: '0 1px 0 #e2e8f0, 0 4px 20px rgba(0,0,0,0.04)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
             <button
               onClick={() => setSidebarOpen(true)}
               id="mobile-hamburger"
               style={{
-                width: 38, height: 38, background: '#f8fafc',
-                border: '1.5px solid #e2e8f0', borderRadius: 10,
+                width: 38, height: 38, background: 'rgba(255,255,255,0.05)',
+                border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 10,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', color: '#64748b', transition: 'all 0.15s',
+                cursor: 'pointer', color: '#94a3b8', transition: 'all 0.15s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.borderColor = '#cbd5e1' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#e2e8f0' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(2,216,220,0.1)'; e.currentTarget.style.borderColor = 'rgba(2,216,220,0.3)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}
             >
               <Menu size={18} />
             </button>
 
             <div id="breadcrumb-area">
               <h2 style={{
-                fontSize: '1rem', fontWeight: 800, color: '#0f172a',
+                fontSize: '1rem', fontWeight: 800, color: '#e2e8f0',
                 margin: 0, fontFamily: 'Outfit, sans-serif', lineHeight: 1, marginBottom: 3,
               }}>
                 {getPageTitle()}
@@ -361,9 +361,9 @@ export default function MemberLayout() {
             {/* Notifications */}
             <Link to="/dashboard/announcements" style={{
               position: 'relative', width: 38, height: 38,
-              background: '#f8fafc', border: '1.5px solid #e2e8f0',
+              background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(255,255,255,0.1)',
               borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#64748b', textDecoration: 'none', transition: 'all 0.15s',
+              color: '#94a3b8', textDecoration: 'none', transition: 'all 0.15s',
             }}>
               <Bell size={17} />
               {announcementCount > 0 && (
@@ -383,18 +383,18 @@ export default function MemberLayout() {
             {/* User Chip */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: '0.625rem',
-              background: '#f8fafc', border: '1.5px solid #e2e8f0',
+              background: 'rgba(255,255,255,0.05)', border: '1.5px solid rgba(2,216,220,0.2)',
               borderRadius: 12, padding: '0.3rem 0.875rem 0.3rem 0.375rem',
             }}>
               <div style={{
                 width: 28, height: 28, borderRadius: 8,
-                background: 'linear-gradient(135deg, #0d9488, #3b82f6)',
+                background: 'linear-gradient(135deg, #1e3a5f, #02d8dc)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.75rem', fontWeight: 900, color: '#fff',
               }}>
                 {user?.name?.[0]?.toUpperCase() || 'M'}
               </div>
-              <span id="header-userid" style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span id="header-userid" style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace' }}>
                 {user?.user_id}
               </span>
             </div>
@@ -411,14 +411,15 @@ export default function MemberLayout() {
         {/* Footer note */}
         <div style={{
           padding: '1rem 2.5rem',
-          borderTop: '1px solid #f1f5f9',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: 'rgba(0,0,0,0.15)',
         }} id="layout-footer">
-          <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
+          <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 500 }}>
             © 2026 BitLance. All rights reserved.
           </p>
-          <p style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>
-            Member ID: <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#64748b' }}>{user?.user_id}</span>
+          <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 500 }}>
+            Member ID: <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#02d8dc' }}>{user?.user_id}</span>
           </p>
         </div>
       </div>

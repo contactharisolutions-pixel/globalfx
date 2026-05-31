@@ -75,12 +75,10 @@ const CORS_ORIGINS = process.env.CORS_ORIGINS
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
-      'https://globalfx.pro',
-      'https://www.globalfx.pro',
-      'https://globalfx.vip',
-      'https://www.globalfx.vip',
-      'https://member.globalfx.vip',
-      'https://admin.globalfx.vip',
+      'https://bitlance.cloud',
+      'https://www.bitlance.cloud',
+      'https://member.bitlance.cloud',
+      'https://admin.bitlance.cloud',
       /\.vercel\.app$/, // Allow all Vercel subdomains (including previews)
     ]
 
@@ -159,7 +157,7 @@ app.use((err, _req, res, _next) => {
 if (process.env.VERCEL !== '1') {
   // Running locally — start the HTTP server and the cron scheduler
   app.listen(PORT, () => {
-    console.log(`✅ GlobalFX API running on http://localhost:${PORT}`)
+    console.log(`✅ BitLance Income Engine API running on http://localhost:${PORT}`)
     startROICron()
   })
 }

@@ -1,3 +1,8 @@
+/**
+ * earnings.js — Member Earnings API
+ * Updated for new BitLance income types:
+ * trading | sponsor_l1 | sponsor_l2 | sponsor_l3 | match_reward | monthly_salary | royalty | monsoon
+ */
 const router       = require('express').Router()
 const authenticate = require('../middleware/authenticate')
 const prisma = require('../lib/prisma')
@@ -6,44 +11,53 @@ router.use(authenticate)
 // ─── GET /api/earnings/summary ────────────────────────────────
 router.get('/summary', async (req, res, next) => {
   try {
-    const [roi, direct, level, reward, royalty] = await Promise.all([
-      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'trading' }, _sum: { amount: true } }),
-      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'direct'  }, _sum: { amount: true } }),
-      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'level'   }, _sum: { amount: true } }),
-      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'reward'  }, _sum: { amount: true } }),
-      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'royalty' }, _sum: { amount: true } }),
+    const [roi, l1, l2, l3, matchReward, salary, royalty, monsoon] = await Promise.all([
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'trading'        }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'sponsor_l1'     }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'sponsor_l2'     }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'sponsor_l3'     }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'match_reward'   }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'monthly_salary' }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'royalty'        }, _sum: { amount: true } }),
+      prisma.bonus.aggregate({ where: { user_id: req.user.id, type: 'monsoon'        }, _sum: { amount: true } }),
     ])
-    const trading_income = +(roi._sum.amount     || 0)
-    const direct_bonus   = +(direct._sum.amount  || 0)
-    const level_bonus    = +(level._sum.amount   || 0)
-    const reward_income  = +(reward._sum.amount  || 0)
-    const royalty_income = +(royalty._sum.amount || 0)
 
-    res.json({ 
-      total: trading_income + direct_bonus + level_bonus + reward_income + royalty_income, 
-      trading_income, 
-      direct_bonus, 
-      level_bonus,
-      reward_income,
-      royalty_income
+    const trading_income  = +(roi._sum.amount         || 0)
+    const sponsor_l1      = +(l1._sum.amount           || 0)
+    const sponsor_l2      = +(l2._sum.amount           || 0)
+    const sponsor_l3      = +(l3._sum.amount           || 0)
+    const sponsor_income  = sponsor_l1 + sponsor_l2 + sponsor_l3
+    const match_reward    = +(matchReward._sum.amount  || 0)
+    const monthly_salary  = +(salary._sum.amount       || 0)
+    const royalty_income  = +(royalty._sum.amount      || 0)
+    const monsoon_income  = +(monsoon._sum.amount      || 0)
+
+    res.json({
+      total: trading_income + sponsor_income + match_reward + monthly_salary + royalty_income + monsoon_income,
+      trading_income,
+      sponsor_l1,
+      sponsor_l2,
+      sponsor_l3,
+      sponsor_income,   // total L1+L2+L3
+      match_reward,
+      monthly_salary,
+      royalty_income,
+      monsoon_income,
     })
   } catch (err) { next(err) }
 })
 
 // ─── GET /api/earnings/history ────────────────────────────────
 // Last 30 days of ALL bonus types aggregated per day for the area chart.
-// Previously only counted 'trading' type — now sums all income types so the
-// chart total matches the "Total Earned" KPI card.
 router.get('/history', async (req, res, next) => {
   try {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     const records = await prisma.bonus.findMany({
-      where:   { user_id: req.user.id, created_at: { gte: thirtyDaysAgo } }, // all types
+      where:   { user_id: req.user.id, created_at: { gte: thirtyDaysAgo } },
       orderBy: { created_at: 'asc' },
       select:  { amount: true, created_at: true },
     })
 
-    // Aggregate by IST day (UTC+5:30) so chart dates align with member's timezone
     const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000
     const byDay = {}
     records.forEach((r) => {
@@ -61,25 +75,29 @@ router.get('/history', async (req, res, next) => {
 })
 
 // ─── GET /api/earnings/report ─────────────────────────────────
-// Query: ?type=trading|direct|level|reward|royalty
+// Query: ?type=trading|sponsor_l1|sponsor_l2|sponsor_l3|match_reward|monthly_salary|royalty|monsoon|sponsor (all sponsor levels)
 router.get('/report', async (req, res, next) => {
   const { type } = req.query
-  if (!['trading', 'direct', 'level', 'reward', 'royalty'].includes(type)) {
-    return res.status(400).json({ error: 'Invalid report type' })
+  const VALID_TYPES = ['trading', 'sponsor_l1', 'sponsor_l2', 'sponsor_l3', 'sponsor', 'match_reward', 'monthly_salary', 'royalty', 'monsoon']
+  if (!VALID_TYPES.includes(type)) {
+    return res.status(400).json({ error: `Invalid report type. Valid: ${VALID_TYPES.join(', ')}` })
   }
 
   try {
+    // 'sponsor' = all 3 levels combined
+    const typeFilter = type === 'sponsor'
+      ? { in: ['sponsor_l1', 'sponsor_l2', 'sponsor_l3'] }
+      : { equals: type }
+
     const records = await prisma.bonus.findMany({
-      where:   { user_id: req.user.id, type },
+      where:   { user_id: req.user.id, type: typeFilter },
       orderBy: { created_at: 'desc' },
       include: {
-        from_user: {
-          select: { user_id: true, name: true }
-        }
-      }
+        from_user: { select: { user_id: true, name: true } },
+      },
     })
     res.json({ records })
-  } catch (err) { 
+  } catch (err) {
     console.error(`[Earnings Report Error - ${type}]:`, err.message)
     res.status(500).json({ error: `Internal server error: ${err.message}` })
   }

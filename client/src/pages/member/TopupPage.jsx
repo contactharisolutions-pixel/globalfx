@@ -20,9 +20,9 @@ const schema = z.object({
 const QUICK_AMOUNTS = [25, 50, 100, 250, 500, 1000, 2500, 5000]
 
 const STEPS = [
-  { num: '1', label: 'Choose Amount',   color: '#0d9488', bg: '#f0fdfa'  },
-  { num: '2', label: 'Send Payment',    color: '#3b82f6', bg: '#eff6ff'  },
-  { num: '3', label: 'Upload Proof',    color: '#7c3aed', bg: '#f5f3ff'  },
+  { num: '1', label: 'Choose Amount',   color: '#02d8dc', bg: 'rgba(2,216,220,0.08)'  },
+  { num: '2', label: 'Send Payment',    color: '#3b82f6', bg: 'rgba(59,130,246,0.08)'  },
+  { num: '3', label: 'Upload Proof',    color: '#7c3aed', bg: 'rgba(124,58,237,0.08)'  },
 ]
 
 export default function TopupPage() {
@@ -90,11 +90,11 @@ export default function TopupPage() {
           }}>
             <CheckCircle size={40} style={{ color: '#fff' }} strokeWidth={2} />
           </div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif', margin: '0 0 0.75rem' }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Outfit, sans-serif', margin: '0 0 0.75rem' }}>
             Deposit Submitted!
           </h2>
-          <p style={{ color: '#64748b', fontSize: '0.9375rem', lineHeight: 1.7, marginBottom: '2.5rem', fontWeight: 500 }}>
-            Your deposit of <strong style={{ color: '#0d9488' }}>${(+amount).toLocaleString()}</strong> USDT has been submitted for review. Funds will appear in your Deposit Wallet once approved (usually within 24 hours).
+          <p style={{ color: '#cbd5e1', fontSize: '0.9375rem', lineHeight: 1.7, marginBottom: '2.5rem', fontWeight: 500 }}>
+            Your deposit of <strong style={{ color: '#02d8dc' }}>${(+amount).toLocaleString()}</strong> USDT has been submitted for review. Funds will appear in your Deposit Wallet once approved (usually within 24 hours).
           </p>
           <button onClick={() => setSubmitted(false)} className="btn-primary" style={{ width: '100%', height: 50 }}>
             Submit Another Deposit
@@ -126,8 +126,8 @@ export default function TopupPage() {
       {/* Step 1 — Choose Amount */}
       <Panel>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: '#0d9488', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8125rem', fontWeight: 900 }}>1</div>
-          <p style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Choose Amount</p>
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: '#02d8dc', color: '#080f1e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8125rem', fontWeight: 900 }}>1</div>
+          <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Choose Amount</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '1rem' }} id="amount-grid">
@@ -145,7 +145,7 @@ export default function TopupPage() {
         </div>
 
         <div style={{ position: 'relative' }}>
-          <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: '#64748b', fontSize: '1rem' }}>$</span>
+          <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: 'var(--text-faint)', fontSize: '1rem' }}>$</span>
           <input
             {...register('amount')}
             type="number"
@@ -158,19 +158,19 @@ export default function TopupPage() {
       </Panel>
 
       {/* Step 2 — Send Payment */}
-      <Panel style={{ border: '1.5px solid rgba(59,130,246,0.25)', background: '#fafeff' }}>
+      <Panel style={{ border: '1.5px solid rgba(2,216,220,0.25)', background: 'var(--bg-card)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
           <div style={{ width: 28, height: 28, borderRadius: 8, background: '#3b82f6', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8125rem', fontWeight: 900 }}>2</div>
-          <p style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Send Payment</p>
+          <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Send Payment</p>
         </div>
 
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
           {/* QR Code */}
-          <div style={{ padding: '1rem', background: '#ffffff', borderRadius: 16, border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ padding: '1rem', background: '#ffffff', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {settings.deposit_qr_url ? (
               <img src={settings.deposit_qr_url} alt="USDT QR Code" style={{ width: 120, height: 120, objectFit: 'contain', display: 'block' }} />
             ) : (
-              <QrCode size={120} style={{ color: '#0f172a' }} />
+              <QrCode size={120} style={{ color: '#080f1e' }} />
             )}
           </div>
 
@@ -179,11 +179,11 @@ export default function TopupPage() {
             <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
               <div>
                 <p style={{ fontSize: '0.625rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>Network</p>
-                <p style={{ fontSize: '0.9375rem', color: '#3b82f6', fontWeight: 800 }}>USDT BEP20 (BSC)</p>
+                <p style={{ fontSize: '0.9375rem', color: '#02d8dc', fontWeight: 800 }}>USDT BEP20 (BSC)</p>
               </div>
               <div>
                 <p style={{ fontSize: '0.625rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>Currency</p>
-                <p style={{ fontSize: '0.9375rem', color: '#0f172a', fontWeight: 800 }}>USDT</p>
+                <p style={{ fontSize: '0.9375rem', color: '#ffffff', fontWeight: 800 }}>USDT</p>
               </div>
             </div>
 
@@ -192,10 +192,10 @@ export default function TopupPage() {
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <code style={{
                   flex: 1, padding: '0.75rem 1rem',
-                  background: '#f8fafc', border: '1.5px solid #e2e8f0',
+                  background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)',
                   borderRadius: 10, fontSize: '0.75rem',
                   fontFamily: 'JetBrains Mono, monospace',
-                  color: '#0f172a', fontWeight: 700,
+                  color: '#ffffff', fontWeight: 700,
                   wordBreak: 'break-all',
                 }}>
                   {settings.deposit_address}
@@ -205,8 +205,8 @@ export default function TopupPage() {
                   onClick={copyAddress}
                   style={{
                     width: 42, flexShrink: 0,
-                    background: copied ? '#f0fdf4' : '#ffffff',
-                    border: `1.5px solid ${copied ? 'rgba(16,185,129,0.3)' : '#e2e8f0'}`,
+                    background: copied ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.03)',
+                    border: `1.5px solid ${copied ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)'}`,
                     borderRadius: 10, cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: copied ? '#10b981' : '#64748b',
@@ -220,9 +220,9 @@ export default function TopupPage() {
           </div>
         </div>
 
-        <div style={{ marginTop: '1.25rem', padding: '0.875rem 1rem', background: '#fff7ed', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 10, display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+        <div style={{ marginTop: '1.25rem', padding: '0.875rem 1rem', background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 10, display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
           <AlertCircle size={16} style={{ color: '#f97316', flexShrink: 0, marginTop: 2 }} />
-          <p style={{ fontSize: '0.8125rem', color: '#92400e', fontWeight: 600, lineHeight: 1.6 }}>
+          <p style={{ fontSize: '0.8125rem', color: '#fdba74', fontWeight: 600, lineHeight: 1.6, margin: 0 }}>
             <strong>Important:</strong> Only send USDT via the <strong>BEP20 (Binance Smart Chain)</strong> network. Sending via any other network will result in permanent loss of funds.
           </p>
         </div>
@@ -232,13 +232,13 @@ export default function TopupPage() {
       <Panel>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: '#7c3aed', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8125rem', fontWeight: 900 }}>3</div>
-            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Upload Proof</p>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: '#02d8dc', color: '#080f1e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8125rem', fontWeight: 900 }}>3</div>
+            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', margin: 0, fontFamily: 'Outfit, sans-serif' }}>Upload Proof</p>
           </div>
 
           {/* TX Hash */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#475569', marginBottom: '0.625rem' }}>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.625rem' }}>
               Transaction ID (TX Hash)
             </label>
             <input
@@ -253,12 +253,13 @@ export default function TopupPage() {
 
           {/* Screenshot Upload */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#475569', marginBottom: '0.625rem' }}>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.625rem' }}>
               Payment Screenshot
             </label>
             <label className="upload-box" style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
               minHeight: 180, cursor: 'pointer', position: 'relative', overflow: 'hidden', borderRadius: 14,
+              background: 'rgba(255,255,255,0.02)', border: '2px dashed rgba(255,255,255,0.15)',
             }}>
               {previewUrl ? (
                 <>
@@ -270,11 +271,11 @@ export default function TopupPage() {
                 </>
               ) : (
                 <>
-                  <div style={{ width: 52, height: 52, borderRadius: 16, background: '#f8fafc', border: '1.5px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 16, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <ImageIcon size={22} style={{ color: '#94a3b8' }} />
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.875rem', color: '#0d9488', fontWeight: 700, margin: 0 }}>Click to upload screenshot</p>
+                    <p style={{ fontSize: '0.875rem', color: '#02d8dc', fontWeight: 700, margin: 0 }}>Click to upload screenshot</p>
                     <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>JPG or PNG, max 5MB</p>
                   </div>
                 </>

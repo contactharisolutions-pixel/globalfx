@@ -18,8 +18,8 @@ const DOC_TYPES = [
 ]
 
 const STATUS_CONFIG = {
-  pending:  { icon: Clock,       color: '#f59e0b', bg: '#fffbeb', border: 'rgba(245,158,11,0.25)',  label: 'Under Review',     desc: 'Your documents are being checked by our team. This usually takes less than 24 hours.' },
-  approved: { icon: CheckCircle, color: '#10b981', bg: '#f0fdf4', border: 'rgba(16,185,129,0.25)', label: 'Identity Verified', desc: 'Your identity has been verified. You now have full access to all platform features.' },
+  pending:  { icon: Clock,       color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)',  label: 'Under Review',     desc: 'Your documents are being checked by our team. This usually takes less than 24 hours.' },
+  approved: { icon: CheckCircle, color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', label: 'Identity Verified', desc: 'Your identity has been verified. You now have full access to all platform features.' },
 }
 
 export default function KYCPage() {
@@ -99,21 +99,21 @@ export default function KYCPage() {
           }}>
             <Icon size={38} style={{ color: cfg.color }} strokeWidth={2} />
           </div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif', marginBottom: '0.75rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit, sans-serif', marginBottom: '0.75rem' }}>
             {cfg.label}
           </h2>
-          <p style={{ color: '#64748b', fontSize: '0.9375rem', lineHeight: 1.7, maxWidth: 400, margin: '0 auto 2rem', fontWeight: 500 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', lineHeight: 1.7, maxWidth: 400, margin: '0 auto 2rem', fontWeight: 500 }}>
             {cfg.desc}
           </p>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
             {[
               { label: 'Document Type', value: kyc.doc_type?.replace(/_/g, ' ')?.replace(/\b\w/g, c => c.toUpperCase()) },
               { label: 'Submitted On',  value: new Date(kyc.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) },
             ].map(({ label, value }) => (
               <div key={label} style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '0.625rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>{label}</p>
-                <p style={{ fontSize: '0.9375rem', color: '#0f172a', fontWeight: 700 }}>{value}</p>
+                <p style={{ fontSize: '0.625rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em', marginBottom: '0.25rem' }}>{label}</p>
+                <p style={{ fontSize: '0.9375rem', color: 'var(--text-main)', fontWeight: 700 }}>{value}</p>
               </div>
             ))}
           </div>
@@ -133,13 +133,13 @@ export default function KYCPage() {
       {kyc?.status === 'rejected' && (
         <div style={{
           padding: '1rem 1.25rem',
-          background: '#fef2f2', border: '1.5px solid rgba(239,68,68,0.25)',
+          background: 'rgba(239,68,68,0.08)', border: '1.5px solid rgba(239,68,68,0.25)',
           borderRadius: 14, display: 'flex', gap: '0.875rem', alignItems: 'flex-start',
         }}>
-          <AlertTriangle size={18} style={{ color: '#ef4444', flexShrink: 0, marginTop: 2 }} />
+          <AlertTriangle size={18} style={{ color: 'var(--error)', flexShrink: 0, marginTop: 2 }} />
           <div>
-            <p style={{ fontWeight: 800, color: '#991b1b', marginBottom: '0.375rem' }}>Verification Rejected</p>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', lineHeight: 1.6 }}>
+            <p style={{ fontWeight: 800, color: 'var(--red)', marginBottom: '0.375rem' }}>Verification Rejected</p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
               {kyc.review_note || 'Please resubmit with clearer photos of a valid ID document.'}
             </p>
           </div>
@@ -149,13 +149,13 @@ export default function KYCPage() {
       {/* Why verify */}
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         {[
-          { label: 'Secure Account',    desc: 'Protect against unauthorized access',  color: '#0d9488', bg: '#f0fdfa'  },
-          { label: 'Higher Limits',     desc: 'Unlock higher withdrawal amounts',      color: '#3b82f6', bg: '#eff6ff'  },
-          { label: 'Faster Approvals',  desc: 'Priority processing of your requests', color: '#7c3aed', bg: '#f5f3ff'  },
+          { label: 'Secure Account',    desc: 'Protect against unauthorized access',  color: 'var(--primary)', bg: 'rgba(2,216,220,0.08)'  },
+          { label: 'Higher Limits',     desc: 'Unlock higher withdrawal amounts',      color: '#3b82f6', bg: 'rgba(59,130,246,0.08)'  },
+          { label: 'Faster Approvals',  desc: 'Priority processing of your requests', color: 'var(--purple)', bg: 'rgba(124,58,237,0.08)'  },
         ].map((b) => (
-          <div key={b.label} style={{ flex: '1 1 160px', padding: '1rem', background: b.bg, borderRadius: 12, border: `1px solid ${b.color}25` }}>
+          <div key={b.label} style={{ flex: '1 1 160px', padding: '1rem', background: b.bg, borderRadius: 12, border: `1px solid ${b.color}30` }}>
             <p style={{ margin: 0, fontWeight: 800, fontSize: '0.875rem', color: b.color }}>{b.label}</p>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>{b.desc}</p>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>{b.desc}</p>
           </div>
         ))}
       </div>
@@ -166,7 +166,7 @@ export default function KYCPage() {
 
           {/* Document Type Selection */}
           <div>
-            <p style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#475569', marginBottom: '0.875rem' }}>
+            <p style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.875rem' }}>
               Select Document Type
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
@@ -178,12 +178,12 @@ export default function KYCPage() {
                     style={{
                       padding: '1rem', textAlign: 'center',
                       borderRadius: 14,
-                      border: `1.5px solid ${selectedType === value ? '#0d9488' : '#e2e8f0'}`,
-                      background: selectedType === value ? '#f0fdfa' : '#fff',
+                      border: `1.5px solid ${selectedType === value ? 'var(--primary)' : 'var(--border-subtle)'}`,
+                      background: selectedType === value ? 'var(--primary-glow)' : 'var(--bg-card)',
                       fontSize: '0.875rem', fontWeight: selectedType === value ? 700 : 600,
-                      color: selectedType === value ? '#0d9488' : '#64748b',
+                      color: selectedType === value ? 'var(--primary)' : 'var(--text-muted)',
                       transition: 'all 0.18s',
-                      boxShadow: selectedType === value ? '0 4px 14px rgba(13,148,136,0.12)' : 'none',
+                      boxShadow: selectedType === value ? '0 4px 14px var(--primary-glow)' : 'none',
                     }}
                   >
                     <div style={{ fontSize: '1.5rem', marginBottom: '0.375rem' }}>{emoji}</div>
@@ -192,7 +192,7 @@ export default function KYCPage() {
                 </label>
               ))}
             </div>
-            {errors.doc_type && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.doc_type.message}</p>}
+            {errors.doc_type && <p style={{ color: 'var(--error)', fontSize: '0.75rem', marginTop: '0.5rem' }}>{errors.doc_type.message}</p>}
           </div>
 
           {/* Upload Areas */}
@@ -206,20 +206,20 @@ export default function KYCPage() {
             ].filter(f => f.show).map(({ side, label, required, preview }) => (
               <div key={side}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
-                  <label style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#475569' }}>{label}</label>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: required ? '#ef4444' : '#94a3b8' }}>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-main)' }}>{label}</label>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: required ? 'var(--error)' : 'var(--text-faint)' }}>
                     {required ? 'Required' : 'Optional'}
                   </span>
                 </div>
                 <label style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-                  minHeight: 180, border: `2px dashed ${preview ? '#10b981' : '#e2e8f0'}`,
+                  minHeight: 180, border: `2px dashed ${preview ? 'var(--green)' : 'var(--border-subtle)'}`,
                   borderRadius: 14, cursor: 'pointer',
                   transition: 'all 0.2s ease', position: 'relative', overflow: 'hidden',
-                  background: preview ? '#f0fdf4' : '#fafafa',
+                  background: preview ? 'rgba(16,185,129,0.05)' : 'var(--bg-card)',
                 }}
-                  onMouseEnter={e => { if (!preview) { e.currentTarget.style.borderColor = '#0d9488'; e.currentTarget.style.background = '#f0fdfa' } }}
-                  onMouseLeave={e => { if (!preview) { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.background = '#fafafa' } }}
+                  onMouseEnter={e => { if (!preview) { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.background = 'var(--primary-light)' } }}
+                  onMouseLeave={e => { if (!preview) { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.background = 'var(--bg-card)' } }}
                 >
                   {preview ? (
                     <>
@@ -244,12 +244,12 @@ export default function KYCPage() {
                     </>
                   ) : (
                     <>
-                      <div style={{ width: 52, height: 52, borderRadius: 16, background: '#f0fdfa', border: '1.5px solid rgba(13,148,136,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ImageIcon size={22} style={{ color: '#0d9488' }} />
+                      <div style={{ width: 52, height: 52, borderRadius: 16, background: 'var(--primary-light)', border: '1.5px solid rgba(2,216,220,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ImageIcon size={22} style={{ color: 'var(--primary)' }} />
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '0.875rem', color: '#0d9488', fontWeight: 700, margin: 0 }}>Click to Upload</p>
-                        <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.25rem' }}>JPG, PNG, PDF — max 5MB</p>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--primary)', fontWeight: 700, margin: 0 }}>Click to Upload</p>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '0.25rem' }}>JPG, PNG, PDF — max 5MB</p>
                       </div>
                     </>
                   )}
@@ -259,8 +259,8 @@ export default function KYCPage() {
             ))}
           </div>
 
-          <div style={{ padding: '0.875rem 1rem', background: '#f0fdf4', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10 }}>
-            <p style={{ fontSize: '0.8125rem', color: '#065f46', fontWeight: 600, lineHeight: 1.6 }}>
+          <div style={{ padding: '0.875rem 1rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10 }}>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--green)', fontWeight: 600, lineHeight: 1.6 }}>
               ✅ Upload a clear, readable photo of your document. Make sure all text and corners are visible.
             </p>
           </div>

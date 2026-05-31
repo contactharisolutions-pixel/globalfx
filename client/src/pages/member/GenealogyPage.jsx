@@ -142,7 +142,7 @@ function TreeCanvas({ treeData }) {
   }
 
   return (
-    <Panel style={{ height: 560, padding: 0, position: 'relative', overflow: 'hidden', background: '#0f172a' }}>
+    <Panel style={{ height: 560, padding: 0, position: 'relative', overflow: 'hidden', background: 'var(--bg-main)' }}>
       {/* Controls */}
       <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
         {[
@@ -273,7 +273,7 @@ export default function GenealogyPage() {
                 <button key={lvl} onClick={() => { setSelLevel(+lvl); loadLevelPage(+lvl, 1) }}
                 style={{
                   padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)',
-                  background: selLevel === +lvl ? 'var(--cyan-glow)' : '#ffffff',
+                  background: selLevel === +lvl ? 'var(--cyan-glow)' : 'var(--bg-card)',
                   borderColor: selLevel === +lvl ? 'var(--cyan)' : 'var(--border-subtle)',
                   color: selLevel === +lvl ? 'var(--cyan)' : 'var(--text-main)',
                   fontSize: '0.8125rem', fontWeight: 800, transition: 'var(--transition-normal)', cursor: 'pointer'
@@ -300,7 +300,7 @@ export default function GenealogyPage() {
                       <button key={pg} onClick={() => loadLevelPage(selLevel, pg)}
                         style={{
                           width: 36, height: 36, borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)',
-                          background: pg === page ? 'var(--cyan-glow)' : '#ffffff',
+                          background: pg === page ? 'var(--cyan-glow)' : 'var(--bg-card)',
                           borderColor: pg === page ? 'var(--cyan)' : 'var(--border-subtle)',
                           color: pg === page ? 'var(--cyan)' : 'var(--text-muted)',
                           fontSize: '0.8125rem', fontWeight: 700, cursor: 'pointer'
@@ -315,7 +315,7 @@ export default function GenealogyPage() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {Object.entries(levels).sort((a,b) => a[0]-b[0]).map(([lvl, members]) => (
-                <div key={lvl} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', background: '#ffffff', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                <div key={lvl} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                     <div style={{ width: 44, height: 44, borderRadius: 'var(--radius-sm)', background: 'var(--purple-glow)', border: '1px solid var(--border-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 900, color: 'var(--purple)' }}>
                       L{lvl}
